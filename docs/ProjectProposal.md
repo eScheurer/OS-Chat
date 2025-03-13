@@ -11,12 +11,12 @@ A client can only be in one chat at a time (though they can open multiple tabs a
 
 
 ## Functions Backend
-* The client-server-communication works via internet. The server and clients do not have to be in the same network
-* Login from user on website should request Client thread from Server interface
-* Server interface should create new Client thread (or assign client to existing thread)
-* Client thread is used for communication between user/website and chatroom on server
-* Server should group messages in different chatrooms via prefix
-* The number of Clients hosted by the server should be restrictable
+* The client-server-communication works via internet. The server and clients do not have to be in the same network.
+* Login from user on website should request Client thread from Server interface.
+* Server interface should create new Client thread (or assign client to existing thread).
+* Client thread is used for communication between user/website and chatroom on server.
+* Server should group messages in different chatrooms via prefix.
+* The number of Clients hosted by the server should be restrictable.
 
 
 ## Sketch Backend
