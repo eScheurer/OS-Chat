@@ -20,7 +20,7 @@ A client can only be in one chat at a time (though they can open multiple tabs a
 
 
 ## Sketch Backend
-![Sketch_ProjectProposal](Sketch_ProjectProposal.png)
+![Sketch_ProjectProposal](resources/Sketch_ProjectProposal.png)
 
 
 ## Functions Frontend
