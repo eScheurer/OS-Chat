@@ -25,31 +25,31 @@ Die die Zeit haben (Helene, Luis, bischen Cielle?), parallel/selbstständig Prot
 ## Diskussionen
 Makefiles benutzen!
 ### Helene: Kann alles in C geschrieben werden?
--> Browser können nicht C als Client Side websiten implementation interpretieren!
+-> Browser können nicht C als Client Side websiten implementation interpretieren!  
 Wir brauchen also HTML und JavaScript
 ### Enya: Wir müssen uns noch um den Raspberry Pi kümmern/nachfragen.
 -> Enya übernimmt Kommunikation.
 ### Cielle: Was sind die nächsten Schritte?
-Helene: Enya und Cielle arbeiten an nächsten Schritten?
-Luis: Grober Prototyp steht, das nächste Grundkonstrukt sollten Threads sein.
-Helene: Ist das Header-File wichtig?
-Konsens: Ja
-Helene: Dann sollten wir die beiden Prototypen kombinieren
-Luis: Habe die 2. Übungen noch nicht gemacht -> Da sind viele Infos über Threads drin die helfen könnten
-Helene: Ich würde gerne bereits dieses Wochenende daran arbeiten da ich danach ja nicht mehr verfügbar bin
-Luis: Dann schaue ich, dass ich es bis Freitag fertig schreibe und auf git pushe.
-Helene & Luis: Bisheriges System ist gut, hilft sehr die komplexität des Projekts herunterzubrechen
-Luis: Event-Driven -> Nicht ein Thread pro Client, sondern ein Thread der alle Clients handled.
-Helene: Ich hätte mich zuerst gerne an den Thread-Pool gesetzt
-Luis: Wir können ja vorerst an verschiedenen Aspekten arbeiten.
-Helene: Dann warten wir bis Luis den Prototypen hochgeladen hat, und dann arbeiten wir an unterschiedlichen Aspekten bis zur nächsten Sitzung
-Enya: 30. ist etwas spät für prototyp, was wenn etwas schiefgeht? Evt sollten wir uns vorher schon treffen und an etwasem Arbeiten.
-Helene: Dann trefft ihr euch doch in einer Woche um die nächsten Schritte zu definieren und auch evt schon daran zu arbeiten.
-Enya: Regelmässige Updates helfen sehr!
-Helene: Branches und pushes benutzen!
+Helene: Enya und Cielle arbeiten an nächsten Schritten?  
+Luis: Grober Prototyp steht, das nächste Grundkonstrukt sollten Threads sein.  
+Helene: Ist das Header-File wichtig?  
+Konsens: Ja  
+Helene: Dann sollten wir die beiden Prototypen kombinieren   
+Luis: Habe die 2. Übungen noch nicht gemacht -> Da sind viele Infos über Threads drin die helfen könnten  
+Helene: Ich würde gerne bereits dieses Wochenende daran arbeiten da ich danach ja nicht mehr verfügbar bin  
+Luis: Dann schaue ich, dass ich es bis Freitag fertig schreibe und auf git pushe.  
+Helene & Luis: Bisheriges System ist gut, hilft sehr die komplexität des Projekts herunterzubrechen  
+Luis: Event-Driven -> Nicht ein Thread pro Client, sondern ein Thread der alle Clients handled.  
+Helene: Ich hätte mich zuerst gerne an den Thread-Pool gesetzt  
+Luis: Wir können ja vorerst an verschiedenen Aspekten arbeiten.  
+Helene: Dann warten wir bis Luis den Prototypen hochgeladen hat, und dann arbeiten wir an unterschiedlichen Aspekten bis zur nächsten Sitzung  
+Enya: 30. ist etwas spät für prototyp, was wenn etwas schiefgeht? Evt sollten wir uns vorher schon treffen und an etwasem Arbeiten.  
+Helene: Dann trefft ihr euch doch in einer Woche um die nächsten Schritte zu definieren und auch evt schon daran zu arbeiten.  
+Enya: Regelmässige Updates helfen sehr!  
+Helene: Branches und pushes benutzen!  
 
 ### Nächste Sitzungen:
-23.4.2025 - 10:00
+23.4.2025 - 10:00  
 30.4.2025 - 10:00
 
 ## Nächste Aufgaben
