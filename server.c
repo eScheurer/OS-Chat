@@ -5,25 +5,9 @@
 #include <unistd.h>
 #include <netinet/in.h>
 
-#define PORT 8080
-#define BUFFER_SIZE 16000
+#include "server.h"
 
-// Declaring function in scope
-void send_time(int client_socket);
 
-struct Server {
-    int domain;
-    int port;
-    int service;
-    int protocol;
-    int backlog;
-    u_long interface;
-
-    int socket;
-    struct sockaddr_in address;
-
-    void (*launch)(struct Server *server);
-};
 
 int main() {
     // Setup for TCP connection
