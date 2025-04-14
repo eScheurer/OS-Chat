@@ -27,6 +27,8 @@ struct Server {
   int backlog;
   u_long interface;
 
+  int num_threads;
+
   int socket;
   struct sockaddr_in address;
 

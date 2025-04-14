@@ -5,11 +5,14 @@
 #include <unistd.h>
 #include <netinet/in.h>
 
+
 #include "server.h"
+#include "threadpool.h"
 
 
 
 int main() {
+
     // Setup for TCP connection
     printf("Server starting \n");
     struct Server server;
@@ -65,27 +68,8 @@ int main() {
 
         printf("Connection accepted\n");
 
-        // Reading what was send
-        char buffer[BUFFER_SIZE] = {0};
-        ssize_t bytes_read = read(client_socket, buffer, BUFFER_SIZE - 1);
-        if (bytes_read <= 0) {
-            close(client_socket);
-            continue;
-        }
-
-        // Listening on http://localhost:8080/
-        // This can also be adapted to /response for example if the javascript sends a request to the subdirectory /response
-        if (strstr(buffer, "GET / ") != NULL) {
-            send_time(client_socket);
-        } else {
-            // Returning error if anything else
-            char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
-            send(client_socket, not_found, strlen(not_found), 0);
-        }
-        close(client_socket);
+        add_task_to_pool(client_socket); //Pass socket to threadpool to handly reading and responding
     }
-
-    return 0;
 }
 
 /**
@@ -93,18 +77,38 @@ int main() {
  * @param client_socket connection socket to the client
  */
 void send_time(int client_socket) {
-    time_t now = time(NULL);
-    char *time_str = ctime(&now);
-    printf("Sending Time: %s\n", time_str);
+char buffer[BUFFER_SIZE];
 
-    // Setting parameters for response
-    char response[1024];
-    snprintf(response, sizeof(response),
+    // Read request from client
+    ssize_t bytes_read = read(client_socket, buffer, BUFFER_SIZE -1);
+    if (bytes_read <= 0) {
+        close(client_socket);
+        return;
+    }
+
+    // Check for get-request
+    if (strncmp(buffer, "GET /", 5) == 0) {
+        time_t now = time(NULL);
+        char *time_str = ctime(&now);
+        printf("Sending Time: %s\n", time_str);
+
+        // Setting parameters for response
+        char response[1024];
+        snprintf(response, sizeof(response),
              "HTTP/1.1 200 OK\r\n"
              "Content-Type: text/plain\r\n"
              "Access-Control-Allow-Origin: *\r\n"
              "Content-Length: %lu\r\n"
              "\r\n"
              "%s", strlen(time_str), time_str);
-    send(client_socket, response, strlen(response), 0);
+        send(client_socket, response, strlen(response), 0);
+    } else {
+        // Send 404
+        char *not_found = "HTTP/1.1 404 Not Found\r\n"
+                            "Content-Type: text/html\r\n"
+                            "Connection: close\r\n"
+                            "\r\n";
+        send(client_socket, not_found, strlen(not_found), 0);
+    }
+    close(client_socket);
 }
