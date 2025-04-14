@@ -18,12 +18,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="01c58a62-7ec1-47ef-83bc-893940fb2443" name="Changes" comment="Implement solution for response from server">
+    <list default="true" id="01c58a62-7ec1-47ef-83bc-893940fb2443" name="Changes" comment="Substitute send_time with handle_request">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/script.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server" beforeDir="false" afterPath="$PROJECT_DIR$/server" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/threadpool.c" beforeDir="false" afterPath="$PROJECT_DIR$/threadpool.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,7 +124,7 @@
       <workItem from="1744201368416" duration="1403000" />
       <workItem from="1744567756171" duration="1871000" />
       <workItem from="1744572185783" duration="1066000" />
-      <workItem from="1744641865658" duration="9434000" />
+      <workItem from="1744641865658" duration="10905000" />
     </task>
     <task id="LOCAL-00001" summary="Create server and testfile to print onto website">
       <option name="closed" value="true" />
@@ -168,7 +166,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744653041137</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Substitute send_time with handle_request">
+      <option name="closed" value="true" />
+      <created>1744655086933</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1744655086933</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -180,6 +186,7 @@
     <MESSAGE value="Create headerfile for server.c and include it" />
     <MESSAGE value="Implement threadpool.c and threadpool.h" />
     <MESSAGE value="Implement solution for response from server" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement solution for response from server" />
+    <MESSAGE value="Substitute send_time with handle_request" />
+    <option name="LAST_COMMIT_MESSAGE" value="Substitute send_time with handle_request" />
   </component>
 </project>

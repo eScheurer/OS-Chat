@@ -94,8 +94,33 @@ void handle_request(int client_socket) {
     // Print request for debugging
     printf("Received request:\n%s\n", buffer);
 
+    // Parse the request line to extract method and path
+    char method[16];
+    char path[256];
+    sscanf(buffer, "%s %s", method, path);
+
+    // Serve /time
+    if (strcmp(path, "/time") == 0) {
+        time_t now = time(NULL);
+        char *time_str = ctime(&now);
+
+        // Remove trailing newline from ctime()
+        time_str[strcspn(time_str, "\n")] = 0;
+
+        char response[512];
+        snprintf(response, sizeof(response),
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/plain\r\n"
+            "Content-Length: %zu\r\n"
+            "Connection: close\r\n"
+            "\r\n"
+            "%s", strlen(time_str), time_str);
+
+        send(client_socket, response, strlen(response), 0);
+    }
+
     // Serve index.html
-    if (strncmp(buffer, "GET / ", 6) == 0 || strncmp(buffer, "GET /HTTP ", 9) == 0) {
+    else if (strncmp(buffer, "GET / ", 6) == 0 || strncmp(buffer, "GET /HTTP ", 9) == 0) {
         FILE *file =fopen("index.html", "r");
         if (file == NULL) {
             const char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
@@ -142,23 +167,6 @@ void handle_request(int client_socket) {
         }
     }
 
-    // Serve /time
-    else if (strncmp(buffer, "GET /time", 9) == 0) {
-        time_t now = time(NULL);
-        char *time_str = ctime(&now);
-
-        char response[1024];
-        snprintf(response, sizeof(response),
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/plain\r\n"
-            "Access-Control-Allow-Origin: *\r\n"
-            "Content-Length: %lu\r\n"
-            "Connection: close\r\n"
-            "\r\n"
-            "%s", strlen(time_str), time_str);
-
-        send(client_socket, response, strlen(response), 0);
-    }
 
     close(client_socket);
 }
