@@ -1,5 +1,5 @@
 function getTime() {
-  fetch('/time')
+  fetch('http://localhost:8080')
     .then(response => response.text())
     .then(data => {
       document.getElementById('time').innerText = data;

@@ -79,94 +79,21 @@ int main() {
  * @param client_socket connection socket to the client
  */
 void handle_request(int client_socket) {
-    char buffer[BUFFER_SIZE] = {0};
+    time_t now = time(NULL);
+    char *time_str = ctime(&now);
+    printf("Sending Time: %s\n", time_str);
 
-    // Read the HTTP request
-    ssize_t bytes_read = read(client_socket, buffer, BUFFER_SIZE - 1);
-    if (bytes_read <= 0) {
-        printf("Nothing read from client.\n");
-        close(client_socket);
-        return;
-    }
+    // Setting parameters for response
+    char response[1024];
+    snprintf(response, sizeof(response),
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/plain\r\n"
+        "Access-Control-Allow-Origin: *\r\n"
+        "Content-Length: %lu\r\n"
+        "\r\n"
+        "%s", strlen(time_str), time_str);
 
-    buffer[bytes_read] = '\0';
-
-    // Print request for debugging
-    printf("Received request:\n%s\n", buffer);
-
-    // Parse the request line to extract method and path
-    char method[16];
-    char path[256];
-    sscanf(buffer, "%s %s", method, path);
-
-    // Serve /time
-    if (strcmp(path, "/time") == 0) {
-        time_t now = time(NULL);
-        char *time_str = ctime(&now);
-
-        // Remove trailing newline from ctime()
-        time_str[strcspn(time_str, "\n")] = 0;
-
-        char response[512];
-        snprintf(response, sizeof(response),
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/plain\r\n"
-            "Content-Length: %zu\r\n"
-            "Connection: close\r\n"
-            "\r\n"
-            "%s", strlen(time_str), time_str);
-
-        send(client_socket, response, strlen(response), 0);
-    }
-
-    // Serve index.html
-    else if (strncmp(buffer, "GET / ", 6) == 0 || strncmp(buffer, "GET /HTTP ", 9) == 0) {
-        FILE *file =fopen("index.html", "r");
-        if (file == NULL) {
-            const char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
-            send(client_socket, not_found, strlen(not_found), 0);
-        } else {
-            char content[8192];
-            size_t bytes = fread(content, 1, sizeof(content), file);
-            fclose(file);
-
-            char header[256];
-            snprintf(header, sizeof(header),
-                "HTTP/1.1 200 OK\r\n"
-                "Content-Type: text/plain\r\n"
-                "Content-Length: %lu\r\n"
-                "Connection: close\r\n"
-                "\r\n", bytes);
-
-            send(client_socket, header, strlen(header), 0);
-            send(client_socket, content, strlen(content), 0);
-        }
-    }
-
-    // Serve script.js
-    else if (strncmp(buffer, "GET /script.js", 14) == 0) {
-        FILE *file = fopen("script.js", "r");
-        if (file == NULL) {
-            const char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
-            send(client_socket, not_found, strlen(not_found), 0);
-        } else {
-            char content[4096];
-            size_t bytes = fread(content, 1, sizeof(content), file);
-            fclose(file);
-
-            char header[256];
-            snprintf(header, sizeof(header),
-                "HTTP/1.1 200 OK\r\n"
-                "Content-Type: application/javascript\r\n"
-                "Content-Length: %lu\r\n"
-                "Connection: close\r\n"
-                "\r\n", bytes);
-
-            send(client_socket, header, strlen(header), 0);
-            send(client_socket, content, strlen(content), 0);
-        }
-    }
-
+    send(client_socket, response, strlen(response), 0);
 
     close(client_socket);
 }

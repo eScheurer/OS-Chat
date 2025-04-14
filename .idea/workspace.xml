@@ -18,10 +18,8 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="01c58a62-7ec1-47ef-83bc-893940fb2443" name="Changes" comment="Substitute send_time with handle_request">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server" beforeDir="false" afterPath="$PROJECT_DIR$/server" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
+    <list default="true" id="01c58a62-7ec1-47ef-83bc-893940fb2443" name="Changes" comment="Changes to try and get time request working">
+      <change beforePath="$PROJECT_DIR$/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,27 +61,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C/C++ File.server.c.executor": "Debug",
-    "C/C++ File.test.c.executor": "Run",
-    "RunOnceActivity.RadMigrateCodeStyle": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Prototype__ThreadPool",
-    "last_opened_file_path": "/home/user1/CLionProjects/OS-Chat",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C/C++ File.server.c.executor&quot;: &quot;Debug&quot;,
+    &quot;C/C++ File.test.c.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Prototype__ThreadPool&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/user1/CLionProjects/OS-Chat&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -104,11 +102,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="C/C++ File.test.c" />
+        <item itemvalue="C/C++ File.server.c" />
         <item itemvalue="C/C++ File.server.c" />
         <item itemvalue="C/C++ File.test.c" />
         <item itemvalue="C/C++ File.server.c" />
-        <item itemvalue="C/C++ File.test.c" />
-        <item itemvalue="C/C++ File.test.c" />
       </list>
     </recent_temporary>
   </component>
@@ -124,7 +122,7 @@
       <workItem from="1744201368416" duration="1403000" />
       <workItem from="1744567756171" duration="1871000" />
       <workItem from="1744572185783" duration="1066000" />
-      <workItem from="1744641865658" duration="10905000" />
+      <workItem from="1744641865658" duration="11210000" />
     </task>
     <task id="LOCAL-00001" summary="Create server and testfile to print onto website">
       <option name="closed" value="true" />
@@ -174,7 +172,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744655086933</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Changes to try and get time request working">
+      <option name="closed" value="true" />
+      <created>1744656565344</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1744656565344</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -187,6 +193,7 @@
     <MESSAGE value="Implement threadpool.c and threadpool.h" />
     <MESSAGE value="Implement solution for response from server" />
     <MESSAGE value="Substitute send_time with handle_request" />
-    <option name="LAST_COMMIT_MESSAGE" value="Substitute send_time with handle_request" />
+    <MESSAGE value="Changes to try and get time request working" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changes to try and get time request working" />
   </component>
 </project>
