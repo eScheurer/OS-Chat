@@ -45,8 +45,8 @@ void* thread_worker(void* arg){
     pthread_mutex_unlock(&lock);
 
     // Call send_time to handle client communication
-    extern void send_time(int client_socket);
-    send_time(client_socket);
+    extern void handle_request(int client_socket);
+    handle_request(client_socket);
   }
   return NULL;
 }

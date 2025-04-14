@@ -78,7 +78,7 @@ int main() {
  * Sends the time to the client
  * @param client_socket connection socket to the client
  */
-void send_time(int client_socket) {
+void handle_request(int client_socket) {
     char buffer[BUFFER_SIZE] = {0};
 
     // Read the HTTP request
@@ -89,27 +89,76 @@ void send_time(int client_socket) {
         return;
     }
 
+    buffer[bytes_read] = '\0';
+
     // Print request for debugging
     printf("Received request:\n%s\n", buffer);
 
-    // Always respond for now (simplify)
-    time_t now = time(NULL);
-    char *time_str = ctime(&now);
+    // Serve index.html
+    if (strncmp(buffer, "GET / ", 6) == 0 || strncmp(buffer, "GET /HTTP ", 9) == 0) {
+        FILE *file =fopen("index.html", "r");
+        if (file == NULL) {
+            const char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
+            send(client_socket, not_found, strlen(not_found), 0);
+        } else {
+            char content[8192];
+            size_t bytes = fread(content, 1, sizeof(content), file);
+            fclose(file);
 
-    // Basic HTML response
-    char response[2048];
-    snprintf(response, sizeof(response),
-             "HTTP/1.1 200 OK\r\n"
-             "Content-Type: text/plain\r\n"
-             "Content-Length: %lu\r\n"
-             "Connection: close\r\n"
-             "\r\n"
-             "%s", strlen(time_str), time_str);
+            char header[256];
+            snprintf(header, sizeof(header),
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: text/plain\r\n"
+                "Content-Length: %lu\r\n"
+                "Connection: close\r\n"
+                "\r\n", bytes);
 
-    printf("Sending response:\n%s\n", response);
+            send(client_socket, header, strlen(header), 0);
+            send(client_socket, content, strlen(content), 0);
+        }
+    }
 
-    // Send response and close
-    send(client_socket, response, strlen(response), 0);
+    // Serve script.js
+    else if (strncmp(buffer, "GET /script.js", 14) == 0) {
+        FILE *file = fopen("script.js", "r");
+        if (file == NULL) {
+            const char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
+            send(client_socket, not_found, strlen(not_found), 0);
+        } else {
+            char content[4096];
+            size_t bytes = fread(content, 1, sizeof(content), file);
+            fclose(file);
+
+            char header[256];
+            snprintf(header, sizeof(header),
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: application/javascript\r\n"
+                "Content-Length: %lu\r\n"
+                "Connection: close\r\n"
+                "\r\n", bytes);
+
+            send(client_socket, header, strlen(header), 0);
+            send(client_socket, content, strlen(content), 0);
+        }
+    }
+
+    // Serve /time
+    else if (strncmp(buffer, "GET /time", 9) == 0) {
+        time_t now = time(NULL);
+        char *time_str = ctime(&now);
+
+        char response[1024];
+        snprintf(response, sizeof(response),
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/plain\r\n"
+            "Access-Control-Allow-Origin: *\r\n"
+            "Content-Length: %lu\r\n"
+            "Connection: close\r\n"
+            "\r\n"
+            "%s", strlen(time_str), time_str);
+
+        send(client_socket, response, strlen(response), 0);
+    }
+
     close(client_socket);
-    printf("Closed client socket.\n");
 }
