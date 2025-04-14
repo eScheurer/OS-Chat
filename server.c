@@ -54,6 +54,8 @@ int main() {
 
     printf("Server running on http://localhost:%d\n", PORT);
 
+    init_thread_pool(4); // Define how many threads max in threadpool
+
     while (1) {
         printf("Waiting for connection \n");
         struct sockaddr_in client_addr;
@@ -77,38 +79,37 @@ int main() {
  * @param client_socket connection socket to the client
  */
 void send_time(int client_socket) {
-char buffer[BUFFER_SIZE];
+    char buffer[BUFFER_SIZE] = {0};
 
-    // Read request from client
-    ssize_t bytes_read = read(client_socket, buffer, BUFFER_SIZE -1);
+    // Read the HTTP request
+    ssize_t bytes_read = read(client_socket, buffer, BUFFER_SIZE - 1);
     if (bytes_read <= 0) {
+        printf("Nothing read from client.\n");
         close(client_socket);
         return;
     }
 
-    // Check for get-request
-    if (strncmp(buffer, "GET /", 5) == 0) {
-        time_t now = time(NULL);
-        char *time_str = ctime(&now);
-        printf("Sending Time: %s\n", time_str);
+    // Print request for debugging
+    printf("Received request:\n%s\n", buffer);
 
-        // Setting parameters for response
-        char response[1024];
-        snprintf(response, sizeof(response),
+    // Always respond for now (simplify)
+    time_t now = time(NULL);
+    char *time_str = ctime(&now);
+
+    // Basic HTML response
+    char response[2048];
+    snprintf(response, sizeof(response),
              "HTTP/1.1 200 OK\r\n"
              "Content-Type: text/plain\r\n"
-             "Access-Control-Allow-Origin: *\r\n"
              "Content-Length: %lu\r\n"
+             "Connection: close\r\n"
              "\r\n"
              "%s", strlen(time_str), time_str);
-        send(client_socket, response, strlen(response), 0);
-    } else {
-        // Send 404
-        char *not_found = "HTTP/1.1 404 Not Found\r\n"
-                            "Content-Type: text/html\r\n"
-                            "Connection: close\r\n"
-                            "\r\n";
-        send(client_socket, not_found, strlen(not_found), 0);
-    }
+
+    printf("Sending response:\n%s\n", response);
+
+    // Send response and close
+    send(client_socket, response, strlen(response), 0);
     close(client_socket);
+    printf("Closed client socket.\n");
 }
