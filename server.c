@@ -10,6 +10,7 @@
 
 // Declaring function in scope
 void send_time(int client_socket);
+void send_UTF_File(int client_socket,char* filename_str,char* MimeType);
 
 struct Server {
     int domain;
@@ -92,7 +93,9 @@ int main() {
         // Listening on http://localhost:8080/
         // This can also be adapted to /response for example if the javascript sends a request to the subdirectory /response
         if (strstr(buffer, "GET / ") != NULL) {
-            send_time(client_socket);
+            send_UTF_File(client_socket,"index.html","html");
+            //send_UTF_File(client_socket,"script.js","javascript");
+            //send_time(client_socket);
         } else {
             // Returning error if anything else
             char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
@@ -102,6 +105,41 @@ int main() {
     }
 
     return 0;
+}
+
+
+/**
+ * Sends a file of type UTF-8 to the client so that the website can be viewed (like .html, .js .txt etc). Filename and MimeType are required.
+ * Look up Mime types under https://www.htmlstrip.com/mime-file-type-checker for example. There is currently no errorhandling of non-existing mime-types!
+ * @param client_socket connection socket to the client
+ * @param filename_str Name of the file as String
+ * @param MimeType Defines what type of file gets send over HTTP
+ */
+void send_UTF_File(int client_socket,char* filename_str,char* MimeType) {
+    //Open the file
+    FILE *file_ptr = fopen(filename_str, "r");
+    //Check if successful
+    if (file_ptr == NULL) {
+        char errorMessage[50];
+        snprintf(errorMessage,sizeof(errorMessage),"Failed to open requested file: %s",filename_str);
+        perror(errorMessage);
+    }
+    //Define Header
+    char response[1000];
+    snprintf(response, sizeof(response),
+             "HTTP/1.1 200 OK\r\n"
+             "Content-Type: text/%s; charset=UTF-8\r\n"
+             "\r\n",MimeType);
+    //Read and append every line of the html file to the response
+    char line[100];
+    while(fgets(line, 100, file_ptr)) {
+        strcat(response,line);
+    }
+    //Done with reading so we close the file
+    fclose(file_ptr);
+
+    printf("Sending file\n");
+    send(client_socket, response, strlen(response), 0);
 }
 
 /**
