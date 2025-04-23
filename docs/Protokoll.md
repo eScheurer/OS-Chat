@@ -57,3 +57,15 @@ Helene: Branches und pushes benutzen!
 - Thread-Pool (Helene & Enya)
 - Event-Driven threading (Luis)
 - Chat-Messages zu sich selber senden (Cielle)
+
+# Sitzung 23.4.25
+### Update Runde:
+* Cielle: hat herausgefunden was in der Response ist, hat implementiert das HTML und JavaScript über selben Port gesendet wird.
+* Luis: hat event driven approach umgesetzte
+* Enya: hat ewigkeiten mit ihrem Setup verbracht, klappt immernoch nicht -> braucht hilfe.
+
+### next Steps:
+* Cielle: informiert sich zum thema one vs two ports benützen, http antworten extrahieren
+* Enya: schaut dass ihr Setup funktioniert, machts sich dann an thread pooling
+* Luis: linked lists für chatrooms thread save implementieren, (zb linked list mit name, zeit, id)
+
