@@ -9,4 +9,6 @@ add_executable(OS_Chat
         server.c
         server.h
         threadpool.c
-        threadpool.h)
+        threadpool.h
+        mainPool.c
+        testServer.c)
