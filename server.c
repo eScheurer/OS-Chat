@@ -10,9 +10,7 @@
 #include "threadpool.h"
 
 
-
 int main() {
-
     // Setup for TCP connection
     printf("Server starting \n");
     struct Server server;
@@ -70,30 +68,36 @@ int main() {
 
         printf("Connection accepted\n");
 
-        add_task_to_pool(client_socket); //Pass socket to threadpool to handly reading and responding
+        Task taskTest;
+        taskTest.socket_id = client_socket;
+        strcpy(taskTest.task_name, "This is a test Task on a test thread.");
+
+        add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding    }
     }
 }
 
-/**
- * Sends the time to the client
- * @param client_socket connection socket to the client
- */
-void handle_request(int client_socket) {
-    time_t now = time(NULL);
-    char *time_str = ctime(&now);
-    printf("Sending Time: %s\n", time_str);
+    /**
+     * Sends the time to the client
+     * @param client_socket connection socket to the client
+     * //future use: make switch case (or similar) to distinguish between tasks, call corresponding method (which should be implemented in external file for modularisation?)
+     */
 
-    // Setting parameters for response
-    char response[1024];
-    snprintf(response, sizeof(response),
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/plain\r\n"
-        "Access-Control-Allow-Origin: *\r\n"
-        "Content-Length: %lu\r\n"
-        "\r\n"
-        "%s", strlen(time_str), time_str);
+    void handle_request(Task task) {
+        time_t now = time(NULL);
+        char *time_str = ctime(&now);
+        printf("Sending Time: %s\n", time_str);
 
-    send(client_socket, response, strlen(response), 0);
+        // Setting parameters for response
+        char response[1024];
+        snprintf(response, sizeof(response),
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/plain\r\n"
+            "Access-Control-Allow-Origin: *\r\n"
+            "Content-Length: %lu\r\n"
+            "\r\n"
+            "%s", strlen(time_str), time_str);
 
-    close(client_socket);
-}
+        send(task.socket_id, response, strlen(response), 0);
+
+        close(task.socket_id);
+    }

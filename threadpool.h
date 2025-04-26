@@ -5,8 +5,14 @@
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 
+typedef struct Task {
+    int socket_id;
+    char task_name[64]; //for Buffer
+    //TODO: how large should buffer be?
+} Task;
+
 void init_thread_pool(int num_threads);
-void add_task_to_pool(int client_socket);
+void add_task_to_queue(Task task);
 void shutdown_thread_pool();
 
 
