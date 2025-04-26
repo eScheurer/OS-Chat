@@ -10,6 +10,7 @@
 
 #define MAX_QUEUE 128 //reicht das aus? sollte queue dynamsich wachsen?
 #define INITIAL_THREADS 4
+#define MAX_THREADS 128 //sinvoll?
 
 /** Struct for each Chunk of the queue */
 typedef struct Task {
@@ -33,6 +34,10 @@ static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 static pthread_t *threads;
 static int thread_count;
 static bool keep_running = true;
+static int active_threads, idle_threads;
+
+//Funktionsprototyp
+void add_thread_to_pool();
 
 /**
  * Worker thread function to handle the task (client socket)
@@ -43,11 +48,13 @@ void* thread_worker(void* arg){
 
         // Wait for tasks from client socket
         pthread_mutex_lock(&lock);
+        idle_threads ++;
         while (queue_count == 0 && keep_running) {
             pthread_cond_wait(&cond, &lock);
         }
 
         if (!keep_running) {
+            idle_threads --;
             pthread_mutex_unlock(&lock);
             break;
         }
@@ -56,12 +63,19 @@ void* thread_worker(void* arg){
         queue_front = (queue_front + 1) % MAX_QUEUE;
         queue_count--;
 
+        idle_threads --;
+        active_threads ++;
+
         pthread_mutex_unlock(&lock);
 
         // Call send_time to handle client communication
         extern void handle_request(int client_socket);
         handle_request(task.socket_id);
         // hier verschiedene taskts abarbeiten
+
+        pthread_mutex_lock(&lock);
+        active_threads--;
+        pthread_mutex_unlock(&lock);
     }
     return NULL;
 }
@@ -74,6 +88,9 @@ void add_task_to_queue(Task task){
         printf("Error: queue is full\n");
         pthread_mutex_unlock(&lock);
         return;
+    }
+    if ((queue_count > active_threads - idle_threads) && (thread_count < MAX_THREADS)){
+        add_thread_to_pool();
     }
 
     task_queue[queue_rear] = task;
@@ -106,4 +123,10 @@ void init_thread_pool(){
     for (int i = 0; i < thread_count; i++) {
         pthread_create(&threads[i], NULL, thread_worker, NULL);
     }
+}
+
+void add_thread_to_pool() {
+    threads = realloc(threads, sizeof(pthread_t) * (thread_count + 1)); //TODO: is realloc critical?
+    pthread_create(&threads[thread_count], NULL, thread_worker, NULL);
+    thread_count ++;
 }
