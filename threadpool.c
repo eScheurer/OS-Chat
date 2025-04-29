@@ -15,12 +15,13 @@
 #define MAX_THREADS 128 //sinvoll?
 #define THREAD_IDLE_TIMEOUT 5 // (Sekunden), sinvoll?
 
-/** Struct for each Chunk of the queue */
+/** Struct for each Chunk of the queue*/
 typedef struct Task {
     int socket_id;
     char task_name[64]; //for Buffer
     //TODO: how large should buffer be?
 } Task;
+
 
 static Task task_queue[MAX_QUEUE];
 static int queue_front = 0, queue_rear =0, queue_count = 0;
@@ -36,6 +37,7 @@ static int active_threads = 0, idle_threads = 0;
 //Funktionsprototyp
 void add_thread_to_pool();
 void remove_thread_from_pool();
+void print_threadpool_status();
 
 // struct for timespec
 struct timespec make_timeout_timespec(int seconds) {
@@ -72,9 +74,18 @@ void* thread_worker(void* arg){
             pthread_mutex_unlock(&lock);
             break;
         }
-        if (resume == ETIMEDOUT && thread_count > INITIAL_THREADS) {
-            idle_threads--;
-            remove_thread_from_pool();
+        if (resume == ETIMEDOUT) {
+            if (queue_count == 0) {
+                idle_threads--;
+                pthread_mutex_unlock(&lock);
+                remove_thread_from_pool();
+                return NULL;
+            } else {
+                idle_threads--;
+                pthread_mutex_unlock(&lock);
+                continue;
+            }
+
         }
 
         if (resume == 0) {
@@ -110,13 +121,18 @@ void add_task_to_queue(Task task){
         pthread_mutex_unlock(&lock);
         return;
     }
-    if ((queue_count > active_threads - idle_threads) && (thread_count < MAX_THREADS)){
-        add_thread_to_pool();
-    }
 
     task_queue[queue_rear] = task;
     queue_rear = (queue_rear + 1) % MAX_QUEUE;
     queue_count++;
+
+// first add task to queue and then create new thread to ensure right order and safe storage of task (and no race condition)
+
+    if ((queue_count > idle_threads) && (thread_count < MAX_THREADS)){
+        pthread_mutex_unlock(&lock);
+        add_thread_to_pool();
+        pthread_mutex_lock(&lock);
+    }
 
     pthread_cond_signal(&cond);
     pthread_mutex_unlock(&lock);
@@ -137,6 +153,7 @@ void shutdown_thread_pool(){
 
 //Initialize threadpool
 void init_thread_pool(){
+    pthread_mutex_lock(&lock);
     thread_count = INITIAL_THREADS;
     threads = malloc(sizeof(pthread_t) * thread_count);
 
@@ -144,24 +161,47 @@ void init_thread_pool(){
     for (int i = 0; i < thread_count; i++) {
         pthread_create(&threads[i], NULL, thread_worker, NULL);
     }
+    pthread_mutex_unlock(&lock);
 }
 
 void add_thread_to_pool() {
+    pthread_mutex_lock(&lock);
     pthread_t *new_threads = realloc(threads, sizeof(pthread_t) * (thread_count + 1)); //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
     if (new_threads == NULL) {
         printf("Error: Failed to allocate memory for new thread\n");
         return;
         }
-        threads = new_threads;
+    threads = new_threads;
 
-        pthread_create(&threads[thread_count], NULL, thread_worker, NULL);
-        thread_count++;
+    pthread_create(&threads[thread_count], NULL, thread_worker, NULL);
+    thread_count++;
+    printf("Creating new Thread %d .\n", thread_count); //for testing
+    pthread_mutex_unlock(&lock);
 }
 
 // Should only be called by worker threads that want to terminate themselves, not by any others, cause it will kill your thread
 void remove_thread_from_pool() {
-    thread_count --;
-    idle_threads --;
+    pthread_mutex_lock(&lock);
+
+    if (thread_count > INITIAL_THREADS) {
+
+        for (int i = 0; i < thread_count; i++) {
+            if (pthread_equal(threads[i], pthread_self())) {
+                //moves all existing threads to the left to avoid gaps in array
+                for (int j = i; j < thread_count - 1; j++) {
+                    threads[j] = threads[j + 1];
+                }
+                thread_count--;
+                break;
+            }
+        }
+
+        pthread_mutex_unlock(&lock);
+        printf("Thread %ld is exiting due to inactivity.\n", pthread_self()); //for testing
+        pthread_exit(NULL);
+    }
+    printf("not gonna rmove youuu");
     pthread_mutex_unlock(&lock);
-    pthread_exit(NULL);
+
 }
+
