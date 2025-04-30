@@ -69,3 +69,16 @@ Helene: Branches und pushes benutzen!
 * Enya: schaut dass ihr Setup funktioniert, machts sich dann an thread pooling
 * Luis: linked lists für chatrooms thread save implementieren, (zb linked list mit name, zeit, id)
 
+# Sitzung 30.4.25
+### Recap
+- Enya: Hat an Threadpool weitergearbeitet. Idee: Switchcase implementieren welcher Buffer-Inhalt überprüft und abhandelt,Buffer enthält Tasks
+  - Vorschlag: Thread ruft Methode auf, Methode beinhalted Buffer und Switchcase -> Methode separat ausserhalb des Thread-Pools und server definieren.
+  - Thread Anzahl wird alle 5 Sekunden überprüft und angepasst. Wenn ein Thread nichts zu tun hat, beendet er.
+  - Threads starten und beenden sich selbst! Jedoch gibt es manchmal eine komische Verzögerung.
+  - Vorschlag: Struct implementieren um Auslastung zu überprüfen (evt sogar an Website schicken?)
+- Luis: Hat Threadsichere Linked-List erstellt.
+### next steps
+- Vorbereitung auf merge nächste Woche! (Alle)
+- Auslastung auf Website anzeigen
+- Playit.gg ausprobieren (Luis)
+- HTML + JavaScript aufsetzen (Cielle)
