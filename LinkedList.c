@@ -72,7 +72,7 @@ void print(ThreadSafeList* list) {
     pthread_mutex_lock(&list->lock);
 
     printf("[%s] ", list->listName);
-    Node* current = list->head;
+    Node* current = list->tail;
     while (current) {
         printf("%s: %s -> ", current->name, current->message);
         current = current->next;
@@ -81,6 +81,9 @@ void print(ThreadSafeList* list) {
 
     pthread_mutex_unlock(&list->lock);
 }
+
+// TODO Implement method to export the data of a list in json format (Warning the list in currently stored in reverse due to implementation)
+// TODO Implement method to send single new entries (Not sure if even possible)
 
 /**
  * Deallocate memory for list
@@ -130,7 +133,7 @@ void saveToFile(ThreadSafeList* list) {
         return;
     }
 
-    Node* current = list->head;
+    Node* current = list->tail;
     while (current) {
         fprintf(file, "%s %s\n", current->name, current->message);
         current = current->next;
