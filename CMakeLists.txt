@@ -6,6 +6,7 @@ set(CMAKE_C_STANDARD 11)
 include_directories(.)
 
 add_executable(OSProjectGit
-    server.c
-    server.h
+        server.c
+        server.h
+        LinkedList.c
 )
