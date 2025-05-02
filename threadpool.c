@@ -13,7 +13,8 @@
 #define MAX_QUEUE 128 //reicht das aus? sollte queue dynamsich wachsen?
 #define INITIAL_THREADS 4
 #define MAX_THREADS 128 //sinvoll?
-#define THREAD_IDLE_TIMEOUT 6 // (Sekunden), sinvoll?
+#define THREAD_IDLE_TIMEOUT 8 // (Sekunden), sinvoll? -> später dann so 30-60 sekunden? für testing aber tief lassen
+#define NEW_THREADS 4
 
 /** Struct for each Chunk of the queue*/
 typedef struct Task {
@@ -35,7 +36,7 @@ static bool keep_running = true;
 static int idle_threads = 0;
 
 //Funktionsprototyp
-void add_thread_to_pool();
+void add_threads_to_pool();
 void remove_thread_from_pool();
 void print_threadpool_status();
 
@@ -114,7 +115,7 @@ void add_task_to_queue(Task task){
 
     if (queue_count > idle_threads && thread_count < MAX_THREADS){
         pthread_mutex_unlock(&lock);
-        add_thread_to_pool();
+        add_threads_to_pool();
         pthread_mutex_lock(&lock);
     }
 
@@ -148,13 +149,13 @@ void init_thread_pool(){
     pthread_mutex_unlock(&lock);
 }
 
-void add_thread_to_pool() {
+void add_threads_to_pool() {
     pthread_mutex_lock(&lock);
     pthread_t *new_threads = realloc(threads, sizeof(pthread_t) * (thread_count + 1)); //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
     if (new_threads == NULL) {
         printf("Error: Failed to allocate memory for new thread\n");
         return;
-        }
+    }
 
     threads = new_threads;
     thread_count++;
@@ -162,6 +163,25 @@ void add_thread_to_pool() {
     printf("Creating new Thread %d .\n", thread_count); //for testing
     pthread_mutex_unlock(&lock);
 }
+
+/** idea for adding multiple threads (auskommentiert), doesn't fully work yet (sometimes works, sometimes creates complete overhead..)
+ * void add_threads_to_pool() {
+    pthread_mutex_lock(&lock);
+    pthread_t *new_threads = realloc(threads, sizeof(pthread_t) * (thread_count + NEW_THREADS)); //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
+    if (new_threads == NULL) {
+        printf("Error: Failed to allocate memory for new thread\n");
+        return;
+        }
+
+    for (int i = NEW_THREADS -1; i >= 0; i-=1) {
+        thread_count++;
+        pthread_create(&new_threads[thread_count -1], NULL, thread_worker, NULL);
+        printf("Creating new Thread %d .\n", thread_count); //for testing
+    }
+    threads = new_threads;
+    pthread_mutex_unlock(&lock);
+}
+*/
 
 // Should only be called by worker threads that want to terminate themselves, not by any others, cause it will kill your thread
 void remove_thread_from_pool() {
