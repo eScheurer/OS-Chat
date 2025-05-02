@@ -70,7 +70,7 @@ int main() {
 
         Task taskTest;
         taskTest.socket_id = client_socket;
-        strcpy(taskTest.task_name, "This is a test Task on a test thread.");
+        strcpy(taskTest.task_name, "TIME");
 
         add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding    }
     }
@@ -82,7 +82,7 @@ int main() {
      * //future use: make switch case (or similar) to distinguish between tasks, call corresponding method (which should be implemented in external file for modularisation?)
      */
 
-    void handle_request(Task task) {
+    void time_request(Task task) {
         time_t now = time(NULL);
         char *time_str = ctime(&now);
         printf("Sending Time: %s\n", time_str);

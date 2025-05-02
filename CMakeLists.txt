@@ -10,5 +10,6 @@ add_executable(OS_Chat
         server.c
         threadpool.h
         threadpool.c
+        requestHandler.c
 
 )
