@@ -52,7 +52,7 @@ int main() {
 
     printf("Server running on http://localhost:%d\n", PORT);
 
-    init_thread_pool(4); // Define how many threads max in threadpool
+    init_thread_pool();
 
     while (1) {
         printf("Waiting for connection \n");

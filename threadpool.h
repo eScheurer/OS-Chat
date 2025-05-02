@@ -11,7 +11,7 @@ typedef struct Task {
     //TODO: how large should buffer be?
 } Task;
 
-void init_thread_pool(int num_threads);
+void init_thread_pool();
 void add_task_to_queue(Task task);
 void shutdown_thread_pool();
 
