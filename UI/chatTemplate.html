@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="script.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>OS-Chatroom</title>
+</head>
+<body onload="getChatRooms(); getMessages()">
+<table>
+    <tr>
+        <th>Chat Rooms:<button onclick="getChatRooms()">refresh</button></th>
+        <th>
+            <div id="chat-title">-Chat Title-</div>
+        </th>
+        <th>Data</th>
+    </tr>
+    <tr>
+        <td><div id="chatList"> -no current chats- </div>
+        </td>
+        <td>
+            <div id="chatMessages">-Chat-</div>
+            Send a Message:
+            <form action="" method="post" class="message-example">
+                <div class="message-example">
+                        <label for="message"></label>
+                        <input type="text" name="message" id="message" required />
+                </div>
+                <div class="chatMessages">
+                    <input type="submit" value="Send!" />
+                </div>
+            </form>
+        </td>
+        <td>
+            -list data-
+            <div id="chat-data"></div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
