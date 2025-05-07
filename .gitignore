@@ -77,3 +77,7 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
+/build/CMakeFiles/Progress/2
+/build/CMakeFiles/OS_Chat.dir/compiler_depend.internal
+/build/CMakeFiles/OS_Chat.dir/server.c.o
+/build/CMakeFiles/OS_Chat.dir/threadpool.c.o.d
