@@ -8,6 +8,9 @@
 #include <pthread.h>
 #include <stdbool.h>
 
+
+#define MAX_THREADS 128 // Todo: does this make sense?
+
 // Struct for each Chunk of the queue
 typedef struct Task {
     int socket_id;
