@@ -9,7 +9,7 @@
 #include <sys/types.h>
 
 // Constants
-#define PORT 8080
+#define PORT 9999
 #define BUFFER_SIZE 16000
 #define MAX_EVENTS 10
 
