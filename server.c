@@ -89,13 +89,35 @@ int main() {
             close(client_socket);
             continue;
         }
-
+        for (int i = 0; i < strlen(buffer); i++) {
+            printf("%c", buffer[i]);
+        }
         // Listening on http://localhost:8080/
         // This can also be adapted to /response for example if the javascript sends a request to the subdirectory /response
         if (strstr(buffer, "GET / ") != NULL) {
+
+            /** Test-Code to print http buffer into console
+            char test[100];
+            printf("Buffer content: \n");
+            snprintf(test, sizeof(test), buffer);
+            printf(test);
+            printf("\n");
+            */
+
             send_UTF_File(client_socket,"index.html","html");
-            //send_UTF_File(client_socket,"script.js","javascript");
-            //send_time(client_socket);
+            send_UTF_File(client_socket,"script.js","javascript");
+        } else if (strstr(buffer, "GET /time ") != NULL) {
+            send_time(client_socket);
+
+
+        } else if (strstr(buffer, "GET /message ") != NULL) {
+            char test[100];
+            printf("Buffer content: \n");
+            snprintf(test, sizeof(test), buffer);
+            printf(test);
+            printf("\n");
+
+
         } else {
             // Returning error if anything else
             char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
