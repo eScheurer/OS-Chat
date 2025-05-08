@@ -35,7 +35,7 @@ static int thread_count;
 static bool keep_running = true;
 static int idle_threads = 0;
 
-//Funktionsprototyp
+//Funktionsprototypen
 void add_threads_to_pool();
 void remove_thread_from_pool();
 void print_threadpool_status();
@@ -64,35 +64,43 @@ void* thread_worker(void* arg) {
         // Wait for tasks from client socket
         pthread_mutex_lock(&lock);
         Task task;
-        idle_threads ++;
+        idle_threads ++; //markiert sich selbst als idle um zu zeigen dass er auf arbeit wartet
 
-        const int resume = wait_for_task_with_timeout(&cond, &lock, THREAD_IDLE_TIMEOUT);
 
-        if (!keep_running) {
-            idle_threads --;
-            pthread_mutex_unlock(&lock);
-            return NULL;
+        // thread geht schlafen
+        //const int resume = wait_for_task_with_timeout(&cond, &lock, THREAD_IDLE_TIMEOUT);
+        //wird geweckt, wenn jemand pthread_cond_signal(&cond) oder pthread_cond_broadcast(&cond) aufruft.
+        //Oder er wird nach THREAD_IDLE_TIMEOUT Sekunden automatisch aufgeweckt, falls niemand ihn vorher weckt.
+
+
+        int resume;
+        //wartet auf Task oder Timeout, geht nur raus wenn eine Task da oder thread beendet werden soll
+        while (queue_count == 0 && keep_running) {
+            resume = wait_for_task_with_timeout(&cond, &lock, THREAD_IDLE_TIMEOUT);
+
+            if (!keep_running) {
+                idle_threads--;
+                pthread_mutex_unlock(&lock);
+                return NULL;
+            }
+            if (resume == ETIMEDOUT && queue_count == 0) {
+                pthread_mutex_unlock(&lock);
+                remove_thread_from_pool();
+                return NULL;
+            }
         }
-        if (resume == ETIMEDOUT && queue_count == 0) {
-            idle_threads--;
-            pthread_mutex_unlock(&lock);
-            remove_thread_from_pool();
-            return NULL;
-        }
 
-        if (resume == 0 || (resume == ETIMEDOUT && queue_count > 0)) {
-            task = task_queue[queue_front];
-            queue_front = (queue_front + 1) % MAX_QUEUE;
-            queue_count--;
-            idle_threads --;
-            pthread_mutex_unlock(&lock);
+        //if (resume == 0 && queue_count > 0 || (resume == ETIMEDOUT && queue_count > 0))
+            // (resume == 0, wenn thread durch siganl geweckt wurde
+        task = task_queue[queue_front]; //task wird aus der queue geholt
+        queue_front = (queue_front + 1) % MAX_QUEUE;
+        queue_count--;
+        idle_threads --;
+        pthread_mutex_unlock(&lock);
 
-            extern void handle_request(Task task); // Call send_time to handle client communication
-            handle_request(task);
+        extern void handle_request(Task task); // Call send_time to handle client communication
+        handle_request(task);
 
-        } else {
-            pthread_mutex_unlock(&lock);
-        }
     }
     return NULL;
 }
@@ -111,7 +119,7 @@ void add_task_to_queue(Task task){
     queue_rear = (queue_rear + 1) % MAX_QUEUE;
     queue_count++;
 
-// first add task to queue and then create new thread to ensure right order and safe storage of task (and no race condition)
+    // first add task to queue and then create new thread to ensure right order and safe storage of task (and no race condition)
 
     if (queue_count > idle_threads && thread_count < MAX_THREADS){
         pthread_mutex_unlock(&lock);
@@ -119,7 +127,7 @@ void add_task_to_queue(Task task){
         pthread_mutex_lock(&lock);
     }
 
-    pthread_cond_signal(&cond);
+    pthread_cond_signal(&cond); //thread wird aufgeweckt!
     pthread_mutex_unlock(&lock);
 }
 
@@ -151,12 +159,15 @@ void init_thread_pool(){
 
 void add_threads_to_pool() {
     pthread_mutex_lock(&lock);
-    pthread_t *new_threads = realloc(threads, sizeof(pthread_t) * (thread_count + 1)); //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
+    //reallocate memory: with pointer to the memory that is being resized + new size of allocated memory
+    pthread_t *new_threads = realloc(threads, sizeof(pthread_t) * (thread_count + 1));
     if (new_threads == NULL) {
         printf("Error: Failed to allocate memory for new thread\n");
+        pthread_mutex_unlock(&lock);
         return;
     }
 
+    //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
     threads = new_threads;
     thread_count++;
     pthread_create(&threads[thread_count -1], NULL, thread_worker, NULL);
@@ -194,6 +205,7 @@ void remove_thread_from_pool() {
                     threads[j] = threads[j + 1];
                 }
                 thread_count--;
+                idle_threads--;
                 break;
             }
         }
