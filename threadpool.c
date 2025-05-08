@@ -22,13 +22,13 @@
 static Task task_queue[MAX_QUEUE];
 static int queue_front = 0, queue_rear =0, queue_count = 0;
 
-static ThreadStats thread_stats[MAX_THREADS]; // Initialize when creating thread
+ThreadStats thread_stats[MAX_THREADS]; // Initialize when creating thread
 
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 static pthread_t *threads;
-static int thread_count;
+int thread_count;
 static bool keep_running = true;
 static int idle_threads = 0;
 
