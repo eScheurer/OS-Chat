@@ -9,6 +9,9 @@ void handle_request(Task task) {
     if (strcmp(task.task_name, "TIME") == 0) {
         extern void time_request (Task task);
         time_request(task);
+    } else if (strcmp(task.task_name, "THREADSTATUS") == 0) {
+        extern void serve_thread_status(int client_socket);
+        serve_thread_status(task.socket_id);
     }
     //here:
     // else if (...)

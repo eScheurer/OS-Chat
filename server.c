@@ -68,9 +68,17 @@ int main() {
 
         printf("Connection accepted\n");
 
+        char buffer[1024] = {0};
+        recv(client_socket, buffer, sizeof(buffer), 0);
+        printf("Received request: %s\n", buffer);
+
         Task taskTest;
         taskTest.socket_id = client_socket;
-        strcpy(taskTest.task_name, "TIME");
+        if (strstr(buffer, "GET /threadstatus") != NULL) {
+            strcpy(taskTest.task_name, "THREADSTATUS");
+        } else {
+            strcpy(taskTest.task_name, "TIME");
+        }
 
         add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding    }
     }
