@@ -84,6 +84,7 @@ void* thread_worker(void* arg) {
                 return NULL;
             }
             if (resume == ETIMEDOUT && queue_count == 0) {
+                idle_threads--;
                 pthread_mutex_unlock(&lock);
                 remove_thread_from_pool();
                 return NULL;
@@ -205,7 +206,7 @@ void remove_thread_from_pool() {
                     threads[j] = threads[j + 1];
                 }
                 thread_count--;
-                idle_threads--;
+
                 break;
             }
         }
