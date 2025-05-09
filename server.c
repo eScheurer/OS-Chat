@@ -4,11 +4,12 @@
 #include <time.h>
 #include <unistd.h>
 #include <netinet/in.h>
-
+#include <sys/epoll.h>
+#include <fcntl.h>
+#include <errno.h>
 
 #include "server.h"
 #include "threadpool.h"
-
 
 int main() {
     // Setup for TCP connection
@@ -50,54 +51,98 @@ int main() {
         exit(1);
     }
 
-    printf("Server running on http://localhost:%d\n", PORT);
+    printf("-------------------------\n");
+    printf("Server running! Please make sure the html is open.\n");
+    printf("-------------------------\n");
+
+    // Initialize epoll
+    // See "man epoll" or https://man7.org/linux/man-pages/man7/epoll.7.html
+    int epoll_instance = epoll_create1(0);
+    if (epoll_instance == -1) {
+        perror("Failed to create epoll");
+        exit(EXIT_FAILURE);
+    }
+
+    // Define what to listen for
+    struct epoll_event event, events[MAX_EVENTS];;
+    event.events = EPOLLIN; // Waiting for incoming messages
+    event.data.fd = server.socket; // Location of the event
+
+    // Adding the server socket to the epoll listener to monitor
+    if (epoll_ctl(epoll_instance, EPOLL_CTL_ADD, server.socket, &event) == -1) {
+        perror("Failed to add event to epoll");
+        exit(EXIT_FAILURE);
+    }
 
     init_thread_pool();
 
     while (1) {
-        printf("Waiting for connection \n");
-        struct sockaddr_in client_addr;
-        socklen_t addrlen = sizeof(client_addr);
-        // Accepting connection
-        int client_socket = accept(server.socket, (struct sockaddr*)&client_addr, &addrlen);
-
-        if (client_socket < 0) {
-            perror("Failed to accept connection");
-            continue;
+        // Waiting for event
+        int n = epoll_wait(epoll_instance, events, MAX_EVENTS, -1);
+        if (n == -1) {
+            perror("epoll_wait failed");
+            exit(EXIT_FAILURE);
         }
+        // Looping through all file descriptors (sockets)
+        for (int i = 0; i < n; i++) {
+            // If the event is triggered by the server socket, then a new client connected
+            // (Clients establish connection with server socket)
+            if (events[i].data.fd == server.socket) {
+                struct sockaddr_in client;
+                socklen_t len = sizeof(client);
+                // Accepting the connection from the connecting client
+                int client_socket = accept(server.socket, (struct sockaddr *)&client, &len);
+                printf("New client connecting \n");
+                if (client_socket == -1) {
+                    perror("Failed to accept client");
+                    continue;
+                }
 
-        printf("Connection accepted\n");
+                // Making the newly connected client non-blocking
+                setNonBlocking(client_socket);
+                event.events = EPOLLIN | EPOLLET; // Notify if data is ready and edge-triggered
+                event.data.fd = client_socket;
 
-        Task taskTest;
-        taskTest.socket_id = client_socket;
-        strcpy(taskTest.task_name, "TIME");
+                // Adding new client to be watched by epoll
+                if (epoll_ctl(epoll_instance, EPOLL_CTL_ADD, client_socket, &event)) {
+                    perror("Failed to add event to epoll");
+                    exit(EXIT_FAILURE);
+                }
+            } else { // Otherwise it's an already connected client sending something
+                int client_socket = events[i].data.fd;
+                char buffer[BUFFER_SIZE] = {0};
 
-        add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding    }
+                // Reading data from client socket
+                ssize_t bytes_read = read(client_socket, buffer, BUFFER_SIZE-1);
+
+                if (bytes_read < 0) {
+                    if (errno != EAGAIN & errno != EWOULDBLOCK) {
+                        close(client_socket);
+                        epoll_ctl(epoll_instance, EPOLL_CTL_DEL, client_socket, NULL);
+                    }
+                    continue;
+                }
+
+                Task taskTest;
+                taskTest.socket_id = client_socket;
+                strcpy(taskTest.task_name, buffer);
+                add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding
+
+            }
+        }
     }
 }
 
-    /**
-     * Sends the time to the client
-     * @param client_socket connection socket to the client
-     * //future use: make switch case (or similar) to distinguish between tasks, call corresponding method (which should be implemented in external file for modularisation?)
-     */
-
-    void time_request(Task task) {
-        time_t now = time(NULL);
-        char *time_str = ctime(&now);
-        printf("Sending Time: %s\n", time_str);
-
-        // Setting parameters for response
-        char response[1024];
-        snprintf(response, sizeof(response),
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/plain\r\n"
-            "Access-Control-Allow-Origin: *\r\n"
-            "Content-Length: %lu\r\n"
-            "\r\n"
-            "%s", strlen(time_str), time_str);
-
-        send(task.socket_id, response, strlen(response), 0);
-
-        close(task.socket_id);
+/**
+ * Gets the file status of a file and setts the O_NONBLOCK flag.
+ * This ensures that the socket isn't blocking. (Not waiting for accept, read or write like in the prototype before)
+ * @param fd Socket to make non blocking
+ * @return Exit status of operation (Unused)
+ */
+int setNonBlocking(int fd) {
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags < 0) {
+        return -1;
     }
+    return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+}

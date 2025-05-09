@@ -11,5 +11,6 @@ add_executable(OS_Chat
         threadpool.h
         threadpool.c
         requestHandler.c
-
+        LinkedList.c
+        taskHandler.c
 )

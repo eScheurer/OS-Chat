@@ -11,12 +11,14 @@
 // Constants
 #define PORT 8080
 #define BUFFER_SIZE 16000
+#define MAX_EVENTS 10
 
 // Forward declaration of the Server struct
 struct Server;
 
 // Function prototype
-void send_time(int client_socket);
+void sendTime(int client_socket);
+int setNonBlocking(int fd);
 
 // Struct definition
 struct Server {
