@@ -82,3 +82,23 @@ Helene: Branches und pushes benutzen!
 - Auslastung auf Website anzeigen
 - Playit.gg ausprobieren (Luis)
 - HTML + JavaScript aufsetzen (Cielle)
+
+
+# Sitzung 9.5.2025
+## Beschlüsse
+* momentan noch nicht unique user names, implementieren wenn noch wollen/zeit am ende
+* Threadpool mementant einfach immer 1 neuer thread, potentiell später ändern dass mehrere neue erstellt werden
+
+## Next steps
+### things to do:
+* merge erfolgreich machen
+* nachrichten empfangen und senden können
+* thread status an html senden
+* einzelne chat rooms auswahl, mit pre string (evtl verschlüsselt)
+* in chatrooms gehen können
+* chats abspeichern können
+* Domain name
+
+Helene: Chat prefix
+Enya: status von linked list schicken, quasi antwort fpr "hey schick mir aktuelle nachrichtn"
+Cielle: Nachrichten empfangne und in linked list
