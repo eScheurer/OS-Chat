@@ -17,6 +17,8 @@
  */
 
 void handle_request(Task task) {
+    printf(task.task_name);
+    printf("\n");
     if (strcmp(task.task_name, "GET /") == 0) {
         extern void time_request (Task task);
         time_request(task);

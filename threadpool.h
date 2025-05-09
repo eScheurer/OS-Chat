@@ -7,7 +7,7 @@
 
 typedef struct Task {
     int socket_id;
-    char task_name[128]; //for Buffer
+    char task_name[512]; //for Buffer
     //TODO: how large should buffer be?
 } Task;
 

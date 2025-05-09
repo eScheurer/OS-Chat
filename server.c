@@ -29,7 +29,7 @@ int main() {
 
     // Checking if socket was set up correctly
     if (server.socket < 0) {
-        perror("Failed to initialize");
+        perror("Failed to initialize \n");
         exit(1);
     }
 
@@ -41,13 +41,13 @@ int main() {
 
     // Binding the socket & Check
     if (bind(server.socket, (struct sockaddr *)&server.address, sizeof(server.address)) < 0) {
-        perror("Failed to bind");
+        perror("Failed to bind \n");
         exit(1);
     }
 
     // Server listens & Check
     if (listen(server.socket, server.backlog) < 0) {
-        perror("Failed to listen");
+        perror("Failed to listen \n");
         exit(1);
     }
 
@@ -59,7 +59,7 @@ int main() {
     // See "man epoll" or https://man7.org/linux/man-pages/man7/epoll.7.html
     int epoll_instance = epoll_create1(0);
     if (epoll_instance == -1) {
-        perror("Failed to create epoll");
+        perror("Failed to create epoll \n");
         exit(EXIT_FAILURE);
     }
 
@@ -70,7 +70,7 @@ int main() {
 
     // Adding the server socket to the epoll listener to monitor
     if (epoll_ctl(epoll_instance, EPOLL_CTL_ADD, server.socket, &event) == -1) {
-        perror("Failed to add event to epoll");
+        perror("Failed to add event to epoll \n");
         exit(EXIT_FAILURE);
     }
 
@@ -80,7 +80,7 @@ int main() {
         // Waiting for event
         int n = epoll_wait(epoll_instance, events, MAX_EVENTS, -1);
         if (n == -1) {
-            perror("epoll_wait failed");
+            perror("epoll_wait failed \n");
             exit(EXIT_FAILURE);
         }
         // Looping through all file descriptors (sockets)
@@ -94,7 +94,7 @@ int main() {
                 int client_socket = accept(server.socket, (struct sockaddr *)&client, &len);
                 printf("New client connecting \n");
                 if (client_socket == -1) {
-                    perror("Failed to accept client");
+                    perror("Failed to accept client \n");
                     continue;
                 }
 
@@ -105,7 +105,7 @@ int main() {
 
                 // Adding new client to be watched by epoll
                 if (epoll_ctl(epoll_instance, EPOLL_CTL_ADD, client_socket, &event)) {
-                    perror("Failed to add event to epoll");
+                    perror("Failed to add event to epoll \n");
                     exit(EXIT_FAILURE);
                 }
             } else { // Otherwise it's an already connected client sending something
