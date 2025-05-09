@@ -23,7 +23,6 @@ typedef struct Task {
     //TODO: how large should buffer be?
 } Task;
 
-
 static Task task_queue[MAX_QUEUE];
 static int queue_front = 0, queue_rear =0, queue_count = 0;
 
