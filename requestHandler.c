@@ -17,13 +17,12 @@
  */
 
 void handle_request(Task task) {
-    if (strstr(task.task_name, "GET / ") != NULL) {
-        printf("I'm hereeee");
+    if (strstr(task.buffer, "GET / ") != NULL) {
         extern void time_request (Task task);
         time_request(task);
-    } else if (strcmp(task.task_name, "THREADSTATUS") == 0) {
-        extern void serve_thread_status(int client_socket);
-        serve_thread_status(task.socket_id);
+    } else if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
+        extern void serve_thread_status(Task task);
+        serve_thread_status(task);
     }
 
     //here:

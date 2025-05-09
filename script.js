@@ -1,6 +1,6 @@
 console.log('Script loaded'); //Test if js is loaded
 function getTime() {
-  fetch('http://localhost:8080/time')
+  fetch('http://localhost:8080/')
     .then(response => response.text())
     .then(data => {
       document.getElementById('time').innerText = data;

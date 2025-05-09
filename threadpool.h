@@ -14,7 +14,7 @@
 // Struct for each Chunk of the queue
 typedef struct Task {
     int socket_id;
-    char task_name[512]; //for Buffer
+    char buffer[16000]; //for Buffer
     //TODO: how large should buffer be?
 } Task;
 

@@ -125,7 +125,7 @@ int main() {
 
                 Task taskTest;
                 taskTest.socket_id = client_socket;
-                strcpy(taskTest.task_name, buffer);
+                strcpy(taskTest.buffer, buffer);
                 add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding
 
             }

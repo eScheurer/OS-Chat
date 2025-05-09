@@ -32,3 +32,19 @@ void time_request(Task task) {
     send(task.socket_id, response, strlen(response), 0);
     close(task.socket_id);
 }
+
+/**
+ * Methods for Thread Monitoring
+ */
+void serve_thread_status(Task task) {
+    char json[4096];
+    get_thread_activity_json(json, sizeof(json));
+
+    char response[8192];
+    snprintf(response, sizeof(response),
+             "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nAccess-Control-Allow-Origin: *\r\nContent-Length: %zu\r\n\r\n%s", // Todo: only allow our ports
+             strlen(json), json);
+
+    send(task.socket_id, response, strlen(response), 0);
+    close(task.socket_id);
+}
