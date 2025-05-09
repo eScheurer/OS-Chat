@@ -40,12 +40,5 @@ void init_thread_pool();
 void add_threads_to_pool();
 void remove_thread_from_pool();
 
-// struct for timespec
-struct timespec make_timeout_timespec(const int seconds) {
-    struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    ts.tv_sec += seconds;
-    return ts;
-}
 
 #endif //THREADPOOL_H
