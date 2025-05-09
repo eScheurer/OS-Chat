@@ -176,24 +176,33 @@ void add_threads_to_pool() {
     pthread_mutex_unlock(&lock);
 }
 
-/** idea for adding multiple threads (auskommentiert), doesn't fully work yet (sometimes works, sometimes creates complete overhead..)
- * void add_threads_to_pool() {
-    pthread_mutex_lock(&lock);
-    pthread_t *new_threads = realloc(threads, sizeof(pthread_t) * (thread_count + NEW_THREADS)); //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
-    if (new_threads == NULL) {
-        printf("Error: Failed to allocate memory for new thread\n");
-        return;
-        }
-
-    for (int i = NEW_THREADS -1; i >= 0; i-=1) {
-        thread_count++;
-        pthread_create(&new_threads[thread_count -1], NULL, thread_worker, NULL);
-        printf("Creating new Thread %d .\n", thread_count); //for testing
-    }
-    threads = new_threads;
-    pthread_mutex_unlock(&lock);
-}
-*/
+// //idea for adding multiple threads (auskommentiert), doesn't fully work yet (sometimes works, sometimes creates complete overhead..)
+// void add_threads_to_pool() {
+//     pthread_mutex_lock(&lock);
+//
+//     const int oldCount = thread_count;
+//
+//     //reallocate memory: with pointer to the memory that is being resized + new size of allocated memory
+//     pthread_t *new_threads = realloc(threads, sizeof(pthread_t) * (thread_count + NEW_THREADS)); //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
+//     if (new_threads == NULL) {
+//         printf("Error: Failed to allocate memory for new thread\n");
+//         pthread_mutex_unlock(&lock);
+//         return;
+//     }
+//     //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
+//     threads = new_threads;
+//
+//     for (int i = 0; i < NEW_THREADS; i++) {
+//         const int index = oldCount + i;
+//         if (pthread_create(&new_threads[index], NULL, thread_worker, NULL) != 0) {
+//             printf("Error: Failed to create thread %d\n", oldCount + index);
+//         } else {
+//             thread_count++; //only increase if really sucessful
+//             printf("Creating new Thread %d .\n", thread_count); //for testing
+//         }
+//     }
+//     pthread_mutex_unlock(&lock);
+// }
 
 // Should only be called by worker threads that want to terminate themselves, not by any others, cause it will kill your thread
 void remove_thread_from_pool() {
