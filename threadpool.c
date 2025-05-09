@@ -2,44 +2,7 @@
 // Created by enyas on 23.04.25.
 //
 
-#include <pthread.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <time.h>
-#include <errno.h>
 #include "threadpool.h"
-
-#define MAX_QUEUE 128 //reicht das aus? sollte queue dynamsich wachsen?
-#define INITIAL_THREADS 0
-#define MAX_THREADS 128 //sinvoll?
-#define THREAD_IDLE_TIMEOUT 8 // (Sekunden), sinvoll? -> später dann so 30-60 sekunden? für testing aber tief lassen
-#define NEW_THREADS 4
-
-static Task task_queue[MAX_QUEUE];
-static int queue_front = 0, queue_rear =0, queue_count = 0;
-
-static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-
-static pthread_t *threads;
-static int thread_count;
-static bool keep_running = true;
-static int idle_threads = 0;
-
-//Funktionsprototyp
-void add_threads_to_pool();
-void remove_thread_from_pool();
-void print_threadpool_status();
-
-// struct for timespec
-struct timespec make_timeout_timespec(const int seconds) {
-    struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    ts.tv_sec += seconds;
-    return ts;
-}
 
 /**
  * @return 0 if Task available, ETIMEOUT if time out is reached
@@ -60,7 +23,7 @@ void* thread_worker(void* arg) {
         // Idle threads automatically increased, if thread becomes available again
 
         idle_threads++;
-        printf("Idle Threads now: %d\n", idle_threads);
+        printf("Idle Threads after thread becomes available again: %d\n", idle_threads);
 
 
         const int resume = wait_for_task_with_timeout(&cond, &lock, THREAD_IDLE_TIMEOUT);
@@ -134,10 +97,8 @@ void shutdown_thread_pool(){
 }
 
 //Initialize threadpool
-void init_thread_pool() {
-    pthread_mutex_init(&lock, NULL);  // Initialize the mutex
+void init_thread_pool(){
     pthread_mutex_lock(&lock);
-
     thread_count = INITIAL_THREADS;
     threads = malloc(sizeof(pthread_t) * thread_count);
     if (threads == NULL) {
@@ -148,9 +109,7 @@ void init_thread_pool() {
 
     // Create worker threads
     for (int i = 0; i < thread_count; i++) {
-        if (pthread_create(&threads[i], NULL, thread_worker, NULL) != 0) {
-            perror("Error: Failed to create thread");
-        }
+        pthread_create(&threads[i], NULL, thread_worker, NULL);
     }
 
     pthread_mutex_unlock(&lock);
@@ -158,8 +117,7 @@ void init_thread_pool() {
 
 void add_threads_to_pool() {
     pthread_mutex_lock(&lock);
-
-    pthread_t *new_threads = realloc(threads, sizeof(pthread_t) * (thread_count + 1));
+    pthread_t *new_threads = realloc(threads, sizeof(pthread_t) * (thread_count + 1)); //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
     if (new_threads == NULL) {
         perror("Error: Failed to allocate memory for new thread");
         pthread_mutex_unlock(&lock);
@@ -173,7 +131,7 @@ void add_threads_to_pool() {
         return;
     }
     thread_count++;
-    printf("---> New thread added to threadpool %d.\n", thread_count);  // Safe printing within lock
+    printf("Creating new Thread %d .\n", thread_count); //for testing
     pthread_mutex_unlock(&lock);
 }
 
@@ -208,6 +166,7 @@ void remove_thread_from_pool() {
                 }
                 thread_count--;
                 idle_threads--;
+                printf("Idle Threads after shutting some down: %d\n", idle_threads);
                 break;
             }
         }
