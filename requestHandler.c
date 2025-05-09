@@ -17,13 +17,8 @@
  */
 
 void handle_request(Task task) {
-    printf(task.task_name);
-    printf("\n");
-    if (strcmp(task.task_name, "GET /") == 0) {
-        extern void time_request (Task task);
-        time_request(task);
-    }
-    if (strcmp(task.task_name, "TIME") == 0) {
+    if (strstr(task.task_name, "GET / ") != NULL) {
+        printf("I'm hereeee");
         extern void time_request (Task task);
         time_request(task);
     }
@@ -31,7 +26,6 @@ void handle_request(Task task) {
     //here:
     // else if (...)
     // continue here in a similar manner
-    // use strcmp(string1, string2) == 0 in order to compare strings in C!!!
 
     char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
     send(task.socket_id, not_found, strlen(not_found), 0);
