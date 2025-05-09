@@ -21,7 +21,7 @@ void handle_request(Task task) {
         printf("I'm hereeee");
         extern void time_request (Task task);
         time_request(task);
-    } else if (strcmp(task.task_name, "THREADSTATUS") == 0) {
+    } else if (strstr(task.task_name, "GET /threadstatus ") != NULL) {
         extern void serve_thread_status(int client_socket);
         serve_thread_status(task.socket_id);
     }

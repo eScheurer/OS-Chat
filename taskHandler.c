@@ -32,3 +32,4 @@ void time_request(Task task) {
     send(task.socket_id, response, strlen(response), 0);
     close(task.socket_id);
 }
+

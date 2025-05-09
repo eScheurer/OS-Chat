@@ -18,12 +18,6 @@
 #define THREAD_IDLE_TIMEOUT 8 // (Sekunden), sinvoll? -> später dann so 30-60 sekunden? für testing aber tief lassen
 #define NEW_THREADS 4
 
-/** Struct for each Chunk of the queue*/
-typedef struct Task {
-    int socket_id;
-    char task_name[64]; //for Buffer
-    //TODO: how large should buffer be?
-} Task;
 
 static Task task_queue[MAX_QUEUE];
 static int queue_front = 0, queue_rear =0, queue_count = 0;
@@ -98,6 +92,7 @@ void* thread_worker(void* arg) {
                 remove_thread_from_pool();
                 return NULL;
             }
+        }
 
         //if (resume == 0 && queue_count > 0 || (resume == ETIMEDOUT && queue_count > 0))
             // (resume == 0, wenn thread durch siganl geweckt wurde
@@ -107,23 +102,22 @@ void* thread_worker(void* arg) {
         idle_threads --;
         pthread_mutex_unlock(&lock);
 
+        extern void handle_request(Task task); // Call send_time to handle client communication
+        handle_request(task);
+
+        pthread_mutex_lock(&lock);
+
         // Monitoring
-            thread_stats[index].is_idle = false;
-            struct timespec start, end;
-            clock_gettime(CLOCK_MONOTONIC, &start);
+        thread_stats[index].is_idle = false;
+        struct timespec start, end;
+        clock_gettime(CLOCK_MONOTONIC, &start);
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec ) / 1e9;
+        thread_stats[index].total_active_time += elapsed;
+        thread_stats[index].tasks_handled++;
+        thread_stats[index].is_idle = true;
 
-            extern void handle_request(Task task); // Call send_time to handle client communication
-            handle_request(task);
-
-            clock_gettime(CLOCK_MONOTONIC, &end);
-            double elapsed = ( end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec ) / 1e9;
-            thread_stats[index].total_active_time += elapsed;
-            thread_stats[index].tasks_handled++;
-            thread_stats[index].is_idle = true;
-
-        } else {
-            pthread_mutex_unlock(&lock);
-        }
+        pthread_mutex_unlock(&lock);
     }
     return NULL;
 }
