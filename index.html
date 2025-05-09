@@ -5,13 +5,13 @@
   <meta charset="UTF-8" />
   <title>Time</title>
 </head>
-<body>
+<body onload="getThreadStatus();setInterval(getThreadStatus, 5000);">
+
   <h1>Time</h1>
   <button onclick="getTime()">Get Time</button>
   <p id="time">Time will appear here...</p>
-
+  <h2>Thread Pool Statistics</h2>
   <div id="thread-status">
-    <h2>Thread Pool Statistics</h2>
     <ul id="status-list"></ul>
   </div>
 

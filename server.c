@@ -75,9 +75,12 @@ int main() {
         Task taskTest;
         taskTest.socket_id = client_socket;
         if (strstr(buffer, "GET /threadstatus") != NULL) {
+            printf("Received request: GET /threadstatus\n");
             strcpy(taskTest.task_name, "THREADSTATUS");
-        } else {
+        } else if (strstr(buffer, "GET /time") != NULL){
             strcpy(taskTest.task_name, "TIME");
+        } else {
+            printf("404: Unrecognized request\n");
         }
 
         add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding    }
@@ -119,7 +122,7 @@ void serve_thread_status(int client_socket) {
 
   char response[8192];
   snprintf(response, sizeof(response),
-           "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: %zu\r\n\r\n%s",
+           "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nAccess-Control-Allow-Origin: *\r\nContent-Length: %zu\r\n\r\n%s", // Todo: only allow our ports
            strlen(json), json);
 
   send(client_socket, response, strlen(response), 0);

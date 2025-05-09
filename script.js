@@ -1,6 +1,6 @@
 console.log('Script loaded'); //Test if js is loaded
 function getTime() {
-  fetch('http://localhost:8080')
+  fetch('http://localhost:8080/time')
     .then(response => response.text())
     .then(data => {
       document.getElementById('time').innerText = data;
@@ -12,7 +12,7 @@ function getTime() {
 
 function getThreadStatus() {
     console.log('Fetching thread status...'); // Test if thread_stats is fetched
-    fetch('/threadstatus')
+    fetch('http://localhost:8080/threadstatus')
         .then(response => response.json())
         .then(data => {
             const statusList = document.getElementById('status-list');
@@ -25,16 +25,17 @@ function getThreadStatus() {
             });
         })
         .catch(error => {
-            console.error('Error fetching thread status:', error);
+            document.getElementById('thread-status').innerText = "Error: " + error;
         });
 }
 
-// Run once on load
+/** Run once on load
 window.onload = function() {
     getThreadStatus();
     // Optional: refresh every 5 seconds
     setInterval(getThreadStatus, 5000);
 };
+    */
 
 // Fetch in defined interval
 setInterval(getThreadStatus, 5000);
