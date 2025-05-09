@@ -104,8 +104,8 @@ int main() {
             printf("\n");
             */
 
-            send_UTF_File(client_socket,"index.html","html");
-            send_UTF_File(client_socket,"script.js","javascript");
+            send_UTF_File(client_socket,"UI/index.html","html");
+            send_UTF_File(client_socket,"UI/script.js","javascript");
         } else if (strstr(buffer, "GET /time ") != NULL) {
             send_time(client_socket);
 
