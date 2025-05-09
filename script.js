@@ -9,23 +9,33 @@ function getTime() {
     });
 }
 
-function getThreadStatus(){
+function getThreadStatus() {
+    console.log('Fetching thread status...');
     fetch('/threadstatus')
         .then(response => response.json())
         .then(data => {
             const statusList = document.getElementById('status-list');
-            statusList.innerHTML = '';
-            data.forEach(thread => {
+            statusList.innerHTML = '';  // clear previous
+
+            data.forEach((thread, index) => {
                 const li = document.createElement('li');
-                li.textContent = `Thread ${thread.thread_id}: ${thread.tasks_handled} tasks, ${thread.active_time.toFixed(2)}s active, ${thread.is_idle ? 'idle' : 'busy'}`;
+                li.textContent = `#${index} - thread_id: ${thread.thread_id}, tasks_handled: ${thread.tasks_handled}, active_time: ${thread.active_time.toFixed(2)}s, is_idle: ${thread.is_idle}`;
                 statusList.appendChild(li);
-                });
-            })
-        .catch(error => {console.error('Error fetching thread status:', error);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching thread status:', error);
         });
 }
 
-// Fetch stats every 5 seconds
+// Run once on load
+window.onload = function() {
+    getThreadStatus();
+    // Optional: refresh every 5 seconds
+    setInterval(getThreadStatus, 5000);
+};
+
+// Fetch in defined interval
 setInterval(getThreadStatus, 5000);
 
 // Fetch once on page load

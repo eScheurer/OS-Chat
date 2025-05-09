@@ -92,8 +92,19 @@ void* thread_worker(void* arg) {
             idle_threads --;
             pthread_mutex_unlock(&lock);
 
+            // Monitoring
+            thread_stats[index].is_idle = false;
+            struct timespec start, end;
+            clock_gettime(CLOCK_MONOTONIC, &start);
+
             extern void handle_request(Task task); // Call send_time to handle client communication
             handle_request(task);
+
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            double elapsed = ( end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec ) / 1e9;
+            thread_stats[index].total_active_time += elapsed;
+            thread_stats[index].tasks_handled++;
+            thread_stats[index].is_idle = true;
 
         } else {
             pthread_mutex_unlock(&lock);
