@@ -1,3 +1,4 @@
+console.log('Script loaded'); //Test if js is loaded
 function getTime() {
   fetch('http://localhost:8080')
     .then(response => response.text())
@@ -10,7 +11,7 @@ function getTime() {
 }
 
 function getThreadStatus() {
-    console.log('Fetching thread status...');
+    console.log('Fetching thread status...'); // Test if thread_stats is fetched
     fetch('/threadstatus')
         .then(response => response.json())
         .then(data => {
