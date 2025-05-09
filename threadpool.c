@@ -9,6 +9,8 @@
 #include <stdbool.h>
 #include <time.h>
 #include <errno.h>
+#include <threadpool.h>
+#include <string.h>
 
 #define MAX_QUEUE 128 //reicht das aus? sollte queue dynamsich wachsen?
 #define INITIAL_THREADS 4
@@ -26,20 +28,22 @@ typedef struct Task {
 static Task task_queue[MAX_QUEUE];
 static int queue_front = 0, queue_rear =0, queue_count = 0;
 
+ThreadStats thread_stats[MAX_THREADS]; // Initialize when creating thread
+
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 static pthread_t *threads;
-static int thread_count;
+int thread_count;
 static bool keep_running = true;
 static int idle_threads = 0;
 
-//Funktionsprototypen
+// Funktionsprototyp
 void add_threads_to_pool();
 void remove_thread_from_pool();
 void print_threadpool_status();
 
-// struct for timespec
+// Struct for timespec
 struct timespec make_timeout_timespec(const int seconds) {
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
@@ -59,7 +63,13 @@ int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, cons
  * Worker thread function to handle the task (client socket)
  */
 void* thread_worker(void* arg) {
-    while (keep_running){
+    int index = (int)(size_t)arg; // Pass thread index when creating
+    thread_stats[index].thread_id = pthread_self();
+    thread_stats[index].tasks_handled = 0;
+    thread_stats[index].total_active_time = 0;
+    thread_stats[index].is_idle = true;
+
+    while (keep_running) {
         // Wait for tasks from client socket
         pthread_mutex_lock(&lock);
         Task task;
@@ -88,7 +98,6 @@ void* thread_worker(void* arg) {
                 remove_thread_from_pool();
                 return NULL;
             }
-        }
 
         //if (resume == 0 && queue_count > 0 || (resume == ETIMEDOUT && queue_count > 0))
             // (resume == 0, wenn thread durch siganl geweckt wurde
@@ -98,9 +107,23 @@ void* thread_worker(void* arg) {
         idle_threads --;
         pthread_mutex_unlock(&lock);
 
-        extern void handle_request(Task task); // Call send_time to handle client communication
-        handle_request(task);
+        // Monitoring
+            thread_stats[index].is_idle = false;
+            struct timespec start, end;
+            clock_gettime(CLOCK_MONOTONIC, &start);
 
+            extern void handle_request(Task task); // Call send_time to handle client communication
+            handle_request(task);
+
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            double elapsed = ( end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec ) / 1e9;
+            thread_stats[index].total_active_time += elapsed;
+            thread_stats[index].tasks_handled++;
+            thread_stats[index].is_idle = true;
+
+        } else {
+            pthread_mutex_unlock(&lock);
+        }
     }
     return NULL;
 }
@@ -225,5 +248,25 @@ void remove_thread_from_pool() {
     }
     printf("not gonna remove youuu\n");
     pthread_mutex_unlock(&lock);
+}
+
+/**
+ * Methods for Thread Monitoring
+ */
+void get_thread_activity_json(char *buffer, size_t buffer_size) {
+    snprintf(buffer, buffer_size, "[");
+    size_t used = 1;
+    for (int i = 0; i < thread_count; ++i) {
+        int written = snprintf(buffer + used, buffer_size - used,
+            "{\"thread_id\": %lu, \"tasks_handled\": %d, \"active_time\": %.2f, \"is_idle\": %s}%s",
+            (unsigned long)thread_stats[i].thread_id,
+            thread_stats[i].tasks_handled,
+            thread_stats[i].total_active_time,
+            thread_stats[i].is_idle ? "true" : "false",
+            (i < thread_count - 1) ? "," : "");
+        used += written;
+        if (used >= buffer_size) break;
+    }
+    snprintf(buffer + used, buffer_size - used, "]");
 }
 

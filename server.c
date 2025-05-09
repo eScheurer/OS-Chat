@@ -7,6 +7,7 @@
 #include <sys/epoll.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
 
 #include "server.h"
 #include "threadpool.h"
@@ -145,4 +146,20 @@ int setNonBlocking(int fd) {
         return -1;
     }
     return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+}
+
+/**
+ * Methods for Thread Monitoring
+ */
+void serve_thread_status(int client_socket) {
+  char json[4096];
+  get_thread_activity_json(json, sizeof(json));
+
+  char response[8192];
+  snprintf(response, sizeof(response),
+           "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nAccess-Control-Allow-Origin: *\r\nContent-Length: %zu\r\n\r\n%s", // Todo: only allow our ports
+           strlen(json), json);
+
+  send(client_socket, response, strlen(response), 0);
+  close(client_socket);
 }
