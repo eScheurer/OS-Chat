@@ -99,6 +99,6 @@ Helene: Branches und pushes benutzen!
 * chats abspeichern können
 * Domain name
 
-Helene: Chat prefix
-Enya: status von linked list schicken, quasi antwort fpr "hey schick mir aktuelle nachrichtn"
-Cielle: Nachrichten empfangne und in linked list
+- Helene: Chat prefix
+- Enya: status von linked list schicken, quasi antwort für "hey schick mir aktuelle nachrichtn"
+- Cielle: Nachrichten empfangen und in linked list
