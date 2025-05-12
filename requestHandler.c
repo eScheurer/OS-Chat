@@ -23,6 +23,9 @@ void handle_request(Task task) {
     } else if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
         extern void serve_thread_status(Task task);
         serve_thread_status(task);
+    } else if (strstr(task.buffer, "GET /chatUpdate") != NULL) { //idk how this works yet and what I need to put here..
+        extern void sendChatUpdate(Task task);
+        sendChatUpdate(task);
     }
 
     //here:

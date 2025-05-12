@@ -83,9 +83,47 @@ void print(ThreadSafeList* list) {
 }
 
 // TODO Implement method to export the data of a list in json format (Warning the list in currently stored in reverse due to implementation)
+
+char* formatMessagesForSending(const char* name) {
+    const char* path = "../Chats";
+    struct stat st = {0};
+    // Check if ../Chats exists
+    // -> If no chat exists there's also nothing to load -> skip
+    if (stat(path, &st) == -1) {
+        fprintf(stderr, "../Chats does not exist.\n");
+        return NULL;
+    }
+
+    char filePath[512];
+    snprintf(filePath, sizeof(filePath), "%s/Chat_%s.txt", path, name);
+
+    FILE* file = fopen(filePath, "r");
+    if (!file) {
+        perror("Failed to open file for reading!");
+        return NULL;
+    }
+
+    size_t maxSize = 4096;
+    char* messages = malloc(maxSize); //TODO: how large does it need to be?
+    char nameBuffer[256];
+    char messageBuffer[256];
+
+    while (fscanf(file, "%255s %255[^\n]", nameBuffer, messageBuffer) == 2) {
+        char temp[256]; //temp Buffer to simplify appending
+        snprintf(temp, sizeof(temp), "%s: %s $", nameBuffer, messageBuffer);
+        if (strlen(messages) + strlen(temp) + 1 > maxSize) {
+            fprintf(stderr, "Return string is too long!\n");
+            break;
+        }
+        strcat(messages, temp); // Appends the temp buffer to the end of messages-string
+    }
+    fclose(file);
+    return messages; // Aufrufer has to free the memory of messages!
+}
+
 // TODO Implement method to send single new entries (Not sure if even possible)
 
-/**
+/**k
  * Deallocate memory for list
  * @param list name
  */

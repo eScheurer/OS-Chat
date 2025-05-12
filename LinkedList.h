@@ -23,6 +23,7 @@ typedef struct ThreadSafeList {
 ThreadSafeList* create(const char* name);
 void insert(ThreadSafeList* list, const char* name, const char* message);
 void print(ThreadSafeList* list);
+char* formatMessagesForSending(const char* name);
 void freeList(ThreadSafeList* list);
 void saveToFile(ThreadSafeList* list);
 ThreadSafeList* loadFromFile(const char* name);
