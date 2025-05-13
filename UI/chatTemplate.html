@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>OS-Chatroom</title>
 </head>
-<body onload="getChatRooms(); getMessages()">
+<body onload="getChatRooms(); getMessages(); getThreadStatus()">
 <table>
     <tr>
         <th>Chat Rooms:<button onclick="getChatRooms()">refresh</button></th>
@@ -31,8 +31,9 @@
             </form>
         </td>
         <td>
-            -list data-
-            <div id="chat-data"></div>
+            <div id="thread-status">
+                <ul id="status-list"></ul>
+            </div>
         </td>
     </tr>
 </table>
