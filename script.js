@@ -1,5 +1,5 @@
 function getTime() {
-  fetch('http://thanks-coordinate.gl.at.ply.gg:12631/')
+  fetch('http://edit-response.gl.at.ply.gg:21092/')
     .then(response => response.text())
     .then(data => {
       document.getElementById('time').innerText = data;
