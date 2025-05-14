@@ -1,1 +1,0 @@
-/usr/bin/cc CMakeFiles/OS_Chat.dir/server.c.o CMakeFiles/OS_Chat.dir/threadpool.c.o CMakeFiles/OS_Chat.dir/requestHandler.c.o -o OS_Chat 

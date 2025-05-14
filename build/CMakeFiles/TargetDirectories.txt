@@ -1,3 +1,0 @@
-/home/user1/CLionProjects/OS-Chat/build/CMakeFiles/OS_Chat.dir
-/home/user1/CLionProjects/OS-Chat/build/CMakeFiles/edit_cache.dir
-/home/user1/CLionProjects/OS-Chat/build/CMakeFiles/rebuild_cache.dir
