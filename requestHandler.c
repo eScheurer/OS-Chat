@@ -20,14 +20,17 @@ void handle_request(Task task) {
     if (strstr(task.buffer, "GET / ") != NULL) {
         extern void time_request (Task task);
         time_request(task);
+        return;
     } else if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
         extern void serve_thread_status(Task task);
         serve_thread_status(task);
+        return;
     }
 
     //here:
     // else if (...)
     // continue here in a similar manner
+    printf("404: invalid request made\n");
 
     char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
     send(task.socket_id, not_found, strlen(not_found), 0);
