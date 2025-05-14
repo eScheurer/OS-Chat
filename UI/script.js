@@ -1,6 +1,6 @@
 console.log('Script loaded'); //Test if js is loaded
  function getTime() {
-  fetch('http://localhost:8080/time')
+  fetch('http://localhost:8080/')
     .then(response => response.text())
     .then(data => {
       document.getElementById('time').innerText = data;
@@ -66,10 +66,10 @@ function getThreadStatus() {
  */
 
 // Fetch in defined interval
-setInterval(getThreadStatus, 5000);
+//setInterval(getThreadStatus, 5000);
 
 // Fetch once on page load
-window.onload = getThreadStatus;
+//window.onload = getThreadStatus;
 
 
 // Update frequently. This is usefull for our project to fetch new chat messages later on.
