@@ -102,3 +102,7 @@ Helene: Branches und pushes benutzen!
 - Helene: Chat prefix
 - Enya: status von linked list schicken, quasi antwort für "hey schick mir aktuelle nachrichtn"
 - Cielle: Nachrichten empfangen und in linked list
+
+# 10.5.2025
+TODO: Kommunikation zwischen request handler und html
+* Helene: Rasperypi ausprobieren
