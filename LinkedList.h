@@ -7,7 +7,6 @@
 
 typedef struct Node {
     // TODO as time goes on we might want to store additional information such as timestamps. This requires and adaption here and also in the .c file (Ask Luis)
-    char* name;
     char* message;
     struct Node* next;
 } Node;
@@ -21,9 +20,9 @@ typedef struct ThreadSafeList {
 } ThreadSafeList;
 
 ThreadSafeList* create(const char* name);
-void insert(ThreadSafeList* list, const char* name, const char* message);
+void insert(ThreadSafeList* list, const char* message);
 void print(ThreadSafeList* list);
-char* formatMessagesForSending(const char* name);
+char* formatMessagesForSending(const char* chatName);
 void freeList(ThreadSafeList* list);
 void saveToFile(ThreadSafeList* list);
 ThreadSafeList* loadFromFile(const char* name);

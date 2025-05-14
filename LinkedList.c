@@ -30,12 +30,11 @@ ThreadSafeList* create(const char* name) {
  * @param name name of the user
  * @param message message of the user
  */
-void insert(ThreadSafeList* list, const char* name, const char* message) {
+void insert(ThreadSafeList* list, const char* message) {
     pthread_mutex_lock(&list->lock);
 
     Node* new_node = malloc(sizeof(Node));
     // For strings we need to create a deep copy and therefore user strdup
-    new_node->name = strdup(name);
     new_node->message = strdup(message);
     new_node->next = NULL;
 
@@ -53,7 +52,6 @@ void insert(ThreadSafeList* list, const char* name, const char* message) {
         Node* temp = list->tail;
         list->tail = list->tail->next;
 
-        free(temp->name);
         free(temp->message);
         free(temp);
 
@@ -74,7 +72,7 @@ void print(ThreadSafeList* list) {
     printf("[%s] ", list->listName);
     Node* current = list->tail;
     while (current) {
-        printf("%s: %s -> ", current->name, current->message);
+        printf("%s -> ",current->message);
         current = current->next;
     }
     printf("NULL\n");
@@ -84,7 +82,7 @@ void print(ThreadSafeList* list) {
 
 // TODO Implement method to export the data of a list in json format (Warning the list in currently stored in reverse due to implementation)
 
-char* formatMessagesForSending(const char* name) {
+char* formatMessagesForSending(const char* chatName) {
     const char* path = "../Chats";
     struct stat st = {0};
     // Check if ../Chats exists
@@ -95,7 +93,7 @@ char* formatMessagesForSending(const char* name) {
     }
 
     char filePath[512];
-    snprintf(filePath, sizeof(filePath), "%s/Chat_%s.txt", path, name);
+    snprintf(filePath, sizeof(filePath), "%s/Chat_%s.txt", path, chatName);
 
     FILE* file = fopen(filePath, "r");
     if (!file) {
@@ -105,12 +103,14 @@ char* formatMessagesForSending(const char* name) {
 
     size_t maxSize = 4096;
     char* messages = malloc(maxSize); //TODO: how large does it need to be?
-    char nameBuffer[256];
+    messages[0] = '\0'; // Initialize with empty String to avoid including previous content that was safed there
     char messageBuffer[256];
 
-    while (fscanf(file, "%255s %255[^\n]", nameBuffer, messageBuffer) == 2) {
+    while (fgets(messageBuffer, sizeof(messageBuffer), file)) {
+        messageBuffer[strcspn(messageBuffer, "\n")] = '\0';  // removing the \n //TODO: problematic if zeilenumbruch in message?
         char temp[256]; //temp Buffer to simplify appending
-        snprintf(temp, sizeof(temp), "%s: %s $", nameBuffer, messageBuffer);
+        snprintf(temp, sizeof(temp), "%s $",messageBuffer);
+
         if (strlen(messages) + strlen(temp) + 1 > maxSize) {
             fprintf(stderr, "Return string is too long!\n");
             break;
@@ -134,7 +134,6 @@ void freeList(ThreadSafeList* list) {
     while (current) {
         Node* temp = current;
         current = current->next;
-        free(temp->name);
         free(temp->message);
         free(temp);
     }
@@ -173,7 +172,7 @@ void saveToFile(ThreadSafeList* list) {
 
     Node* current = list->tail;
     while (current) {
-        fprintf(file, "%s %s\n", current->name, current->message);
+        fprintf(file, "%s\n",current->message);
         current = current->next;
     }
 
@@ -211,8 +210,8 @@ ThreadSafeList* loadFromFile(const char* name) {
     // Not entirely sure why we need to reserve it first
     char nameBuffer[256];
     char messageBuffer[256];
-    while (fscanf(file, "%255s %255[^\n]", nameBuffer, messageBuffer) == 2) {
-    insert(list, nameBuffer, messageBuffer);
+    while (fscanf(file, "%255[^\n]",messageBuffer) == 1) {
+    insert(list, messageBuffer);
 }
     fclose(file);
     return list;

@@ -52,12 +52,9 @@ void serve_thread_status(Task task) {
 /**
  *  Method for sending the updated content of a chat.
  */
-void sendChatUpdate(Task task) {
-    //wie komme ich hier zum chat namen?
-    char name[256];
-    strcpy(name, "TestChat");
-    extern char* formatMessagesForSending(const char* name);
-    const char* messages = formatMessagesForSending(name);
+void sendChatUpdate(Task task, char *chatName) {
+    extern char* formatMessagesForSending(const char* chatName);
+    const char* messages = formatMessagesForSending(chatName);
     send(task.socket_id, messages, strlen(messages), 0);
     close(task.socket_id);
 }

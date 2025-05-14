@@ -12,6 +12,9 @@
 #include "threadpool.h"
 
 int main() {
+    //only for testing`!!
+    extern void test_LL();
+    test_LL();
     // Setup for TCP connection
     printf("Server starting \n");
     struct Server server;

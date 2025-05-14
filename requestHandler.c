@@ -23,18 +23,21 @@ void handle_request(Task task) {
     } else if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
         extern void serve_thread_status(Task task);
         serve_thread_status(task);
-    } else if (strstr(task.buffer, "GET /chatUpdate") != NULL) { //idk how this works yet and what I need to put here..
-        extern void sendChatUpdate(Task task);
-        sendChatUpdate(task);
+    } else if (strstr(task.buffer, "GET /chatUpdate/name:") != NULL) { //idk how this works yet and what I need to put here..
+         //aus Buffer extrahieren; char* chatName =
+        char chatName[256];
+        strcpy(chatName, "TestChat");
+        extern void sendChatUpdate(Task task, char* chatName);
+        sendChatUpdate(task, chatName);
     }
 
     //here:
     // else if (...)
     // continue here in a similar manner
-
-    char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
-    send(task.socket_id, not_found, strlen(not_found), 0);
-
+    else {
+        char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
+        send(task.socket_id, not_found, strlen(not_found), 0);
+    }
 }
 
 //here: implement your task handling in its own method
