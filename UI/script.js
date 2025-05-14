@@ -1,6 +1,10 @@
 console.log('Script loaded'); //Test if js is loaded
+
+let url = "http://localhost:8080"
+let usrname = "NoUsername"
+
  function getTime() {
-  fetch('http://localhost:8080/')
+  fetch(url)
     .then(response => response.text())
     .then(data => {
       document.getElementById('time').innerText = data;
@@ -16,7 +20,7 @@ console.log('Script loaded'); //Test if js is loaded
 // getTime();
 function getChatRooms() {
     document.getElementById('chatList').innerText = "loading...";
-    fetch('http://localhost:8080/chatlist')
+    fetch(url + '/chatlist')
         .then(response => response.text())
         .then(data => {
             document.getElementById('chatList').innerText = data;
@@ -28,7 +32,7 @@ function getChatRooms() {
 
 function getMessages() {
     document.getElementById('chatMessages').innerText = "loading...";
-    fetch('http://localhost:8080/chatmessages')
+    fetch(url + '/chatmessages')
         .then(response => response.text())
         .then(data => {
             document.getElementById('chatMessages').innerText = data;
@@ -37,10 +41,36 @@ function getMessages() {
             document.getElementById('chatMessages').innerText = "Error: " + error;
         });
 }
+function sendMessage() {
+    const textarea = document.getElementById("message-text")
+    let message = textarea.value;
+    message = usrname + ": " + message
+    textarea.value = "";
+    fetch(url + '/sendmessage', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        body: message
+    }).catch(error => {
+        document.getElementById('message-text').placeholder = "Error: " + error;
+    });
+    console.log(message);
+}
+
+//Does not seem to work yet, but not too important
+document.getElementById("message-text").addEventListener("keypress", function(event) {
+    // If the user presses the "Enter" key on the keyboard
+    if (event.key === "Enter") {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        sendMessage()
+    }
+});
 
 function getThreadStatus() {
     console.log('Fetching thread status...'); // Test if thread_stats is fetched
-    fetch('http://localhost:8080/threadstatus')
+    fetch(url + '/threadstatus')
         .then(response => response.json())
         .then(data => {
             const statusList = document.getElementById('status-list');
