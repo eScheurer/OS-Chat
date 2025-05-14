@@ -9,6 +9,10 @@
 #include <errno.h>
 
 #include "server.h"
+
+#include <signal.h>
+
+#include "LinkedList.h"
 #include "threadpool.h"
 
 int main() {
@@ -75,6 +79,9 @@ int main() {
     }
 
     init_thread_pool();
+
+    //This makes it so we ignore the error if the socket we try to write to should be closed. (If someone leaves the website or refreshes it for example)
+    signal(SIGPIPE, SIG_IGN);
 
     while (1) {
         // Waiting for event

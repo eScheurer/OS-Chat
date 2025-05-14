@@ -57,19 +57,8 @@ function getThreadStatus() {
         });
 }
 
-/** Run once on load
- window.onload = function() {
- getThreadStatus();
- // Optional: refresh every 5 seconds
- setInterval(getThreadStatus, 5000);
- };
- */
-
 // Fetch in defined interval
-//setInterval(getThreadStatus, 5000);
-
-// Fetch once on page load
-//window.onload = getThreadStatus;
+//setInterval(getThreadStatus, 10000);
 
 
 // Update frequently. This is usefull for our project to fetch new chat messages later on.

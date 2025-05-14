@@ -30,11 +30,8 @@ void handle_request(Task task) {
     //here:
     // else if (...)
     // continue here in a similar manner
-    printf("404: invalid request made\n");
-
-    char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
-    send(task.socket_id, not_found, strlen(not_found), 0);
-
+    extern void send404(Task task);
+    send404(task);
 }
 
 //here: implement your task handling in its own method
