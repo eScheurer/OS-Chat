@@ -1,7 +1,10 @@
 console.log('Script loaded'); //Test if js is loaded
 
 let url = "http://localhost:8080"
+//This can be changed, standart is NoUsername for testing
 let usrname = "NoUsername"
+//This can be changed on buttton press, standart is general for testing
+let chatname = "general"
 
  function getTime() {
   fetch(url)
@@ -44,7 +47,7 @@ function getMessages() {
 function sendMessage() {
     const textarea = document.getElementById("message-text")
     let message = textarea.value;
-    message = usrname + ": " + message
+    message = chatname + ":" + usrname + ": " + message
     textarea.value = "";
     fetch(url + '/sendmessage', {
         method: 'POST',
