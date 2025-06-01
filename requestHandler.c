@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include "LinkedList.h"
 #include "threadpool.h"
 /** this file is responsible for the cooridation of handling tasks*/
 
@@ -21,9 +22,15 @@ void handle_request(Task task) {
         extern void time_request (Task task);
         time_request(task);
         return;
-    } else if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
+    }
+    if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
         extern void serve_thread_status(Task task);
         serve_thread_status(task);
+        return;
+    }
+    if (strstr(task.buffer, "POST /sendmessage ") != NULL) {
+        extern void process_message(Task task);
+        process_message(task);
         return;
     }
 
