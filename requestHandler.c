@@ -25,10 +25,13 @@ void handle_request(Task task) {
         extern void serve_thread_status(Task task);
         serve_thread_status(task);
         return;
-    } else if (strstr(task.buffer, "GET /chatUpdate/name:") != NULL) { //idk how this works yet and what I need to put here..
-         //aus Buffer extrahieren; char* chatName =
+    } else if (strstr(task.buffer, "GET /chatUpdate/") != NULL) { //idk how this works yet and what I need to put here..
         char chatName[256];
-        strcpy(chatName, "TestChat");
+        char* nameTmp = strstr(task.buffer, "chatUpdate/"); //searches for first appearance of this sting
+        if (nameTmp != NULL) {
+            nameTmp += strlen("chatUpdate/"); //so that it point to after the string and not before
+            sscanf(nameTmp, "%[^$]", chatName); //[^$] means "read out until you get to this"
+        }
         extern void sendChatUpdate(Task task, char* chatName);
         sendChatUpdate(task, chatName);
     }
@@ -38,10 +41,6 @@ void handle_request(Task task) {
     // continue here in a similar manner
     extern void send404(Task task);
     send404(task);
-    else {
-        char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
-        send(task.socket_id, not_found, strlen(not_found), 0);
-    }
 }
 
 //here: implement your task handling in its own method
