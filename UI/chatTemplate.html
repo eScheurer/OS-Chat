@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="script.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>OS-Chatroom</title>
+</head>
+<body onload="getChatRooms(); getMessages(); getThreadStatus()">
+<table>
+    <tr>
+        <th>Chat Rooms:<button onclick="getChatRooms()">refresh</button></th>
+        <th>
+            <div id="chat-title">-Chat Title-</div>
+        </th>
+        <th>Data</th>
+    </tr>
+    <tr>
+        <td><div id="chatList"> -no current chats- </div>
+        </td>
+        <td>
+            <div id="chatMessages">-Chat-</div>
+            <label for="message-text">Send a Message:</label>
+            <textarea id="message-text"
+                      cols="50"
+                      rows="10"
+                      writingsuggestions="true"
+                      spellcheck="true"
+                      placeholder="type here...">
+            </textarea>
+            <button onclick=sendMessage()>
+                send!
+            </button>
+        </td>
+        <td>
+            <div id="thread-status">
+                <ul id="status-list"></ul>
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

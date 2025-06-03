@@ -20,9 +20,11 @@ void handle_request(Task task) {
     if (strstr(task.buffer, "GET / ") != NULL) {
         extern void time_request (Task task);
         time_request(task);
+        return;
     } else if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
         extern void serve_thread_status(Task task);
         serve_thread_status(task);
+        return;
     } else if (strstr(task.buffer, "GET /chatUpdate/name:") != NULL) { //idk how this works yet and what I need to put here..
          //aus Buffer extrahieren; char* chatName =
         char chatName[256];
@@ -34,6 +36,8 @@ void handle_request(Task task) {
     //here:
     // else if (...)
     // continue here in a similar manner
+    extern void send404(Task task);
+    send404(task);
     else {
         char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
         send(task.socket_id, not_found, strlen(not_found), 0);
