@@ -87,9 +87,29 @@ function getThreadStatus() {
         });
 }
 
+function getChatUpdate() {
+    console.log("ich bin im getChat Update");
+    //extract ChatName from HTML
+    const chatNameElement = document.getElementById('chat-title');
+    const chatName = chatNameElement.innerText.trim(); //.trim() erases unwanted added elements from formating
+
+    //send request for update
+    fetch(url + "/chatUpdate/" + encodeURIComponent(chatName) + "$") //endocdeURIComponent: encodes it to be URL safe, could contain special characters that might be unsafe
+        .then(respons => respons.text())
+        .then(data => { //display resoonse in field chatMessages
+            document.getElementById('chatMessages').innerText = data;
+        })
+        .catch(error => {
+            document.getElementById('chatMessages').innerText = "Error: " + error;
+        })
+}
+// Fetch in defined interval
+setInterval(getChatUpdate, 1000);
+
+
+
 // Fetch in defined interval
 //setInterval(getThreadStatus, 10000);
-
 
 // Update frequently. This is usefull for our project to fetch new chat messages later on.
 // setInterval(getTime, 1000);

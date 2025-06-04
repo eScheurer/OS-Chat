@@ -46,7 +46,19 @@ void serve_thread_status(Task task) {
 
     send(task.socket_id, response, strlen(response), 0);
 }
-
+/**
+ *  Method for sending the updated content of a chat.
+ */
+void sendChatUpdate(Task task, char *chatName) {
+    printf("ich bin im taskHandler");
+    char fullChatName[512] = "Chat_";
+    strcat(fullChatName, chatName);
+// TODO: bessere lösung!
+    extern char* formatMessagesForSending(const char* chatName);
+    const char* messages = formatMessagesForSending(chatName);
+    send(task.socket_id, messages, strlen(messages), 0);
+    close(task.socket_id);
+}
 
 void send404(Task task) {
     printf("404: invalid request made\n");
