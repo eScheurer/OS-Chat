@@ -6,6 +6,26 @@ let usrname = "NoUsername"
 //This can be changed on buttton press, standart is general for testing
 let chatname = "general"
 
+// Handles the creation of a new chatroom.
+// Opening popup
+document.getElementById("openPopup").addEventListener("click", function (){
+    document.getElementById("popup").style.display = "flex";
+});
+// Closing popup
+document.getElementById("closePopup").addEventListener("click", function (){
+    document.getElementById("popup").style.display = "none";
+});
+// The "Create" button
+document.getElementById("confirmButton").addEventListener("click", function (){
+    const input = document.getElementById("userInput").value;
+    createNewChatroom(input);
+    document.getElementById("userInput").value = ""; // Reset input
+})
+function createNewChatroom(name){
+    window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(name);
+}
+
+
  function getTime() {
   fetch(url)
     .then(response => response.text())
@@ -32,6 +52,8 @@ function getChatRooms() {
             document.getElementById('chatList').innerText = "Error: " + error;
         });
 }
+
+
 
 function sendMessage() {
     const textarea = document.getElementById("message-text")
