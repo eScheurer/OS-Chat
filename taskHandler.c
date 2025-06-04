@@ -73,23 +73,32 @@ void process_message(Task task) {
     char* message = body+chatNameLen+1;
 
     //We insert strings into list, which will get copied
-    insert(&threadSafeList, chatName,message);
+    insert(&threadSafeList,message);
+    //After we're done free the body of the dynamically allocated body & all used strings here again.
+    free(body);
+}
 /**
  *  Method for sending the updated content of a chat.
  */
 void sendChatUpdate(Task task, char *chatName) {
-    printf("ich bin im taskHandler");
-    char fullChatName[512] = "Chat_";
-    strcat(fullChatName, chatName);
+    printf("ich bin im taskHandler \n");
+    //char fullChatName[512] = "Chat_";
+    //strcat(fullChatName, chatName);
+    char chatName2[512] = "Chat Title";
 // TODO: bessere lösung!
-    extern char* formatMessagesForSending(const char* chatName);
-    const char* messages = formatMessagesForSending(chatName);
-    send(task.socket_id, messages, strlen(messages), 0);
+    extern char* formatMessagesForSending(const char* chatName2);
+    const char* messages = formatMessagesForSending(chatName2);
+    printf(messages);
+    char response[1024];
+    snprintf(response, sizeof(response),
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/plain\r\n"
+        "Access-Control-Allow-Origin: *\r\n"
+        "Content-Length: %lu\r\n"
+        "\r\n"
+        "%s", strlen(messages), messages);
+    send(task.socket_id, response, strlen(response), 0);
     close(task.socket_id);
-}
-
-    //After we're done free the body of the dynamically allocated body & all used strings here again.
-    free(body);
 }
 
 /**

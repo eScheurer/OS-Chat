@@ -33,17 +33,6 @@ function getChatRooms() {
         });
 }
 
-function getMessages() {
-    document.getElementById('chatMessages').innerText = "loading...";
-    fetch(url + '/chatmessages')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('chatMessages').innerText = data;
-        })
-        .catch(error => {
-            document.getElementById('chatMessages').innerText = "Error: " + error;
-        });
-}
 function sendMessage() {
     const textarea = document.getElementById("message-text")
     let message = textarea.value;
@@ -97,8 +86,8 @@ function getChatUpdate() {
     const chatName = chatNameElement.innerText.trim(); //.trim() erases unwanted added elements from formating
 
     //send request for update
-    fetch(url + "/chatUpdate/" + encodeURIComponent(chatName) + "$") //endocdeURIComponent: encodes it to be URL safe, could contain special characters that might be unsafe
-        .then(respons => respons.text())
+    fetch(url + '/chatUpdate/' + encodeURIComponent(chatName) + '$') //encodeURIComponent: encodes it to be URL safe, could contain special characters that might be unsafe
+        .then(response => response.text())
         .then(data => { //display resoonse in field chatMessages
             document.getElementById('chatMessages').innerText = data;
         })
