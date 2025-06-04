@@ -109,22 +109,22 @@ TODO: Kommunikation zwischen request handler und html
 
 # 4.6.2025
 ## Wünsche für zusammen bearbeiten
-* Klassendiagramm erstellen um verständnis zu fördern
+* Klassendiagramm erstellen um verständnis zu fördern  ->  Update: haben wir erstellt, ist in resources zu finden
 * Threadpool funktion zu momentanem Zeitpubkt besprechen für mehr Verständnis
 
 ## Aufgaben in Bearbeitung
-* Nachrichten werden empfangen und in Liste gespeichert
-* Server auf Pi
+* Nachrichten werden empfangen, Chat auf Nachricht extrahiert (Prefix) um Nachricht zu speichern, oder abzurufen @Cielle @Enya
+* Server auf Pi @Helene
 
 ## Aufgaben todo
-* regex Eingabe, username unique?, regex ohne ':'
-* Listen als Objekte während runtime
-* Option: Neue chats erstellen
+* regex Eingabe, username unique?, regex ohne ':' 
+* Listen als Objekte während runtime @Cielle und , @Enya
+* Option: Neue chats erstellen 
 * Testing in the large
 
 ## Aufgaben prio zwei
 * Webdesign (inkl. threadpool stats?)
 * Präsentation vorbereiten
 * Projektbericht schreiben
-* Code aufräumen
+* Code aufräumen, Methoden und Klassennamen einheitlich
 * Demo vorbereiten
