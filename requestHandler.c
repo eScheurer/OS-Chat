@@ -27,16 +27,10 @@ void handle_request(Task task) {
         extern void serve_thread_status(Task task);
         serve_thread_status(task);
         return;
-    } else if (strstr(task.buffer, "GET /chatUpdate/") != NULL) {
+    } else if (strstr(task.buffer, "POST /chatUpdate/") != NULL) {
         printf("ich bin im requestHandler richtig \n");
-        char chatName[256];
-        char* nameTmp = strstr(task.buffer, "chatUpdate/"); //searches for first appearance of this sting
-        if (nameTmp != NULL) {
-            nameTmp += strlen("chatUpdate/"); //so that it point to after the string and not before
-            sscanf(nameTmp, "%[^$]", chatName); //[^$] means "read out until you get to this"
-        }
-        extern void sendChatUpdate(Task task, char* chatName);
-        sendChatUpdate(task, chatName);
+        extern void sendChatUpdate(Task task);
+        sendChatUpdate(task);
         return;
     }
     if (strstr(task.buffer, "POST /sendmessage ") != NULL) {

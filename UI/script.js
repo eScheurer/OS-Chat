@@ -86,7 +86,10 @@ function getChatUpdate() {
     const chatName = chatNameElement.innerText.trim(); //.trim() erases unwanted added elements from formating
 
     //send request for update
-    fetch(url + '/chatUpdate/' + encodeURIComponent(chatName) + '$') //encodeURIComponent: encodes it to be URL safe, could contain special characters that might be unsafe
+    fetch(url + '/chatUpdate/', {
+        method: 'POST',
+        body: chatName
+    })
         .then(response => response.text())
         .then(data => { //display resoonse in field chatMessages
             document.getElementById('chatMessages').innerText = data;
@@ -97,6 +100,7 @@ function getChatUpdate() {
 }
 // Fetch in defined interval
 setInterval(getChatUpdate, 1000);
+
 
 
 
