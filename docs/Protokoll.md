@@ -128,3 +128,4 @@ TODO: Kommunikation zwischen request handler und html
 * Projektbericht schreiben
 * Code aufräumen, Methoden und Klassennamen einheitlich
 * Demo vorbereiten
+* Buttom um chats zu speichern
