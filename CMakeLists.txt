@@ -13,4 +13,7 @@ add_executable(OS_Chat
         server.h
         taskHandler.c
         threadpool.c
-        threadpool.h)
+        threadpool.h
+        chatList.h
+        chatList.c
+)
