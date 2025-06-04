@@ -106,3 +106,25 @@ Helene: Branches und pushes benutzen!
 # 10.5.2025
 TODO: Kommunikation zwischen request handler und html
 * Helene: Rasperypi ausprobieren
+
+# 4.6.2025
+## Wünsche für zusammen bearbeiten
+* Klassendiagramm erstellen um verständnis zu fördern
+* Threadpool funktion zu momentanem Zeitpubkt besprechen für mehr Verständnis
+
+## Aufgaben in Bearbeitung
+* Nachrichten werden empfangen und in Liste gespeichert
+* Server auf Pi
+
+## Aufgaben todo
+* regex Eingabe, username unique?, regex ohne ':'
+* Listen als Objekte während runtime
+* Option: Neue chats erstellen
+* Testing in the large
+
+## Aufgaben prio zwei
+* Webdesign (inkl. threadpool stats?)
+* Präsentation vorbereiten
+* Projektbericht schreiben
+* Code aufräumen
+* Demo vorbereiten
