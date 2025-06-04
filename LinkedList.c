@@ -83,7 +83,6 @@ void print(ThreadSafeList* list) {
 // TODO Implement method to export the data of a list in json format (Warning the list in currently stored in reverse due to implementation)
 
 char* formatMessagesForSending(const char* chatName) {
-    printf("ich bin im formatMessagesForSending [%s] \n", chatName);
     const char* path = "../Chats";
     struct stat st = {0};
     // Check if ../Chats exists

@@ -42,7 +42,7 @@ void handle_request(Task task) {
     //here:
     // else if (...)
     // continue here in a similar manner
-    printf("ich bin im requestHandler - else case \n");
+    printf("requestHandler - else case \n");
 
     extern void send404(Task task);
     send404(task);

@@ -80,7 +80,6 @@ function getThreadStatus() {
 }
 
 function getChatUpdate() {
-    console.log("ich bin im getChat Update");
     //extract ChatName from HTML
     const chatNameElement = document.getElementById('chat-title');
     const chatName = chatNameElement.innerText.trim(); //.trim() erases unwanted added elements from formating
@@ -91,8 +90,8 @@ function getChatUpdate() {
         body: chatName
     })
         .then(response => response.text())
-        .then(data => { //display resoonse in field chatMessages
-            document.getElementById('chatMessages').innerText = data;
+        .then(data => { //display response in field chatMessages
+            document.getElementById('chatMessages').innerText = data.split('$').join('\n'); // Format data
         })
         .catch(error => {
             document.getElementById('chatMessages').innerText = "Error: " + error;

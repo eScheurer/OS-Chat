@@ -81,7 +81,6 @@ void process_message(Task task) {
  *  Method for sending the updated content of a chat.
  */
 void sendChatUpdate(Task task) {
-    printf("ich bin im taskHandler \n");
     char* chatName = extractHTTPBody(task);
     //char chatName2[512] = "Chat Title";
     extern char* formatMessagesForSending(const char* chatName);
