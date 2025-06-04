@@ -17,8 +17,16 @@
 
 int main() {
     //only for testing`!!
-    extern void test_LL();
-    test_LL();
+    //extern void test_LL();
+    //test_LL();
+    ThreadSafeList* list = create("Chat Title");
+    // Testdaten einfügen
+    insert(list, "Alice: Hallo zusammen!");
+    insert(list, "Bob: Hey Alice :)");
+    insert(list, "Charlie: Hi alle!");
+    saveToFile(list);
+
+
     // Setup for TCP connection
     printf("Server starting \n");
     struct Server server;

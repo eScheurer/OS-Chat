@@ -7,8 +7,7 @@
 
 void test_LL() {
     // Liste erstellen
-    ThreadSafeList* list = create("TestChat");
-
+    ThreadSafeList* list = create("Chat Title");
 
     // Testdaten einfügen
     insert(list, "Alice: Hallo zusammen!");
@@ -18,7 +17,7 @@ void test_LL() {
 
 
     // Liste ausgeben
-    char* messages = formatMessagesForSending("TestChat");
+    char* messages = formatMessagesForSending("Chat Title");
     printf("%s\n", messages);
 
 

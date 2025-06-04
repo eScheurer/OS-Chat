@@ -25,7 +25,8 @@ void handle_request(Task task) {
         extern void serve_thread_status(Task task);
         serve_thread_status(task);
         return;
-    } else if (strstr(task.buffer, "GET /chatUpdate/") != NULL) { //idk how this works yet and what I need to put here..
+    } else if (strstr(task.buffer, "GET /chatUpdate/") != NULL) {
+        printf("ich bin im requestHandler");
         char chatName[256];
         char* nameTmp = strstr(task.buffer, "chatUpdate/"); //searches for first appearance of this sting
         if (nameTmp != NULL) {
@@ -34,13 +35,17 @@ void handle_request(Task task) {
         }
         extern void sendChatUpdate(Task task, char* chatName);
         sendChatUpdate(task, chatName);
+        return;
     }
 
     //here:
     // else if (...)
     // continue here in a similar manner
-    extern void send404(Task task);
-    send404(task);
+        printf("ich bin im requestHandler - else case ");
+        printf(task.buffer);
+        extern void send404(Task task);
+        send404(task);
+    }
 }
 
 //here: implement your task handling in its own method
