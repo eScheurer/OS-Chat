@@ -7,6 +7,7 @@
 
 #include <LinkedList.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 #define NUM_OF_ELEMENTS_IN_LIST 100
 
@@ -17,13 +18,19 @@ typedef struct ListNode {
 
 typedef struct ChatList {
     ListNode* head;
-    pthread_mutex_t writeLock;
+    ListNode* tail;
+    int readerCount;
+    pthread_mutex_t lock;
     pthread_mutex_t readLock;
+    //Queue should be handled FIFO for fairness, semaphores usually are, but couldn't find confirmation
+    sem_t queue;
 } ChatList;
 
 ChatList* createChatList();
+void createNewChat(ChatList* chatList,const char* chatName, const char* message);
 void insertMessage(ChatList* chatList,const char* chatName, const char* message);
-void getChat()
+char* getChatNames(ChatList* chatList);
+char* getChatMessages(ChatList* chatList, const char* chatName);
 void printChat(ChatList* chatList,const char* chatName);
 void saveChatToFile(ChatList* chatList);
 void loadFromFile(ChatList* chatList, const char* chatName);

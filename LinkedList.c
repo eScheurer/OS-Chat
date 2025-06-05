@@ -8,6 +8,7 @@
 
 // TODO Check again if no memory leaks or other funky memory stuff happens
 // TODO Check that critical section is safe (Please review yourself again, mistakes can happen quickly)
+// TODO Implement writer/reader locks for more efficient access
 
 /**
  * Create a new ThreadSafeList with a name
@@ -79,6 +80,32 @@ void print(ThreadSafeList* list) {
 
     pthread_mutex_unlock(&list->lock);
 }
+
+char* getMessages(ThreadSafeList* list) {
+    //TODO find right buffer size
+    char* buffer [10000];
+    const char separator = '$';
+    pthread_mutex_lock(&list->lock);
+    if (list->size == 0) {
+        printf("No messages in this list: %s",list->listName);
+        pthread_mutex_unlock(&list->lock);
+        return NULL;
+    }
+
+    Node* current = list->head;
+    strcpy(buffer, current->message);
+    strcat(buffer, &separator);
+    while (current->next != NULL) {
+        current = current->next;
+        strcat(buffer, current->message);
+        strcat(buffer, &separator);
+    }
+    pthread_mutex_unlock(&list->lock);
+    char* messages = malloc(strlen(buffer) + 1);
+    strcpy(messages, buffer);
+    return messages;
+}
+
 
 // TODO Implement method to export the data of a list in json format (Warning the list in currently stored in reverse due to implementation)
 
