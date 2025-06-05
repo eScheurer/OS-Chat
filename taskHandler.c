@@ -85,7 +85,6 @@ void sendChatUpdate(Task task) {
     //char chatName2[512] = "Chat Title";
     extern char* formatMessagesForSending(const char* chatName);
     const char* messages = formatMessagesForSending(chatName);
-    printf(messages);
     char response[1024];
     snprintf(response, sizeof(response),
         "HTTP/1.1 200 OK\r\n"

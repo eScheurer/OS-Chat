@@ -96,8 +96,8 @@ char* formatMessagesForSending(const char* chatName) {
 
     FILE* file = fopen(filePath, "r");
     if (!file) {
-        perror("Failed to open file for reading!");
-        return NULL;
+        perror("Failed to open file for reading! error in LL");
+        return "failed to update messages..";
     }
     size_t maxSize = 4096;
     char* messages = malloc(maxSize); //TODO: how large does it need to be?

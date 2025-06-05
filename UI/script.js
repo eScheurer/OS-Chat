@@ -6,21 +6,34 @@ let usrname = "NoUsername"
 //This can be changed on buttton press, standart is general for testing
 let chatname = "general"
 
-// Handles the creation of a new chatroom.
+// For reading URL-parameters (in case needed somewhere else too)
+function getURLParam(param) {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    return urlSearchParams.get(param);
+}
+// For updating Chat Title on chatTemplate.html
+function initChatTemplate(){
+    document.getElementById('chat-title').innerText = getURLParam('chatname');
+}
+
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Handles the creation of a new chatroom.
 // Opening popup
-document.getElementById("openPopup").addEventListener("click", function (){
-    document.getElementById("popup").style.display = "flex";
-});
+    document.getElementById("openPopup").addEventListener("click", function (){
+        document.getElementById("popup").style.display = "flex";
+    });
 // Closing popup
-document.getElementById("closePopup").addEventListener("click", function (){
-    document.getElementById("popup").style.display = "none";
-});
+    document.getElementById("closePopup").addEventListener("click", function (){
+        document.getElementById("popup").style.display = "none";
+    });
 // The "Create" button
-document.getElementById("confirmButton").addEventListener("click", function (){
-    const input = document.getElementById("userInput").value;
-    createNewChatroom(input);
-    document.getElementById("userInput").value = ""; // Reset input
-})
+    document.getElementById("confirmButton").addEventListener("click", function (){
+        const input = document.getElementById("userInput").value;
+        createNewChatroom(input);
+        document.getElementById("userInput").value = ""; // Reset input
+    });
+});
 function createNewChatroom(name){
     window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(name);
 }
@@ -52,8 +65,6 @@ function getChatRooms() {
             document.getElementById('chatList').innerText = "Error: " + error;
         });
 }
-
-
 
 function sendMessage() {
     const textarea = document.getElementById("message-text")
@@ -122,6 +133,14 @@ function getChatUpdate() {
 // Fetch in defined interval
 setInterval(getChatUpdate, 1000);
 
+// Differentiate that chat stuff only happens on the chat page
+console.log("Current path:", window.location.pathname);
+if (window.location.pathname.endsWith('chatTemplate.html')) {
+    window.addEventListener('load', () => {
+        console.log("initChatTemplate is running");
+        initChatTemplate();
+    });
+}
 
 
 
