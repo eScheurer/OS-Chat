@@ -83,8 +83,7 @@ void print(ThreadSafeList* list) {
 
 char* getMessages(ThreadSafeList* list) {
     //TODO find right buffer size
-    char* buffer [10000];
-    const char separator = '$';
+    char* buffer = malloc(1000 * sizeof(char));
     pthread_mutex_lock(&list->lock);
     if (list->size == 0) {
         printf("No messages in this list: %s",list->listName);
@@ -92,17 +91,18 @@ char* getMessages(ThreadSafeList* list) {
         return NULL;
     }
 
-    Node* current = list->head;
-    strcpy(buffer, current->message);
-    strcat(buffer, &separator);
-    while (current->next != NULL) {
+    Node* current = list->tail;
+    sprintf(buffer, "%s$", current->message);
+    current = current->next;
+    while (current) {
+        sprintf(buffer+strlen(buffer), "%s$", current->message);
         current = current->next;
-        strcat(buffer, current->message);
-        strcat(buffer, &separator);
     }
     pthread_mutex_unlock(&list->lock);
     char* messages = malloc(strlen(buffer) + 1);
     strcpy(messages, buffer);
+    free(buffer);
+    printf("%s\n", messages);
     return messages;
 }
 

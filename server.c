@@ -31,13 +31,9 @@ int main() {
 */
     printf("creating ChatList \n");
     chatList = createChatList();
-    char* message = "Cielle: Wow it really is working!";
-    createNewChat(chatList,"general","This server has made a chat!");
-    insertMessage(chatList,"general",message);
-    createNewChat(chatList,"test","This server has made a chat!");
-    insertMessage(chatList,"general",message);
-    insertMessage(chatList,"test",message);
-    //printf(getChatMessages(chatList,"general"));
+
+    //End of test code
+
     // Setup for TCP connection
     printf("Server starting \n");
     struct Server server;

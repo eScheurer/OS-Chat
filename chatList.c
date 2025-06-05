@@ -82,25 +82,24 @@ char* getChatMessages(ChatList* chatList, const char* inChatName) {
     const char* chatName = strdup(inChatName);
     readerLock(chatList);
     if (chatList->head == NULL) {
-        perror("Tried inserting message but ChatList is empty! \n");
-        return NULL;
-    } else {
-        ListNode* currentNode = chatList->head;
-        while (currentNode) {
-            if (strcmp(currentNode->threadSafeList->listName,chatName) == 0) {
-                char* messages = getMessages(currentNode->threadSafeList);
-                readerUnlock(chatList);
-                return messages;
-            }
-            currentNode = currentNode->next;
-        }
+        perror("Tried reading messages but ChatList is empty! \n");
         readerUnlock(chatList);
-        printf("ERROR: Tried reading messages but couldn't find chatroom: %s\n",chatName);
         return NULL;
-
     }
+
+    ListNode* currentNode = chatList->head;
+    while (currentNode) {
+        if (strcmp(currentNode->threadSafeList->listName,chatName) == 0) {
+            char* messages = getMessages(currentNode->threadSafeList);
+            readerUnlock(chatList);
+            return messages;
+        }
+        currentNode = currentNode->next;
+    }
+    readerUnlock(chatList);
+    printf("ERROR: Tried reading messages but couldn't find chatroom: %s\n",chatName);
+    return NULL;
 }
-//TODO: Get messages, und an locks denken!
 
 void readerLock(ChatList* chatList) {
     sem_wait(&chatList->queue);
