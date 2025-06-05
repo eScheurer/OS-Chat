@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include "LinkedList.h"
 #include "threadpool.h"
 /** this file is responsible for the cooridation of handling tasks*/
 
@@ -21,31 +22,26 @@ void handle_request(Task task) {
         extern void time_request (Task task);
         time_request(task);
         return;
-    } else if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
+    } if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
         extern void serve_thread_status(Task task);
         serve_thread_status(task);
         return;
-    } else if (strstr(task.buffer, "GET /chatUpdate/") != NULL) {
-        printf("ich bin im requestHandler");
-        char chatName[256];
-        char* nameTmp = strstr(task.buffer, "chatUpdate/"); //searches for first appearance of this sting
-        if (nameTmp != NULL) {
-            nameTmp += strlen("chatUpdate/"); //so that it point to after the string and not before
-            sscanf(nameTmp, "%[^$]", chatName); //[^$] means "read out until you get to this"
-        }
-        extern void sendChatUpdate(Task task, char* chatName);
-        sendChatUpdate(task, chatName);
+    } if (strstr(task.buffer, "POST /chatUpdate/") != NULL) {
+        printf("ich bin im requestHandler richtig \n");
+        extern void sendChatUpdate(Task task);
+        sendChatUpdate(task);
+        return;
+    } if (strstr(task.buffer, "POST /sendmessage ") != NULL) {
+        extern void process_message(Task task);
+        process_message(task);
+        return;
+    } if (strstr(task.buffer, "POST /newChat ") != NULL) {
+        extern void newChatroom(Task task);
+        newChatroom(task);
         return;
     }
 
-    //here:
-    // else if (...)
-    // continue here in a similar manner
-        printf("ich bin im requestHandler - else case ");
-        printf(task.buffer);
-        extern void send404(Task task);
-        send404(task);
-    }
+    printf("requestHandler - else case \n");
+    extern void send404(Task task);
+    send404(task);
 }
-
-//here: implement your task handling in its own method

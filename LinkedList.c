@@ -110,7 +110,6 @@ char* getMessages(ThreadSafeList* list) {
 // TODO Implement method to export the data of a list in json format (Warning the list in currently stored in reverse due to implementation)
 
 char* formatMessagesForSending(const char* chatName) {
-    printf("ich bin im formatMessagesForSending [%s] ", chatName);
     const char* path = "../Chats";
     struct stat st = {0};
     // Check if ../Chats exists
@@ -124,8 +123,8 @@ char* formatMessagesForSending(const char* chatName) {
 
     FILE* file = fopen(filePath, "r");
     if (!file) {
-        perror("Failed to open file for reading!");
-        return NULL;
+        perror("Failed to open file for reading! error in LL");
+        return "failed to update messages..";
     }
     size_t maxSize = 4096;
     char* messages = malloc(maxSize); //TODO: how large does it need to be?

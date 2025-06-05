@@ -10,6 +10,11 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include "LinkedList.h"
+
+ThreadSafeList threadSafeList;
+char* extractHTTPBody(Task task);
+ThreadSafeList getThreadSafeList();
 /**
 * Sends the time to the client
 * @param client_socket connection socket to the client
@@ -46,23 +51,117 @@ void serve_thread_status(Task task) {
 
     send(task.socket_id, response, strlen(response), 0);
 }
+
 /**
- *  Method for sending the updated content of a chat.
+ * Reads out chatroom as well as message-content of a sent message. Stores it in the corresponding linked list.
+ * @param task containing http buffer
  */
-void sendChatUpdate(Task task, char *chatName) {
-    printf("ich bin im taskHandler");
-    char fullChatName[512] = "Chat_";
-    strcat(fullChatName, chatName);
-// TODO: bessere lösung!
+void process_message(Task task) {
+    printf("received message, processing... \n");
+    //Get Message Body - Dynamically allocated!
+    char* body = extractHTTPBody(task);
+
+    //Get Chat Name
+    long chatNameLen = strstr(body,":") - body;
+    char chatName[chatNameLen+1];
+    chatName[chatNameLen] = '\0';
+    for (int i = 0; i < chatNameLen; i++) {
+        chatName[i] = *(body+i);
+    }
+
+    //Get Actual Chat Message
+    char* message = body+chatNameLen+1;
+
+    //We insert strings into list, which will get copied
+    insert(&threadSafeList,message);
+    //After we're done free the body of the dynamically allocated body & all used strings here again.
+    free(body);
+}
+/**
+ *  Reads out the current content of a chat and sends it to client.
+ *  @param task contains the name of the current chatroom
+ */
+void sendChatUpdate(Task task) {
+    char* chatName = extractHTTPBody(task);
+    //char chatName2[512] = "Chat Title";
     extern char* formatMessagesForSending(const char* chatName);
     const char* messages = formatMessagesForSending(chatName);
-    send(task.socket_id, messages, strlen(messages), 0);
+    char response[1024];
+    snprintf(response, sizeof(response),
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/plain\r\n"
+        "Access-Control-Allow-Origin: *\r\n"
+        "Content-Length: %lu\r\n"
+        "\r\n"
+        "%s", strlen(messages), messages);
+    send(task.socket_id, response, strlen(response), 0);
     close(task.socket_id);
+
+    free(chatName);
 }
 
+/**
+ * Sends client a 404 response
+ * @param task containing socket_id
+ */
 void send404(Task task) {
     printf("404: invalid request made\n");
 
     char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
     send(task.socket_id, not_found, strlen(not_found), 0);
+}
+
+/**
+ * Adds initial message to the chatroom in creation
+ * @param task contains the buffer with chat name and msg
+ */
+void newChatroom(Task task) {
+    char* body = extractHTTPBody(task);
+    //Get Chat Name
+    long chatNameLen = strstr(body,":") - body;
+    char chatName[chatNameLen+1];
+    chatName[chatNameLen] = '\0';
+    for (int i = 0; i < chatNameLen; i++) {
+        chatName[i] = *(body+i);
+    }
+    //Get Actual Chat Message
+    char* message = body+chatNameLen+1;
+    //We insert strings into list, which will get copied
+    // TODO: chose methode name(&threadSafeList,message);
+    //After we're done free the body of the dynamically allocated body & all used strings here again.
+    free(body);
+}
+
+
+/**
+ * Extracts the Body of a http message.
+ * @param task containing http message in buffer.
+ * @return body, string that needs to be deallocated!!
+ */
+char* extractHTTPBody(Task task) {
+    printf("received message, extracting body...\n");
+    //Search for Body length in HTTP Header
+    char* ptr =  strstr(task.buffer, "Content-Length:");
+    if (ptr == NULL) {
+        printf("Error: Could not read received message from buffer");
+        return NULL;
+    }
+
+    //We need to skip past the "Content-Length: " part of this line, so we add 16 and then convert the string to an integer
+    int bodyLength = strtol(ptr+16,NULL,10);
+    //printf("Received body length: %d\n", bodyLength);
+
+    //Create new char array to store extracted buffer
+    char* body = (char*)malloc((bodyLength+1)*sizeof(char));
+    if (body == NULL) {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+    body[bodyLength] = '\0';
+    int headerLength = (int) strlen(task.buffer) - bodyLength;
+    for (int i = 0 ; i < bodyLength; i++) {
+        body[i] = task.buffer[i+headerLength];
+    }
+    //printf("Received body: %s\n", body);
+    return body;
 }
