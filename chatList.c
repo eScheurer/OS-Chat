@@ -67,8 +67,6 @@ void insertMessage(ChatList* chatList, const char* inChatName, const char* inMes
             if (strcmp(currentNode->threadSafeList->listName,chatName) == 0) {
                 insert(currentNode->threadSafeList, message);
                 readerUnlock(chatList);
-                //TODO remove debug
-                print(currentNode->threadSafeList);
                 return;
             }
             currentNode = currentNode->next;
@@ -99,6 +97,30 @@ char* getChatMessages(ChatList* chatList, const char* inChatName) {
     readerUnlock(chatList);
     printf("ERROR: Tried reading messages but couldn't find chatroom: %s\n",chatName);
     return NULL;
+}
+
+char* getChatNames(ChatList* chatList) {
+    //TODO find right buffer size
+    char* buffer = malloc(1000 * sizeof(char));
+    readerLock(chatList);
+    if (chatList->head == NULL) {
+        readerUnlock(chatList);
+        free(buffer);
+        return "Empty chatList";
+    }
+    ListNode* currentNode = chatList->head;
+    sprintf(buffer, "%s$", currentNode->threadSafeList->listName);
+    currentNode = currentNode->next;
+    while (currentNode) {
+        sprintf(buffer+strlen(buffer), "%s$", currentNode->threadSafeList->listName);
+        currentNode = currentNode->next;
+    }
+    readerUnlock(chatList);
+
+    char* chatNames = malloc(strlen(buffer) + 1);
+    strcpy(chatNames, buffer);
+    free(buffer);
+    return chatNames;
 }
 
 void readerLock(ChatList* chatList) {
