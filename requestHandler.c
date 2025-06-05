@@ -41,13 +41,7 @@ void handle_request(Task task) {
         return;
     }
 
-    //here:
-    // else if (...)
-    // continue here in a similar manner
     printf("requestHandler - else case \n");
-
     extern void send404(Task task);
     send404(task);
 }
-
-//here: implement your task handling in its own method

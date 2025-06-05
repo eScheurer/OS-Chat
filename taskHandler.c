@@ -113,6 +113,7 @@ void send404(Task task) {
 
 /**
  * Adds initial message to the chatroom in creation
+ * @param task contains the buffer with chat name and msg
  */
 void newChatroom(Task task) {
     char* body = extractHTTPBody(task);
@@ -130,8 +131,6 @@ void newChatroom(Task task) {
     //After we're done free the body of the dynamically allocated body & all used strings here again.
     free(body);
 }
-
-
 
 
 /**

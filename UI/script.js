@@ -16,7 +16,6 @@ function initChatTemplate(){
     document.getElementById('chat-title').innerText = getURLParam('chatname');
 }
 
-
 window.addEventListener('DOMContentLoaded', () => {
     // Handles the creation of a new chatroom.
 // Opening popup
