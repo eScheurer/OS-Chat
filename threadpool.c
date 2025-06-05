@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <errno.h>
-#include <threadpool.h>
+#include "threadpool.h"
 #include <string.h>
 
 #define MAX_QUEUE 128 //reicht das aus? sollte queue dynamsich wachsen?
