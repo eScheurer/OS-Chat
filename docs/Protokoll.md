@@ -107,7 +107,7 @@ Helene: Branches und pushes benutzen!
 TODO: Kommunikation zwischen request handler und html
 * Helene: Rasperypi ausprobieren
 
-# 4.6.2025
+# 4.6.2025 - Zwischenbilanz für Enspurt
 ## Wünsche für zusammen bearbeiten
 * Klassendiagramm erstellen um verständnis zu fördern  ->  Update: haben wir erstellt, ist in resources zu finden
 * Threadpool funktion zu momentanem Zeitpubkt besprechen für mehr Verständnis
@@ -129,3 +129,9 @@ TODO: Kommunikation zwischen request handler und html
 * Code aufräumen, Methoden und Klassennamen einheitlich
 * Demo vorbereiten
 * Buttom um chats zu speichern
+
+# 5.6.2025
+## Progress
+Enya: Messages werden isoliert geupdatet, heute soll dies integriert werden. Option neue Chats generieren ist als Funktion auf Website implementiert. Heute noch Defaultnachricht "has joind the chat" um automatisch logisch chat zu generieren. Plus Errornachricht implementieren, falls Chat in Logik generieren nicht funktioniert (Errorhandling).
+Cielle: Reader-Writer Problem genauer informiert um Locks sinnvoll zu zu implementieren. Neue Funktionen gecoded, die über ganzes Programm verwendet werden können.
+Helene: Raspberry pi mit OS läuft über Helene's Hotspot. Server läuft noch nicht darauf, wegen Kompliationsfehler. Wird am Freitag weiter erprobt. Heute Testing-Konzept und Programm erste prio 
