@@ -94,7 +94,6 @@ void sendChatUpdate(Task task) {
         "\r\n"
         "%s", strlen(messages), messages);
     send(task.socket_id, response, strlen(response), 0);
-    close(task.socket_id);
 
     free(chatName);
     free(messages);
