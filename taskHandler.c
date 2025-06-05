@@ -78,7 +78,8 @@ void process_message(Task task) {
     free(body);
 }
 /**
- *  Method for sending the updated content of a chat.
+ *  Reads out the current content of a chat and sends it to client.
+ *  @param task contains the name of the current chatroom
  */
 void sendChatUpdate(Task task) {
     char* chatName = extractHTTPBody(task);
@@ -109,6 +110,29 @@ void send404(Task task) {
     char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
     send(task.socket_id, not_found, strlen(not_found), 0);
 }
+
+/**
+ * Adds initial message to the chatroom in creation
+ */
+void newChatroom(Task task) {
+    char* body = extractHTTPBody(task);
+    //Get Chat Name
+    long chatNameLen = strstr(body,":") - body;
+    char chatName[chatNameLen+1];
+    chatName[chatNameLen] = '\0';
+    for (int i = 0; i < chatNameLen; i++) {
+        chatName[i] = *(body+i);
+    }
+    //Get Actual Chat Message
+    char* message = body+chatNameLen+1;
+    //We insert strings into list, which will get copied
+    // TODO: chose methode name(&threadSafeList,message);
+    //After we're done free the body of the dynamically allocated body & all used strings here again.
+    free(body);
+}
+
+
+
 
 /**
  * Extracts the Body of a http message.

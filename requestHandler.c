@@ -22,20 +22,22 @@ void handle_request(Task task) {
         extern void time_request (Task task);
         time_request(task);
         return;
-    }
-    if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
+    } if (strstr(task.buffer, "GET /threadstatus ") != NULL) {
         extern void serve_thread_status(Task task);
         serve_thread_status(task);
         return;
-    } else if (strstr(task.buffer, "POST /chatUpdate/") != NULL) {
+    } if (strstr(task.buffer, "POST /chatUpdate/") != NULL) {
         printf("ich bin im requestHandler richtig \n");
         extern void sendChatUpdate(Task task);
         sendChatUpdate(task);
         return;
-    }
-    if (strstr(task.buffer, "POST /sendmessage ") != NULL) {
+    } if (strstr(task.buffer, "POST /sendmessage ") != NULL) {
         extern void process_message(Task task);
         process_message(task);
+        return;
+    } if (strstr(task.buffer, "POST /newChat ") != NULL) {
+        extern void newChatroom(Task task);
+        newChatroom(task);
         return;
     }
 

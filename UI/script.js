@@ -36,6 +36,15 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 function createNewChatroom(name){
     window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(name);
+    let message = name;
+    message = name + ":" + usrname + " created a new chat room!";
+    fetch(url + '/newChatroom/', {
+        method: 'POST',
+        body: message
+    }).catch(error => {
+        document.getElementById('chatMessages').placeholder = "Error: " + error;
+    });
+    console.log(message);
 }
 
 
