@@ -22,7 +22,7 @@ typedef struct ThreadSafeList {
 ThreadSafeList* create(const char* name);
 void insert(ThreadSafeList* list, const char* message);
 void print(ThreadSafeList* list);
-char* getMessages(ThreadSafeList list);
+char* getMessages(ThreadSafeList* list);
 char* formatMessagesForSending(const char* chatName);
 void freeList(ThreadSafeList* list);
 void saveToFile(ThreadSafeList* list);

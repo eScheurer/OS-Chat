@@ -22,7 +22,10 @@ ChatList* createChatList() {
     return chatList;
 }
 
-void createNewChat(ChatList* chatList,const char* chatName) {
+void createNewChat(ChatList* chatList,const char* inChatName, const char* inMessage) {
+    const char* chatName = strdup(inChatName);
+    const char* message = strdup(inMessage);
+
     writerLock(chatList);
     if (chatList->head == NULL) {
         //Because it's empty we actually need to edit the list, so
@@ -36,7 +39,7 @@ void createNewChat(ChatList* chatList,const char* chatName) {
         chatList->tail = new_node;
 
         //Now that everything is set up, we can insert the message
-        insert(new_node->threadSafeList, "New Chat created!");
+        insert(new_node->threadSafeList, message);
     } else {
         //if we haven't found it yet it is a new chat and we have to create a new node
         ListNode* new_node = malloc(sizeof(ListNode));
@@ -45,48 +48,54 @@ void createNewChat(ChatList* chatList,const char* chatName) {
 
         chatList->tail->next = new_node;
         chatList->tail = new_node;
-        insert(new_node->threadSafeList, "New Chat created!");
+        insert(new_node->threadSafeList, message);
     }
     writerUnlock(chatList);
 }
 
-void insertMessage(ChatList* chatList, const char* chatName, const char* message) {
+void insertMessage(ChatList* chatList, const char* inChatName, const char* inMessage) {
+    const char* chatName = strdup(inChatName);
+    const char* message = strdup(inMessage);
+    printf("Trying to insert message into chat\n");
     readerLock(chatList);
     //Chatlist shouldn't be empty
     if (chatList->head == NULL) {
-        perror("Tried inserting message but ChatList is empty!");
+        perror("Tried inserting message but ChatList is empty! \n");
     } else {
         ListNode* currentNode = chatList->head;
-        while (currentNode->next != NULL) {
-            if (currentNode->threadSafeList->listName == chatName) {
+        while (currentNode) {
+            if (strcmp(currentNode->threadSafeList->listName,chatName) == 0) {
                 insert(currentNode->threadSafeList, message);
                 readerUnlock(chatList);
+                //TODO remove debug
+                print(currentNode->threadSafeList);
                 return;
             }
             currentNode = currentNode->next;
         }
         readerUnlock(chatList);
-        printf("ERROR: Tried inserting message but couldn't find chatroom: %s",chatName);
+        printf("ERROR: Tried inserting message but couldn't find chatroom: %s\n",chatName);
 
     }
 }
-char* getChatMessages(ChatList* chatList, const char* chatName) {
+char* getChatMessages(ChatList* chatList, const char* inChatName) {
+    const char* chatName = strdup(inChatName);
     readerLock(chatList);
     if (chatList->head == NULL) {
-        perror("Tried inserting message but ChatList is empty!");
+        perror("Tried inserting message but ChatList is empty! \n");
         return NULL;
     } else {
         ListNode* currentNode = chatList->head;
-        while (currentNode->next != NULL) {
-            if (currentNode->threadSafeList->listName == chatName) {
-                char* messages = getMessages(*currentNode->threadSafeList);
+        while (currentNode) {
+            if (strcmp(currentNode->threadSafeList->listName,chatName) == 0) {
+                char* messages = getMessages(currentNode->threadSafeList);
                 readerUnlock(chatList);
                 return messages;
             }
             currentNode = currentNode->next;
         }
         readerUnlock(chatList);
-        printf("ERROR: Tried inserting message but couldn't find chatroom: %s",chatName);
+        printf("ERROR: Tried reading messages but couldn't find chatroom: %s\n",chatName);
         return NULL;
 
     }
@@ -100,6 +109,7 @@ void readerLock(ChatList* chatList) {
     if (chatList->readerCount == 1) {
         pthread_mutex_lock(&chatList->lock);
     }
+    pthread_mutex_unlock(&chatList->readLock);
     sem_post(&chatList->queue);
 }
 

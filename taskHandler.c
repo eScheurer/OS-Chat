@@ -10,11 +10,11 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#include "LinkedList.h"
+#include "chatList.h"
+#include "server.h"
 
-ThreadSafeList threadSafeList;
 char* extractHTTPBody(Task task);
-ThreadSafeList getThreadSafeList();
+extern ChatList* chatList;
 /**
 * Sends the time to the client
 * @param client_socket connection socket to the client
@@ -73,7 +73,7 @@ void process_message(Task task) {
     char* message = body+chatNameLen+1;
 
     //We insert strings into list, which will get copied
-    insert(&threadSafeList,message);
+    insertMessage(chatList, chatName, message);
     //After we're done free the body of the dynamically allocated body & all used strings here again.
     free(body);
 }
@@ -84,8 +84,7 @@ void process_message(Task task) {
 void sendChatUpdate(Task task) {
     char* chatName = extractHTTPBody(task);
     //char chatName2[512] = "Chat Title";
-    extern char* formatMessagesForSending(const char* chatName);
-    const char* messages = formatMessagesForSending(chatName);
+    char* messages = getChatMessages(chatList, chatName);
     char response[1024];
     snprintf(response, sizeof(response),
         "HTTP/1.1 200 OK\r\n"
@@ -98,6 +97,7 @@ void sendChatUpdate(Task task) {
     close(task.socket_id);
 
     free(chatName);
+    free(messages);
 }
 
 /**
@@ -128,6 +128,7 @@ void newChatroom(Task task) {
     char* message = body+chatNameLen+1;
     //We insert strings into list, which will get copied
     // TODO: chose methode name(&threadSafeList,message);
+    createNewChat(chatList,chatName,message);
     //After we're done free the body of the dynamically allocated body & all used strings here again.
     free(body);
 }
@@ -139,7 +140,6 @@ void newChatroom(Task task) {
  * @return body, string that needs to be deallocated!!
  */
 char* extractHTTPBody(Task task) {
-    printf("received message, extracting body...\n");
     //Search for Body length in HTTP Header
     char* ptr =  strstr(task.buffer, "Content-Length:");
     if (ptr == NULL) {

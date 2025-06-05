@@ -27,7 +27,6 @@ void handle_request(Task task) {
         serve_thread_status(task);
         return;
     } if (strstr(task.buffer, "POST /chatUpdate/") != NULL) {
-        printf("ich bin im requestHandler richtig \n");
         extern void sendChatUpdate(Task task);
         sendChatUpdate(task);
         return;
@@ -40,8 +39,6 @@ void handle_request(Task task) {
         newChatroom(task);
         return;
     }
-
-    printf("requestHandler - else case \n");
     extern void send404(Task task);
     send404(task);
 }

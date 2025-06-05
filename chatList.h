@@ -29,11 +29,11 @@ typedef struct ChatList {
 ChatList* createChatList();
 void createNewChat(ChatList* chatList,const char* chatName, const char* message);
 void insertMessage(ChatList* chatList,const char* chatName, const char* message);
-char* getChatNames(ChatList* chatList);
+//char* getChatNames(ChatList* chatList);
 char* getChatMessages(ChatList* chatList, const char* chatName);
-void printChat(ChatList* chatList,const char* chatName);
-void saveChatToFile(ChatList* chatList);
-void loadFromFile(ChatList* chatList, const char* chatName);
+//void printChat(ChatList* chatList,const char* chatName);
+//void saveChatToFile(ChatList* chatList);
+//void loadFromFile(ChatList* chatList, const char* chatName);
 //void* thread_routine(void* arg);
 
 #endif //CHATLIST_H

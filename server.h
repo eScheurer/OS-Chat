@@ -7,6 +7,7 @@
 
 #include <netinet/in.h>
 #include <sys/types.h>
+#include "chatList.h"
 
 // Constants
 #define PORT 8080

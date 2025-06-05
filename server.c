@@ -12,10 +12,13 @@
 
 #include <signal.h>
 
-#include "LinkedList.h"
+#include "chatList.h"
 #include "threadpool.h"
 
+ChatList* chatList;
+
 int main() {
+    /**
     //only for testing`!!
     //extern void test_LL();
     //test_LL();
@@ -25,8 +28,16 @@ int main() {
     insert(list, "Bob: Hey Alice :)");
     insert(list, "Charlie: Hi alle!");
     saveToFile(list);
-
-
+*/
+    printf("creating ChatList \n");
+    chatList = createChatList();
+    char* message = "Cielle: Wow it really is working!";
+    createNewChat(chatList,"general","This server has made a chat!");
+    insertMessage(chatList,"general",message);
+    createNewChat(chatList,"test","This server has made a chat!");
+    insertMessage(chatList,"general",message);
+    insertMessage(chatList,"test",message);
+    //printf(getChatMessages(chatList,"general"));
     // Setup for TCP connection
     printf("Server starting \n");
     struct Server server;
