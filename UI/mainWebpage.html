@@ -8,9 +8,12 @@
 <body onload="getChatRooms()">
 Welcome to the OSFS25 Project:
 <h1>Multithreaded Chat Server</h1>
-<form>
+<form onsubmit ="return validUsername()">
     <label for="Uname">Please type in a Username:</label>
-    <input type="text" id="Uname" name="Uname"><br><br>
+    <input type="text" id="Uname" name="Uname" oninput="validateUsername()">
+    <p id="usernameHint" style="color: red;"></p>
+    <br><br>
+    <input type="submit" value="Enter Chat" />
 </form>
 Currently available Chat-Rooms: <button onclick="getChatRooms()">Refresh</button>
 <div id="chatList">-No current Chats-</div>
