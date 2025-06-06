@@ -147,3 +147,26 @@ Helene wird also noch chatList Unittests erstellen und später an Integrated tes
 Gemeinsamer Entscheid: Wir machen keinen automatischen default Main chat.
 Current Fehler: Cielle ist aufgefallen, dass Server abstürzt wenn 2. Website geöffnet und Chatlist ausgelesen werden soll
 
+
+## Aufteilung Präsentation 18. min Präsi plus Demo
+Pro person ca. 3min:
+* Intro und Problem Statement @Cielle
+* Server-Client Communication @Luis
+* Threadpool und Queue (Step-by-Step Message folgen) @Helene
+* dinamic Threadpool @Enya
+* RequestHandler (Schnittstelle für Tasks) und task-Handler (Ent- und Verpackung, Weiterverarbeitung) @Enya
+* Taskhandling: HTTP Requests @Cielle
+* Taskhandling: ChatList @Cielle
+* Taskhandling: LinkedList (Speicherung von Chats) @Luis
+* Testing Populate Server with many Requests (Scalability) @Helene
+* UI: Website, Hosting @Luis
+* Server auf Raspberry-Pi @Helene (Übergang zu Demo)
+* Demo zu UI und Threadpoolstats kurz was sagen @Enya Backup @Cielle 
+* Dicussion and Lessons Learned @Helene 
+
+--> Präsentation Üben Donnerstag 12.6.2025 8:30 per Discord
+
+## Nächstes Meeting 9.6.2025 13:00 Uhr und bis dahin:
+* Offene Aufgaben erledigen
+* Report zugeteilte Teile schreiben
+* Präsentation Slides individuelle Teile schreiben
