@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <unistd.h>
+
 #include "../LinkedList.h"
 #include "../threadpool.h"
 
@@ -24,7 +26,6 @@ int main() {
  * This method tests the most important functions of the LinkedList class
  */
 int testLinkedList() {
-  printf("Running LinkedList tests\n");
 
   ThreadSafeList* list = create("TestList");
   // Test if allocation was correct
@@ -48,7 +49,7 @@ int testLinkedList() {
   // Test if Message is extracted correctly from list
   char* messages = getMessages(list);
   assert(messages != NULL);
-  assert(strcmp(messages, "TestMessage1$TestMessage2") == 0);
+  assert(strcmp(messages, "TestMessage1$TestMessage2$") == 0);
 
   printf("getMessages() tested and passed.\n");
 
@@ -59,8 +60,34 @@ int testLinkedList() {
 }
 
 /**
- * This method tests the most important functions of the threadpool class
+ * These are methods to tests the most important functions of the threadpool class
  */
-int testThreadpool() {
+void handle_request(Task task) {
+    printf("Mock handle_request: %d\n", task.socket_id);
+    sleep(1);
+}
 
+
+int testThreadpool() {
+    init_thread_pool(); // Workerthread
+
+#define NUM_TASKS 10
+    for (int i = 0; i < NUM_TASKS; i++) { // Todo: Adjust Number of tasks
+        Task task;
+        task.socket_id = i;
+        add_task_to_queue(task);
+    }
+
+    sleep((NUM_TASKS /2) + 2); //Allow time for all tasks to complete
+
+    shutdown_thread_pool();
+
+    // Check how many tasks were handled
+    int total_handled = 0;
+    for (int i = 0; i < MAX_THREADS; i++) {
+        total_handled += thread_stats[i].tasks_handled;
+    }
+    printf("Total handled: %d\n", total_handled);
+    assert(total_handled == NUM_TASKS);
+    return 0;
 }

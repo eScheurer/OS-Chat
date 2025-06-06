@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.10)
 project(OS_Chat C)
 
 set(CMAKE_C_STANDARD 11)
@@ -24,9 +24,7 @@ add_executable(OS_Chat
 # Executable for testfiles
 add_executable(UnitTesting
         tests/UnitTesting.c
-        LinkedList.h
         LinkedList.c
-        threadpool.h
         threadpool.c
 )
 
