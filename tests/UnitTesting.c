@@ -5,17 +5,24 @@
 #include <unistd.h>
 
 #include "../LinkedList.h"
+#include "../chatList.h"
 #include "../threadpool.h"
 
 // Forward declaration due to no headerfile
 int testLinkedList();
+int testChatList();
 int testThreadpool();
+
 
 int main() {
 
   printf("Running LinkedList tests.\n");
   testLinkedList();
   printf("All tests for LinkedList passed.\n");
+
+    print("Running ChatList tests.");
+    testChatList();
+    printf("All tests for ChatList passed.\n");
 
     printf("Running Threadpool tests.\n");
     testThreadpool();
@@ -53,11 +60,61 @@ int testLinkedList() {
 
   printf("getMessages() tested and passed.\n");
 
-  // Test if memory has been cleaned up properly
   freeList(list);
-  list == 0;
+    // Test if memory has been cleaned up properly
+  assert(list == 0);
 
 }
+
+// Helper class for chatList tests
+int countNodes(ChatList* list) {
+    int count = 0;
+    ListNode* node = list->head;
+    while (node != NULL) {
+        count++;
+        node = node->next;
+    }
+}
+/**
+ * This method tests the most important functions of the chatList class
+ */
+int testChatList() {
+    const char* chatName = "TestChat";
+    const char* message1 = "TestMessage1";
+    const char* message2  = "TestMessage2";
+
+    ChatList* list = createChatList();
+    // Test if allocation was correct
+    assert(list != NULL);
+    // Test if new list is empty
+    assert(list->head == NULL && list->tail == NULL);
+
+    printf("createChatList() tested and passed.\n");
+
+    // Test if createNameChat creates new chat successfully
+    createNewChat(list, chatName, message1);
+    assert(list->head != NULL && list->tail != NULL);
+    assert(countNodes(list) == 1);
+
+    printf("createNewChat() tested and passed.\n");
+
+    // Test if new Messages gets inserted properly simultaneously to test getMessages()
+    insertMessage(list, chatName, message2);
+    assert(list->head != NULL && list->tail != NULL);
+    assert(countNodes(list) == 2);
+
+    char* result = getChatMessages(list, chatName);
+    assert(result != NULL);
+    assert(strcmp(result, "TestMessage1$TestMessage2$") == 0);
+
+    printf("insertMessage() and getChatMessages tested and passed.\n");
+
+    freeList(list);
+    // Test if memory has been cleaned up properly
+    assert(list == 0);
+}
+
+
 
 /**
  * These are methods to tests the most important functions of the threadpool class
