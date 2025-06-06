@@ -58,16 +58,14 @@ function createNewChatroom(name){
     });
 }
 
-// Update frequently. This is usefull for our project to fetch new chat messages later on.
-// setInterval(getTime, 1000);
-
-// getTime();
+// For displaying currently available chatrooms
 function getChatRooms() {
     document.getElementById('chatList').innerText = "loading...";
-    fetch(url + '/chatlist')
+    fetch(url + '/chatList/')
         .then(response => response.text())
         .then(data => {
-            document.getElementById('chatList').innerText = data;
+            document.getElementById('chatList').innerText = data.split('$').join('\n');
+            //const chatRoomsList = data.split('$');
         })
         .catch(error => {
             document.getElementById('chatList').innerText = "Error: " + error;
