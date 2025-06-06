@@ -129,9 +129,21 @@ TODO: Kommunikation zwischen request handler und html
 * Code aufräumen, Methoden und Klassennamen einheitlich
 * Demo vorbereiten
 * Buttom um chats zu speichern
+* Benachrichtigungen wenn Person chat verlässt
 
 # 5.6.2025
-## Progress
+## Progress Report
 Enya: Messages werden isoliert geupdatet, heute soll dies integriert werden. Option neue Chats generieren ist als Funktion auf Website implementiert. Heute noch Defaultnachricht "has joind the chat" um automatisch logisch chat zu generieren. Plus Errornachricht implementieren, falls Chat in Logik generieren nicht funktioniert (Errorhandling).
 Cielle: Reader-Writer Problem genauer informiert um Locks sinnvoll zu zu implementieren. Neue Funktionen gecoded, die über ganzes Programm verwendet werden können.
 Helene: Raspberry pi mit OS läuft über Helene's Hotspot. Server läuft noch nicht darauf, wegen Kompliationsfehler. Wird am Freitag weiter erprobt. Heute Testing-Konzept und Programm erste prio 
+
+# 6.6.2025
+## Progress Report
+Enya: Repetitives Client connecting Fehler gefunden und gelöst. liste von chats kann ausgelesen und angezeigt werden. Mache jetzt bei der Funktion chat neu generieren und chat joinen.
+Cielle: Bin an Dokumentation von all meinen Befehlen und heute für eine neue Aufgabe zu haben, z.B.
+Helene: UNittests für LinkedList und Threadpool erstellt. Kleine Fehler in Threadpool entdeckt, möchte ich mit Enya anschauen (Update: war nur schriebfehler, nevermind). Habt ihr noch wichtige Komponenten die in Unit-tests getestet werden sollen? -> Cielle: chatList Methoden sind relevant.
+Helene wird also noch chatList Unittests erstellen und später an Integrated testing um Server zu populaten arbeiten
+
+Gemeinsamer Entscheid: Wir machen keinen automatischen default Main chat.
+Current Fehler: Cielle ist aufgefallen, dass Server abstürzt wenn 2. Website geöffnet und Chatlist ausgelesen werden soll
+
