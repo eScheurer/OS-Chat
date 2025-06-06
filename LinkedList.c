@@ -102,7 +102,6 @@ char* getMessages(ThreadSafeList* list) {
     char* messages = malloc(strlen(buffer) + 1);
     strcpy(messages, buffer);
     free(buffer);
-    printf("%s\n", messages);
     return messages;
 }
 
@@ -133,8 +132,8 @@ char* formatMessagesForSending(const char* chatName) {
 
     while (fgets(messageBuffer, sizeof(messageBuffer), file)) {
         messageBuffer[strcspn(messageBuffer, "\n")] = '\0';  // removing the \n //TODO: problematic if zeilenumbruch in message?
-        char temp[256]; //temp Buffer to simplify appending
-        snprintf(temp, sizeof(temp), "%s $",messageBuffer);
+        char temp[258]; //temp Buffer to simplify appending
+        snprintf(temp, sizeof(temp), "%s$",messageBuffer);
 
         if (strlen(messages) + strlen(temp) + 1 > maxSize) {
             fprintf(stderr, "Return string is too long!\n");
