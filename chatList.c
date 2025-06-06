@@ -20,7 +20,7 @@ ChatList* createChatList() {
     ChatList* chatList = malloc(sizeof(ChatList));
     chatList->head = NULL;
     chatList->readerCount = 0;
-    pthread_mutex_init(&chatList->lock,NULL);
+    pthread_mutex_init(&chatList->writeLock,NULL);
     pthread_mutex_init(&chatList->readLock,NULL);
     sem_init(&chatList->queue,0,1);
     return chatList;
@@ -179,7 +179,7 @@ void readerLock(ChatList* chatList) {
     pthread_mutex_lock(&chatList->readLock);
     chatList->readerCount++;
     if (chatList->readerCount == 1) {
-        pthread_mutex_lock(&chatList->lock);
+        pthread_mutex_lock(&chatList->writeLock);
     }
     pthread_mutex_unlock(&chatList->readLock);
     //Allow next thread to try and activate a lock
@@ -195,7 +195,7 @@ void readerUnlock(ChatList* chatList) {
     pthread_mutex_lock(&chatList->readLock);
     chatList->readerCount--;
     if (chatList->readerCount == 0) {
-        pthread_mutex_unlock(&chatList->lock);
+        pthread_mutex_unlock(&chatList->writeLock);
     }
     pthread_mutex_unlock(&chatList->readLock);
 }
@@ -208,7 +208,7 @@ void writerLock(ChatList* chatList) {
     //We wait for the semaphore to give access, this should be FIFO but it is currently (probably) not
     sem_wait(&chatList->queue);
     //We lock the CS for all other threads
-    pthread_mutex_lock(&chatList->lock);
+    pthread_mutex_lock(&chatList->writeLock);
     //Signal to the semaphore that other threads can try and aquire the lock now
     sem_post(&chatList->queue);
 }
@@ -219,5 +219,5 @@ void writerLock(ChatList* chatList) {
  */
 void writerUnlock(ChatList* chatList) {
     //Give access to the CS to the next thread
-    pthread_mutex_unlock(&chatList->lock);
+    pthread_mutex_unlock(&chatList->writeLock);
 }

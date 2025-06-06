@@ -20,7 +20,7 @@ typedef struct ChatList {
     ListNode* head;
     ListNode* tail;
     int readerCount;
-    pthread_mutex_t lock;
+    pthread_mutex_t writeLock;
     pthread_mutex_t readLock;
     //Queue should be handled FIFO for fairness, semaphores usually are, but couldn't find confirmation
     sem_t queue;
