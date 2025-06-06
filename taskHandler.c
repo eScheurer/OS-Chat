@@ -85,15 +85,24 @@ void sendChatUpdate(Task task) {
     char* chatName = extractHTTPBody(task);
     //char chatName2[512] = "Chat Title";
     char* messages = getChatMessages(chatList, chatName);
-    char response[1024];
-    snprintf(response, sizeof(response),
+
+    if (messages == NULL) {
+        // TODO Or send the client a message that no message was found but ignoring should work
+        return;
+    }
+
+    size_t bodySize = strlen(messages);
+
+    char header[1024];
+    int headerSize= snprintf(header, sizeof(header),
         "HTTP/1.1 200 OK\r\n"
         "Content-Type: text/plain\r\n"
         "Access-Control-Allow-Origin: *\r\n"
         "Content-Length: %lu\r\n"
         "\r\n"
         "%s", strlen(messages), messages);
-    send(task.socket_id, response, strlen(response), 0);
+    send(task.socket_id, header, headerSize, 0);
+    send(task.socket_id, messages, bodySize, 0);
 
     free(chatName);
     free(messages);
