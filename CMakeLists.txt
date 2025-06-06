@@ -26,6 +26,7 @@ add_executable(UnitTesting
         tests/UnitTesting.c
         LinkedList.c
         threadpool.c
+        chatList.c
 )
 
 # Link pthread

@@ -137,3 +137,5 @@ fabric.properties
 /build/UnitTesting
 /build/CMakeFiles/UnitTesting.dir/tests/UnitTesting.c.o
 /build/CMakeFiles/UnitTesting.dir/tests/UnitTesting.c.o.d
+/build/CMakeFiles/UnitTesting.dir/chatList.c.o
+/build/CMakeFiles/UnitTesting.dir/chatList.c.o.d

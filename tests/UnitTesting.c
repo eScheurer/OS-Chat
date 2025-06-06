@@ -12,6 +12,8 @@
 int testLinkedList();
 int testChatList();
 int testThreadpool();
+int countMessages();
+
 
 
 int main() {
@@ -20,7 +22,7 @@ int main() {
   testLinkedList();
   printf("All tests for LinkedList passed.\n");
 
-    print("Running ChatList tests.");
+    printf("Running ChatList tests.\n");
     testChatList();
     printf("All tests for ChatList passed.\n");
 
@@ -61,20 +63,24 @@ int testLinkedList() {
   printf("getMessages() tested and passed.\n");
 
   freeList(list);
-    // Test if memory has been cleaned up properly
-  assert(list == 0);
+
+    return 0;
 
 }
 
 // Helper class for chatList tests
-int countNodes(ChatList* list) {
-    int count = 0;
+int countMessages(ChatList* list, const char* chatName) {
     ListNode* node = list->head;
     while (node != NULL) {
-        count++;
+        if (strcmp(node->threadSafeList->listName, chatName) == 0) {
+            return node->threadSafeList->size;
+        }
         node = node->next;
     }
+    return -1; // Error: Not found
 }
+
+
 /**
  * This method tests the most important functions of the chatList class
  */
@@ -89,19 +95,20 @@ int testChatList() {
     // Test if new list is empty
     assert(list->head == NULL && list->tail == NULL);
 
+
     printf("createChatList() tested and passed.\n");
 
     // Test if createNameChat creates new chat successfully
     createNewChat(list, chatName, message1);
     assert(list->head != NULL && list->tail != NULL);
-    assert(countNodes(list) == 1);
+    assert(countMessages(list, chatName) == 1);
 
     printf("createNewChat() tested and passed.\n");
 
     // Test if new Messages gets inserted properly simultaneously to test getMessages()
     insertMessage(list, chatName, message2);
     assert(list->head != NULL && list->tail != NULL);
-    assert(countNodes(list) == 2);
+    assert(countMessages(list, chatName) == 2);
 
     char* result = getChatMessages(list, chatName);
     assert(result != NULL);
@@ -109,9 +116,9 @@ int testChatList() {
 
     printf("insertMessage() and getChatMessages tested and passed.\n");
 
-    freeList(list);
-    // Test if memory has been cleaned up properly
-    assert(list == 0);
+    free(list);
+
+    return 0;
 }
 
 
