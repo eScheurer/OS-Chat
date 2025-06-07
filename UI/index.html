@@ -1,29 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+<script src="script.js" defer></script>
 <head>
-  <meta charset="UTF-8" />
-  <title>Time</title>
+    <meta charset="UTF-8">
+    <title>OS Project 2025</title>
 </head>
-<body>
-  <h1>Time</h1>
-  <button onclick="getTime()">Get Time</button>
-  <p id="time">Time will appear here...</p>
-
-  <script src="script.js"></script>
-  <h1>Message</h1>
-
-  <form action="" method="post" class="message-example">
-    <div class="message-example">
-      <label for="name">Enter your name: </label>
-      <input type="text" name="name" id="name" required />
+<body onload="getChatRooms()">
+Welcome to the OSFS25 Project:
+<h1>Multithreaded Chat Server</h1>
+<form>
+    <label for="Uname">Please type in a Username:</label>
+    <input type="text" id="Uname" name="Uname"><br><br>
+</form>
+Currently available Chat-Rooms: <button onclick="getChatRooms()">Refresh</button>
+<div id="chatList">-No current Chats-</div>
+Create a new Chat-Room: <button id="openPopup">Create</button>
+<div id="popup" style="display: none;">
+    <div id="content">
+        <h2>Please choose a name for you chat room:</h2>
+        <input type="text" id="userInput" placeholder="please type here..">
+        <button id="confirmButton">Create</button>
+        <button id="closePopup">X</button>
     </div>
-    <div class="message-example">
-      <label for="message">Enter your test-message: </label>
-      <input type="text" name="message" id="message" required />
-    </div>
-    <div class="message-example">
-      <input type="submit" value="Send!" />
-    </div>
-  </form>
+</div>
 </body>
 </html>
