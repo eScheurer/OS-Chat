@@ -20,13 +20,11 @@ Currently available Chat-Rooms: <button onclick="getChatRooms()">Refresh</button
 Create a new Chat-Room: <button id="openPopup">Create</button>
 <div id="popup" style="display: none;">
     <div id="content">
-        <form id="chatForm">
             <h2>Please choose a name for you chat room:</h2>
             <input type="text" id="userInput" placeholder="please type here.." oninput="validateChatname()">
             <p id="chatnameHint" style="color:red;"></p>
             <button id="confirmButton">Create</button>
             <button id="closePopup">X</button>
-        </form>
     </div>
 </div>
 </body>
