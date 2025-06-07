@@ -13,7 +13,9 @@ Welcome to the OSFS25 Project:
     <input type="text" id="Uname" name="Uname"><br><br>
 </form>
 Currently available Chat-Rooms: <button onclick="getChatRooms()">Refresh</button>
-<div id="chatList">-No current Chats-</div>
+<div id="chatList">
+    <ul id="chatRoomsList"></ul>
+</div>
 Create a new Chat-Room: <button id="openPopup">Create</button>
 <div id="popup" style="display: none;">
     <div id="content">

@@ -60,17 +60,44 @@ function createNewChatroom(name){
 
 // For displaying currently available chatrooms
 function getChatRooms() {
-    document.getElementById('chatList').innerText = "loading...";
+    const ul = document.getElementById('chatRoomsList');
+    ul.innerHTML = ''; // List needs to be emptied so that no duplicate chatrooms are shown
+    //document.getElementById('chatList').innerText = "Loading...";
+    //ul.innerHTML = "<li>Loading...</li>";
     fetch(url + '/chatList/')
         .then(response => response.text())
         .then(data => {
-            document.getElementById('chatList').innerText = data.split('$').join('\n');
             //const chatRoomsList = data.split('$');
+            //document.getElementById('chatList').innerText = data.split('$').join('\n');
+            const chatRoomsList = data.split('$').filter(name => name !== '' && name !== 'Empty chatList');
+
+            if (chatRoomsList.length === 0) { // No chatrooms yet
+                ul.innerHTML = '<li>No existing chat rooms yet</li>';
+                return;
+            }
+            for (let i = 0; i < chatRoomsList.length; i++) {
+                const chatName = chatRoomsList[i].trim();
+                const li = document.createElement('li');
+                li.textContent = chatName;
+                const button = document.createElement('button') ;
+                button.textContent = 'Join'; button.onclick = function () {
+                    joinChatroom(chatName);
+                };
+                li.appendChild(button);
+                ul.appendChild(li);
+            }
+
         })
         .catch(error => {
             document.getElementById('chatList').innerText = "Error: " + error;
         });
 }
+
+// for joining a chatroom on button click
+function joinChatroom(chatName){
+
+}
+
 
 function sendMessage() {
     const textarea = document.getElementById("message-text")
