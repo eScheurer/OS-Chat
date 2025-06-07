@@ -61,21 +61,90 @@ function createNewChatroom(name){
     });
 }
 
-// Update frequently. This is usefull for our project to fetch new chat messages later on.
-// setInterval(getTime, 1000);
-
-// getTime();
+// For displaying currently available chatrooms
 function getChatRooms() {
-    document.getElementById('chatList').innerText = "loading...";
-    fetch(url + '/chatlist')
+    const ul = document.getElementById('chatRoomsList');
+    ul.innerHTML = ''; // List needs to be emptied so that no duplicate chatrooms are shown
+    //document.getElementById('chatList').innerText = "Loading...";
+    //ul.innerHTML = "<li>Loading...</li>";
+    fetch(url + '/chatList/')
         .then(response => response.text())
         .then(data => {
-            document.getElementById('chatList').innerText = data;
+            //const chatRoomsList = data.split('$');
+            //document.getElementById('chatList').innerText = data.split('$').join('\n');
+            const chatRoomsList = data.split('$').filter(name => name !== '' && name !== 'Empty chatList');
+
+            if (chatRoomsList.length === 0) { // No chatrooms yet
+                ul.innerHTML = '<li>No existing chat rooms yet</li>';
+                return;
+            }
+            for (let i = 0; i < chatRoomsList.length; i++) {
+                const chatName = chatRoomsList[i].trim();
+                const li = document.createElement('li');
+                li.textContent = chatName;
+                const button = document.createElement('button') ;
+                button.textContent = 'Join'; button.onclick = function () {
+                    joinChatroom(chatName);
+                };
+                li.appendChild(button);
+                ul.appendChild(li);
+            }
+
         })
         .catch(error => {
             document.getElementById('chatList').innerText = "Error: " + error;
         });
 }
+
+// For displaying currently available chatrooms
+function getChatRoomsfromChat() {
+    //extract ChatName from HTML
+    const chatNameElement = document.getElementById('chat-title');
+    const chatName = chatNameElement.innerText.trim(); //.trim() erases unwanted added elements from formating
+
+    const ul = document.getElementById('chatRoomsList');
+    ul.innerHTML = ''; // List needs to be emptied so that no duplicate chatrooms are shown
+    fetch(url + '/chatList/')
+        .then(response => response.text())
+        .then(data => {
+            const chatRoomsList = data.split('$').filter(name => name !== '' && name !== 'Empty chatList' && name !== chatName);
+            if (chatRoomsList.length === 0) { // No chatrooms yet
+                ul.innerHTML = '<li>No other chat rooms yet</li>';
+                return;
+            }
+            for (let i = 0; i < chatRoomsList.length; i++) {
+                const chatName = chatRoomsList[i].trim();
+                const li = document.createElement('li');
+                li.textContent = chatName;
+                const button = document.createElement('button') ;
+                button.textContent = 'Join'; button.onclick = function () {
+                    joinChatroom(chatName);
+                };
+                li.appendChild(button);
+                ul.appendChild(li);
+            }
+
+        })
+        .catch(error => {
+            document.getElementById('chatList').innerText = "Error: " + error;
+        });
+}
+
+// for joining a chatroom on button click
+function joinChatroom(chatName){
+    window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(chatName);
+    chatName = chatName.trim();
+    let message = chatName + ":" + usrname + " joined this chat room!";
+    fetch(url + '/sendmessage', {
+        method: 'POST',
+        body: message
+    }).catch(error => {
+        document.getElementById('chatMessages').placeholder = "Error: " + error;
+    });
+    console.log(message);
+}
+
+
 
 let previousSend = 0;
 function sendMessage() {
