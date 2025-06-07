@@ -166,10 +166,27 @@ if (window.location.pathname.endsWith('chatTemplate.html')) {
     });
 }
 
+function isValidName(name) {
+    const pattern = /^[a-zA-Z0-9]+$/;
+    return pattern.test(name);
+}
 
+function validateUsername() {
+    const input = document.getElementById("Uname").value;
+    const hint = document.getElementById("usernameHint");
+
+    if (!isValidName(input)) {
+        hint.innerText = "Username not valid. No special characters allowed.";
+        return false; // Submission not possible
+    } else {
+        hint.innerText = ""; // No hint
+        return true; // Submission allowed
+    }
+}
 
 // Fetch in defined interval
 //setInterval(getThreadStatus, 10000);
+
 
 // Update frequently. This is usefull for our project to fetch new chat messages later on.
 // setInterval(getTime, 1000);
