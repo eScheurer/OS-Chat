@@ -115,6 +115,7 @@ void* thread_worker(void* arg) {
         thread_stats[index].total_active_time += elapsed;
         thread_stats[index].tasks_handled++;
         thread_stats[index].is_idle = true;
+        close(task.socket_id);
     }
     return NULL;
 }

@@ -143,9 +143,22 @@ function joinChatroom(chatName){
 
 
 
+let previousSend = 0;
 function sendMessage() {
+    const now = Date.now();
+    if (now - previousSend < 100) {
+        alert("Please don't spam.");
+        console.log("Please wait before sending new messages");
+        return;
+    }
+    previousSend = now;
     const textarea = document.getElementById("message-text")
-    let message = textarea.value;
+    let message = textarea.value.trim();
+
+    if (message === ""){
+        console.log("Empy request");
+        return;
+    }
     //extract ChatName from HTML
     const chatNameElement = document.getElementById('chat-title');
     const chatName = chatNameElement.innerText.trim(); //.trim() erases unwanted added elements from formating
