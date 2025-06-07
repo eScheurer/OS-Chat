@@ -123,11 +123,11 @@ void newChatroom(Task task) {
     //Get Actual Chat Message
     char* message = body+chatNameLen+1;
     //We insert strings into list, which will get copied
-    // TODO: chose methode name(&threadSafeList,message);
     createNewChat(chatList,chatName,message);
     //After we're done free the body of the dynamically allocated body & all used strings here again.
     free(body);
 }
+
 
 /** sends list of currently active chatrooms to client
  * @param task

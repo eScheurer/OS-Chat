@@ -95,8 +95,19 @@ function getChatRooms() {
 
 // for joining a chatroom on button click
 function joinChatroom(chatName){
-
+    window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(chatName);
+    chatName = chatName.trim();
+    let message = chatName + ":" + usrname + " joined this chat room!";
+    fetch(url + '/sendmessage', {
+        method: 'POST',
+        body: message
+    }).catch(error => {
+        document.getElementById('chatMessages').placeholder = "Error: " + error;
+    });
+    console.log(message);
 }
+
+
 
 
 function sendMessage() {

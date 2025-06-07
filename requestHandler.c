@@ -31,6 +31,7 @@ void handle_request(Task task) {
         sendChatUpdate(task);
         return;
     } if (strstr(task.buffer, "POST /sendmessage ") != NULL) {
+        printf("in send msg");
         extern void process_message(Task task);
         process_message(task);
         return;
