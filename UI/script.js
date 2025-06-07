@@ -4,7 +4,7 @@ let url = "http://localhost:8080"
 //This can be changed, standart is NoUsername for testing
 let usrname = "NoUsername"
 //This can be changed on buttton press, standart is general for testing
-let chatname = "general"
+//let chatname = "general"
 
 // For reading URL-parameters (in case needed somewhere else too)
 function getURLParam(param) {
@@ -77,7 +77,10 @@ function getChatRooms() {
 function sendMessage() {
     const textarea = document.getElementById("message-text")
     let message = textarea.value;
-    message = chatname + ":" + usrname + ": " + message
+    //extract ChatName from HTML
+    const chatNameElement = document.getElementById('chat-title');
+    const chatName = chatNameElement.innerText.trim(); //.trim() erases unwanted added elements from formating
+    message = chatName + ":" + usrname + ": " + message
     textarea.value = "";
     fetch(url + '/sendmessage', {
         method: 'POST',

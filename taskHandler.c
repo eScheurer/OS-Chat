@@ -14,6 +14,8 @@
 #include "server.h"
 
 char* extractHTTPBody(Task task);
+void send404(Task task);
+
 extern ChatList* chatList;
 /**
 * Sends the time to the client
@@ -60,9 +62,13 @@ void process_message(Task task) {
     printf("received message, processing... \n");
     //Get Message Body - Dynamically allocated!
     char* body = extractHTTPBody(task);
+    if (body == NULL) {
+        free(body);
+        return;
+    }
 
     //Get Chat Name
-    long chatNameLen = strstr(body,":") - body;
+    const long chatNameLen = strstr(body,":") - body;
     char chatName[chatNameLen+1];
     chatName[chatNameLen] = '\0';
     for (int i = 0; i < chatNameLen; i++) {
@@ -70,21 +76,32 @@ void process_message(Task task) {
     }
 
     //Get Actual Chat Message
-    char* message = body+chatNameLen+1;
+    const char* message = body+chatNameLen+1;
 
     //We insert strings into list, which will get copied
     insertMessage(chatList, chatName, message);
     //After we're done free the body of the dynamically allocated body & all used strings here again.
     free(body);
 }
+
 /**
  *  Reads out the current content of a chat and sends it to client.
  *  @param task contains the name of the current chatroom
  */
 void sendChatUpdate(Task task) {
     char* chatName = extractHTTPBody(task);
+    if (chatName == NULL) {
+        send404(task);
+        free(chatName);
+        return;
+    }
     //char chatName2[512] = "Chat Title";
     char* messages = getChatMessages(chatList, chatName);
+    if (messages == NULL) {
+        printf("Failed to send Chat update, chat could not be found");
+        free(messages);
+        messages = "Failed to load, trying again...";
+    };
     char response[1024];
     snprintf(response, sizeof(response),
         "HTTP/1.1 200 OK\r\n"
@@ -94,7 +111,6 @@ void sendChatUpdate(Task task) {
         "\r\n"
         "%s", strlen(messages), messages);
     send(task.socket_id, response, strlen(response), 0);
-    close(task.socket_id);
 
     free(chatName);
     free(messages);
@@ -106,8 +122,15 @@ void sendChatUpdate(Task task) {
  */
 void send404(Task task) {
     printf("404: invalid request made\n");
+    char* httpRequest = strdup(task.buffer);
+    char test[100];
+    printf("Buffer content: \n");
+    snprintf(test, sizeof(test), httpRequest);
+    printf(test);
+    printf("\n");
 
-    char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
+
+    const char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
     send(task.socket_id, not_found, strlen(not_found), 0);
 }
 
@@ -117,15 +140,20 @@ void send404(Task task) {
  */
 void newChatroom(Task task) {
     char* body = extractHTTPBody(task);
+    if (body == NULL) {
+        send404(task);
+        free(body);
+        return;
+    }
     //Get Chat Name
-    long chatNameLen = strstr(body,":") - body;
+    const long chatNameLen = strstr(body,":") - body;
     char chatName[chatNameLen+1];
     chatName[chatNameLen] = '\0';
     for (int i = 0; i < chatNameLen; i++) {
         chatName[i] = *(body+i);
     }
     //Get Actual Chat Message
-    char* message = body+chatNameLen+1;
+    const char* message = body+chatNameLen+1;
     //We insert strings into list, which will get copied
     // TODO: chose methode name(&threadSafeList,message);
     createNewChat(chatList,chatName,message);
@@ -148,13 +176,14 @@ char* extractHTTPBody(Task task) {
     }
 
     //We need to skip past the "Content-Length: " part of this line, so we add 16 and then convert the string to an integer
-    int bodyLength = strtol(ptr+16,NULL,10);
+    const int bodyLength = strtol(ptr+16,NULL,10);
     //printf("Received body length: %d\n", bodyLength);
 
     //Create new char array to store extracted buffer
     char* body = (char*)malloc((bodyLength+1)*sizeof(char));
     if (body == NULL) {
         printf("Memory allocation failed!\n");
+        free(body);
         return NULL;
     }
     body[bodyLength] = '\0';

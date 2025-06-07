@@ -34,7 +34,8 @@ void handle_request(Task task) {
         extern void process_message(Task task);
         process_message(task);
         return;
-    } if (strstr(task.buffer, "POST /newChat ") != NULL) {
+    } if (strstr(task.buffer, "POST /newChatroom/") != NULL) {
+        printf("i've reached the server");
         extern void newChatroom(Task task);
         newChatroom(task);
         return;

@@ -32,8 +32,31 @@ int main() {
     printf("creating ChatList \n");
     chatList = createChatList();
 
+    //TODO: Remove Test Code
+    /**
+    const char* message = "Cielle: Wow it really is working!";
+    createNewChat(chatList,"general","This server has made a chat!");
+    insertMessage(chatList,"general",message);
+    createNewChat(chatList,"test","This server has made a chat!");
+    insertMessage(chatList,"general",message);
+    insertMessage(chatList,"test",message);
+    char* messages = getChatMessages(chatList,"general");
+    printf(messages);
+    free(messages);
+    printf("\n");
+    char* chatNames = getChatNames(chatList);
+    printf(chatNames);
+    free(chatNames);
+    printf("\n");
+    insertMessage(chatList,"general",message);
+    messages = getChatMessages(chatList,"general");
+    printf(messages);
+    free(messages);
+    messages = getChatMessages(chatList,"test");
+    printf(messages);
+    free(messages);
     //End of test code
-
+    */
     // Setup for TCP connection
     printf("Server starting \n");
     struct Server server;

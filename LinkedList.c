@@ -102,7 +102,6 @@ char* getMessages(ThreadSafeList* list) {
     char* messages = malloc(strlen(buffer) + 1);
     strcpy(messages, buffer);
     free(buffer);
-    printf("%s\n", messages);
     return messages;
 }
 
