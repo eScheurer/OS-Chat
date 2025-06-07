@@ -140,7 +140,7 @@ int main() {
                 socklen_t len = sizeof(client);
                 // Accepting the connection from the connecting client
                 int client_socket = accept(server.socket, (struct sockaddr *)&client, &len);
-                printf("New client connecting \n");
+                printf("New payload received \n");
                 if (client_socket == -1) {
                     perror("Failed to accept client \n");
                     continue;
