@@ -18,3 +18,5 @@ add_executable(OS_Chat
         chatList.h
         chatList.c
 )
+
+target_link_libraries(OS_Chat pthread rt)
