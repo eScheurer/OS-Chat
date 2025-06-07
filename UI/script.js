@@ -184,6 +184,37 @@ function validateUsername() {
     }
 }
 
+function validateChatname() {
+    const input = document.getElementById("userInput").value;
+    const hint = document.getElementById("chatnameHint");
+
+    if (!isValidName(input)) {
+        hint.innerText = "Chatname not valid. No special characters allowed.";
+        return false; // Submission not possible
+    } else {
+        hint.innerText = ""; // No hint
+        return true; // Submission allowed
+    }
+}
+
+function isValidMessage(message) {
+    const pattern = /^[^$]+$/;
+    return pattern.test(message);
+}
+
+function validateMessage() {
+    const input = document.getElementById("message-text").value;
+    const hint = document.getElementById("messageHint");
+
+    if (!isValidMessage(input)) {
+        hint.innerText = "Message not valid. No Dollarsign allowed.";
+        return false; // Submission not possible
+    } else {
+        hint.innerText = ""; // No hint
+        return true; // Submission allowed
+    }
+}
+
 // Fetch in defined interval
 //setInterval(getThreadStatus, 10000);
 
