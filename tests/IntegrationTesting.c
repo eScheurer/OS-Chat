@@ -39,17 +39,20 @@ void* client_behavior(void* arg) {
 
     char body[128];
     snprintf(body, sizeof(body),
-         "chatroom=Room%d&message=HelloFromClient%dMsg%d",
-         client_id % 10, client_id, i); // Reuse 10 rooms for stress
+         "chatroom=Room%d&message=HelloFromClient%d",
+         client_id % 10, client_id); // Reuse 10 rooms for stress, cycle through 0-9 chatroom if more than 10 clients
 
     char request[512];
     snprintf(request, sizeof(request),
            "POST /chat HTTP/1.1\r\n"
+           "Host: %s\r\n"
            "Content-Type: text/plain\r\n"
            "Content-Length: %ld\r\n"
            "\r\n"
            "%s",
+           SERVER_IP,
            strlen(body),body);
+    printf("request: %s\n", request);
 
      // Send request
     send(sock, request, strlen(request), 0);
