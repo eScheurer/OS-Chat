@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <stdatomic.h>
 
 
 
@@ -12,6 +13,9 @@
 #define NUM_MESSAGES 10
 #define SERVER_IP "127.0.0.1" // Todo: change for server not running on Helene machine
 #define SERVER_PORT 8080
+
+// To track success
+atomic_int failed_requests = 0;
 
 void* client_behavior(void* arg) {
   int client_id = *(int*)arg;
@@ -28,12 +32,14 @@ void* client_behavior(void* arg) {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
       perror("Socket creation failed\n");
+      atomic_fetch_add(&failed_requests, 1);
       return NULL;
     }
 
     if(connect(sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
       perror("Connect failed\n");
       close(sock);
+      atomic_fetch_add(&failed_requests, 1);
       return NULL;
     }
 
@@ -52,10 +58,12 @@ void* client_behavior(void* arg) {
            "%s",
            SERVER_IP,
            strlen(body),body);
-    printf("request: %s\n", request);
 
-     // Send request
-    send(sock, request, strlen(request), 0);
+    // Send request and track
+    if (send(sock, request, strlen(request), 0) < 0) {
+      perror("send failed\n");
+      atomic_fetch_add(&failed_requests, 1);
+    }
     close(sock);
     usleep(1000000); // Simulate human tying
   }
@@ -78,5 +86,10 @@ int main() {
   }
 
   printf("Integration test with %d clients completed\n", NUM_CLIENTS);
+  if (failed_requests == 0) {
+    printf("All requests were handled successfully!\n");
+  } else {
+    printf("There were errors during the test.\n Failed requests: %d\n", failed_requests);
+  }
   return 0;
 }
