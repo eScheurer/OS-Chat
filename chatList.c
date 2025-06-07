@@ -129,7 +129,6 @@ char* getChatMessages(ChatList* chatList, const char* inChatName) {
     }
 
     //If we couldn't find the chat we return NULL
-    free(chatName);
     readerUnlock(chatList);
     return NULL;
 }
