@@ -134,7 +134,7 @@ int main() {
         // Looping through all file descriptors (sockets)
         for (int i = 0; i < n; i++) {
             // If the event is triggered by the server socket, then a new client connected
-            // (Clients establish connection with server socket)
+            // Accepting new connection from client -> Arrive on server socket
             if (events[i].data.fd == server.socket) {
                 struct sockaddr_in client;
                 socklen_t len = sizeof(client);
@@ -152,29 +152,42 @@ int main() {
                 event.data.fd = client_socket;
 
                 // Adding new client to be watched by epoll
-                if (epoll_ctl(epoll_instance, EPOLL_CTL_ADD, client_socket, &event)) {
+                if (epoll_ctl(epoll_instance, EPOLL_CTL_ADD, client_socket, &event) == -1) {
                     perror("Failed to add event to epoll \n");
                     exit(EXIT_FAILURE);
                 }
-            } else { // Otherwise it's an already connected client sending something
+            } else { // Otherwise it's again data from an already connected client sending something or disconnecting early
                 int client_socket = events[i].data.fd;
-                char buffer[BUFFER_SIZE] = {0};
-
+                char buffer[BUFFER_SIZE];
+                ssize_t bytes_read;
                 // Reading data from client socket
-                ssize_t bytes_read = read(client_socket, buffer, BUFFER_SIZE-1);
+                while (true) {
 
-                if (bytes_read < 0) {
-                    if (errno != EAGAIN & errno != EWOULDBLOCK) {
+                bytes_read = read(client_socket, buffer, BUFFER_SIZE-1);
+
+                    if (bytes_read > 0) {
+                        buffer[bytes_read] = '\0';
+
+                        Task taskTest;
+                        taskTest.socket_id = client_socket;
+                        strcpy(taskTest.buffer, buffer);
+                        add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding
+                    } else if (bytes_read == 0) {
+                        printf("Client disconnected \n");
                         close(client_socket);
                         epoll_ctl(epoll_instance, EPOLL_CTL_DEL, client_socket, NULL);
+                        break;
+                    }else {
+                        if (errno == EAGAIN && errno == EWOULDBLOCK) {
+                            break;
+                        } else {
+                            perror("Failed to read client data \n");
+                            close(client_socket);
+                            epoll_ctl(epoll_instance, EPOLL_CTL_DEL, client_socket, NULL);
+                            break;
+                        }
                     }
-                    continue;
                 }
-
-                Task taskTest;
-                taskTest.socket_id = client_socket;
-                strcpy(taskTest.buffer, buffer);
-                add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding
 
             }
         }

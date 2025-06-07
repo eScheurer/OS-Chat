@@ -12,7 +12,7 @@
 // Constants
 #define PORT 8080
 #define BUFFER_SIZE 16000
-#define MAX_EVENTS 10
+#define MAX_EVENTS 100
 
 // Forward declaration of the Server struct
 struct Server;

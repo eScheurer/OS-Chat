@@ -98,7 +98,7 @@ void sendChatUpdate(Task task) {
     //char chatName2[512] = "Chat Title";
     char* messages = getChatMessages(chatList, chatName);
     if (messages == NULL) {
-        printf("Failed to send Chat update, chat could not be found");
+        printf("Failed to send Chat update, chat could not be found\n");
         free(messages);
         messages = "Failed to load, trying again...";
     };
@@ -122,13 +122,14 @@ void sendChatUpdate(Task task) {
  */
 void send404(Task task) {
     printf("404: invalid request made\n");
+    /**
     char* httpRequest = strdup(task.buffer);
     char test[100];
     printf("Buffer content: \n");
     snprintf(test, sizeof(test), httpRequest);
     printf(test);
     printf("\n");
-
+*/
 
     const char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
     send(task.socket_id, not_found, strlen(not_found), 0);
@@ -171,7 +172,7 @@ char* extractHTTPBody(Task task) {
     //Search for Body length in HTTP Header
     char* ptr =  strstr(task.buffer, "Content-Length:");
     if (ptr == NULL) {
-        printf("Error: Could not read received message from buffer");
+        printf("Error: Could not read received message from buffer\n");
         return NULL;
     }
 
