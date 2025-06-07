@@ -13,7 +13,9 @@
         <h1>Multithreaded Chat Server</h1>
         <form>
             <label for="Uname">Please type in a Username:</label>
-            <input type="text" id="Uname" name="Uname"><br><br>
+            <input type="text" id="Uname" name="Uname" oninput="validateUsername()">
+            <p id="usernameHint" style="color: red;"></p>
+            <br><br>
         </form>
         Currently available Chat-Rooms: <button onclick="getChatRooms()">Refresh</button>
         <div id="chatList">
@@ -23,7 +25,8 @@
         <div id="popup" style="display: none;">
             <div id="content">
                 <h2>Please choose a name for you chat room:</h2>
-                <input type="text" id="userInput" placeholder="please type here..">
+                <input type="text" id="userInput" placeholder="please type here.." oninput="validateChatname()">
+                <p id="chatnameHint" style="color:red;"></p>
                 <button id="confirmButton">Create</button>
                 <button id="closePopup">X</button>
             </div>
