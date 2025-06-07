@@ -93,6 +93,40 @@ function getChatRooms() {
         });
 }
 
+// For displaying currently available chatrooms
+function getChatRoomsfromChat() {
+    //extract ChatName from HTML
+    const chatNameElement = document.getElementById('chat-title');
+    const chatName = chatNameElement.innerText.trim(); //.trim() erases unwanted added elements from formating
+
+    const ul = document.getElementById('chatRoomsList');
+    ul.innerHTML = ''; // List needs to be emptied so that no duplicate chatrooms are shown
+    fetch(url + '/chatList/')
+        .then(response => response.text())
+        .then(data => {
+            const chatRoomsList = data.split('$').filter(name => name !== '' && name !== 'Empty chatList' && name !== chatName);
+            if (chatRoomsList.length === 0) { // No chatrooms yet
+                ul.innerHTML = '<li>No other chat rooms yet</li>';
+                return;
+            }
+            for (let i = 0; i < chatRoomsList.length; i++) {
+                const chatName = chatRoomsList[i].trim();
+                const li = document.createElement('li');
+                li.textContent = chatName;
+                const button = document.createElement('button') ;
+                button.textContent = 'Join'; button.onclick = function () {
+                    joinChatroom(chatName);
+                };
+                li.appendChild(button);
+                ul.appendChild(li);
+            }
+
+        })
+        .catch(error => {
+            document.getElementById('chatList').innerText = "Error: " + error;
+        });
+}
+
 // for joining a chatroom on button click
 function joinChatroom(chatName){
     window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(chatName);
@@ -106,7 +140,6 @@ function joinChatroom(chatName){
     });
     console.log(message);
 }
-
 
 
 

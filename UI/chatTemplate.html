@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <title>OS-Chatroom</title>
 </head>
-<body onload="getChatRooms(); getThreadStatus(); setInterval(getChatUpdate, 10000)">
+<body onload="getThreadStatus(); setInterval(getChatUpdate, 10000)">
 <table>
     <tr>
-        <th>Chat Rooms:<button onclick="getChatRooms()">refresh</button></th>
+        <th>Chat Rooms:<button onclick="getChatRoomsfromChat()">refresh</button></th>
         <th>
             <div id="chat-title"></div>
         </th>
