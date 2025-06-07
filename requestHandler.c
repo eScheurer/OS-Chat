@@ -31,13 +31,17 @@ void handle_request(Task task) {
         sendChatUpdate(task);
         return;
     } if (strstr(task.buffer, "POST /sendmessage ") != NULL) {
+        printf("in send msg");
         extern void process_message(Task task);
         process_message(task);
         return;
     } if (strstr(task.buffer, "POST /newChatroom/") != NULL) {
-        printf("i've reached the server");
         extern void newChatroom(Task task);
         newChatroom(task);
+        return;
+    } if (strstr(task.buffer, "GET /chatList/") != NULL) {
+        extern void allChats(Task task);
+        allChats(task);
         return;
     }
     extern void send404(Task task);

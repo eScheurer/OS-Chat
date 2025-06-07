@@ -4,18 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <title>OS-Chatroom</title>
+    <link rel="stylesheet" href="chatLayout.css">
 </head>
-<body onload="getChatRooms(); getThreadStatus(); setInterval(getChatUpdate, 10000)">
+<body onload="getThreadStatus(); setInterval(getChatUpdate, 10000)">
 <table>
     <tr>
-        <th>Chat Rooms:<button onclick="getChatRooms()">refresh</button></th>
+        <th>Chat Rooms:<button onclick="getChatRoomsfromChat()">refresh</button></th>
         <th>
             <div id="chat-title"></div>
         </th>
         <th>Data</th>
     </tr>
     <tr>
-        <td><div id="chatList"> -no current chats- </div>
+        <td>
+            <div id="chatList">
+                <ul id="chatRoomsList"></ul>
+            </div>
         </td>
         <td>
             <div id="chatMessages">-Chat-</div>

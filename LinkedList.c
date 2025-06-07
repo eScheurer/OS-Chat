@@ -43,15 +43,15 @@ void insert(ThreadSafeList* list, const char* message) {
         list->head = new_node;
         list->tail = new_node;
     } else {
-        list->head->next = new_node;
-        list->head = new_node;
+        list->tail->next = new_node;
+        list->tail = new_node;
     }
 
     list->size++;
 
     if (list->size > NUM_OF_ELEMENTS_IN_LIST) {
-        Node* temp = list->tail;
-        list->tail = list->tail->next;
+        Node* temp = list->head;
+        list->head = list->head->next;
 
         free(temp->message);
         free(temp);
@@ -71,7 +71,7 @@ void print(ThreadSafeList* list) {
     pthread_mutex_lock(&list->lock);
 
     printf("[%s] ", list->listName);
-    Node* current = list->tail;
+    Node* current = list->head;
     while (current) {
         printf("%s -> ",current->message);
         current = current->next;
@@ -91,7 +91,7 @@ char* getMessages(ThreadSafeList* list) {
         return NULL;
     }
 
-    Node* current = list->tail;
+    Node* current = list->head;
     sprintf(buffer, "%s$", current->message);
     current = current->next;
     while (current) {
@@ -154,15 +154,15 @@ char* formatMessagesForSending(const char* chatName) {
 void freeList(ThreadSafeList* list) {
     pthread_mutex_lock(&list->lock);
 
-    Node* current = list->head;
+    Node* current = list->tail;
     while (current) {
         Node* temp = current;
         current = current->next;
         free(temp->message);
         free(temp);
     }
-    list->head = NULL;
     list->tail = NULL;
+    list->head = NULL;
     list->size = 0;
 
     free(list->listName);
@@ -194,7 +194,7 @@ void saveToFile(ThreadSafeList* list) {
         return;
     }
 
-    Node* current = list->tail;
+    Node* current = list->head;
     while (current) {
         fprintf(file, "%s\n",current->message);
         current = current->next;

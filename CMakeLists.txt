@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.31)
 project(OS_Chat C)
 
 set(CMAKE_C_STANDARD 11)
@@ -19,6 +19,7 @@ add_executable(OS_Chat
         chatList.c
 )
 
+target_link_libraries(OS_Chat pthread rt)
 # ----- Tests -----
 
 # Executable for Unit tests

@@ -1,0 +1,38 @@
+body{
+    color: #292E1E;
+    background-color: #32CBFF;
+    align-content: center;
+    align-items: center;
+}
+h1{
+    background-color: white;
+    text-align: center;
+    margin: 20px auto 40px;
+    padding: 5px;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #292E1E;
+    width: 80%;
+}
+
+#main {
+    background-color: #F4EBE8;
+    border-radius: 25px;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    margin: auto;
+    width: 90%;
+    padding: 20px;
+}
+
+#content {
+    background-color: white;
+    border-radius: 25px;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    margin: auto;
+    width: 60%;
+    padding: 1%;
+}

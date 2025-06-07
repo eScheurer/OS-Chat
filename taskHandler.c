@@ -100,7 +100,8 @@ void sendChatUpdate(Task task) {
     if (messages == NULL) {
         printf("Failed to send Chat update, chat could not be found\n");
         free(messages);
-        messages = "Failed to load, trying again...";
+        //messages = "Failed to load, trying again...";
+        return;
     };
     char response[1024];
     snprintf(response, sizeof(response),
@@ -111,9 +112,6 @@ void sendChatUpdate(Task task) {
         "\r\n"
         "%s", strlen(messages), messages);
     send(task.socket_id, response, strlen(response), 0);
-
-    free(chatName);
-    free(messages);
 }
 
 /**
@@ -156,10 +154,26 @@ void newChatroom(Task task) {
     //Get Actual Chat Message
     const char* message = body+chatNameLen+1;
     //We insert strings into list, which will get copied
-    // TODO: chose methode name(&threadSafeList,message);
     createNewChat(chatList,chatName,message);
     //After we're done free the body of the dynamically allocated body & all used strings here again.
     free(body);
+}
+
+
+/** sends list of currently active chatrooms to client
+ * @param task
+ */
+void allChats(Task task) {
+    char* message = getChatNames(chatList);
+    char response[1024];
+    snprintf(response, sizeof(response),
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/plain\r\n"
+            "Access-Control-Allow-Origin: *\r\n"
+            "Content-Length: %lu\r\n"
+            "\r\n"
+            "%s", strlen(message), message);
+    send(task.socket_id, response, strlen(response), 0);
 }
 
 

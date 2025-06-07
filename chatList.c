@@ -149,7 +149,7 @@ char* getChatNames(ChatList* chatList) {
     if (chatList->head == NULL) {
         readerUnlock(chatList);
         free(buffer);
-        return NULL;
+        return "Empty chatList";
     }
     //We iterate over all Nodes and add their names to the buffer
     ListNode* currentNode = chatList->head;
