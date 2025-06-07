@@ -21,7 +21,7 @@ add_executable(OS_Chat
 
 # ----- Tests -----
 
-# Executable for testfiles
+# Executable for Unit tests
 add_executable(UnitTesting
         tests/UnitTesting.c
         LinkedList.c
@@ -31,3 +31,12 @@ add_executable(UnitTesting
 
 # Link pthread
 target_link_libraries(UnitTesting pthread)
+
+
+# Executable for Integration tests
+add_executable(IntegrationTesting
+        tests/IntegrationTesting.c
+)
+
+# Link pthread
+target_link_libraries(IntegrationTesting pthread)
