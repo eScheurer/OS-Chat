@@ -16,6 +16,7 @@
 #include "threadpool.h"
 
 ChatList* chatList;
+ChatDatabase* chatDatabase;
 
 int main() {
     /**
@@ -31,6 +32,7 @@ int main() {
 */
     printf("creating ChatList \n");
     chatList = createChatList();
+    chatDatabase = createChatDatabase();
 
     //TODO: Remove Test Code
     /**

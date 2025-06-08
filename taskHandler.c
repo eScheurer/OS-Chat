@@ -17,6 +17,7 @@ char* extractHTTPBody(Task task);
 void send404(Task task);
 
 extern ChatList* chatList;
+extern ChatDatabase* chatDatabase;
 /**
 * Sends the time to the client
 * @param client_socket connection socket to the client

@@ -6,6 +6,7 @@
 #include "chatList.h"
 #include "LinkedList.h"
 
+static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 //These functions should not be accessible for any other files
 void readerLock(ChatList* chatList);
 void readerUnlock(ChatList* chatList);
@@ -24,6 +25,13 @@ ChatList* createChatList() {
     pthread_mutex_init(&chatList->readLock,NULL);
     sem_init(&chatList->queue,0,1);
     return chatList;
+}
+
+ChatDatabase* createChatDatabase() {
+    ChatDatabase* chatDatabase = malloc(sizeof(ChatDatabase));
+    chatDatabase->head = NULL;
+    chatDatabase->tail = NULL;
+    return chatDatabase;
 }
 
 /**
@@ -167,6 +175,11 @@ char* getChatNames(ChatList* chatList) {
     strcpy(chatNames, buffer);
     free(buffer);
     return chatNames;
+}
+
+void chatNamesDatabase(ChatDatabase* chatDatabase, char* ChatName) {
+    pthread_mutex_lock(&lock);
+
 }
 
 /**

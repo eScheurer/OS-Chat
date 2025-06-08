@@ -26,7 +26,18 @@ typedef struct ChatList {
     sem_t queue;
 } ChatList;
 
+typedef struct DatabaseNode {
+    char* name;
+    struct DatabaseNode* next;
+} DatabaseNode;
+
+typedef struct ChatDatabase {
+    ListNode* head;
+    ListNode* tail;
+} ChatDatabase;
+
 ChatList* createChatList();
+DatabaseNode* createDatabaseNode();
 void createNewChat(ChatList* chatList,const char* chatName, const char* message);
 void insertMessage(ChatList* chatList,const char* chatName, const char* message);
 char* getChatNames(ChatList* chatList);
