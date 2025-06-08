@@ -7,17 +7,57 @@
 #include <sys/epoll.h>
 #include <fcntl.h>
 #include <errno.h>
-
-#include "server.h"
-
 #include <signal.h>
 
+#include "server.h"
 #include "chatList.h"
 #include "threadpool.h"
 
 ChatList* chatList;
 ChatDatabase* chatDatabase;
 
+
+/**
+ * Helperfunction to receive full request before proceed in requestHandler
+*/
+ssize_t recv_full_request(int socket, char *buffer, size_t buffer_size) {
+    ssize_t total_received = 0;
+    while (1) {
+        ssize_t bytes_received = recv(socket, buffer + total_received, buffer_size - total_received -1, 0);
+        if (bytes_received <= 0) {
+            return -1; // Error or closed connection
+        }
+
+        total_received += bytes_received;
+        buffer[total_received] = '\0';
+
+        // Check if full request has been received
+        if (strstr (buffer, "\r\n\r\n") != NULL) {
+            break; // End found
+        }
+    }
+    return total_received;
+}
+
+/**
+ * Gets the file status of a file and setts the O_NONBLOCK flag.
+ * This ensures that the socket isn't blocking. (Not waiting for accept, read or write like in the prototype before)
+ * @param fd Socket to make non blocking
+ * @return Exit status of operation (Unused)
+ */
+int setNonBlocking(int fd) {
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags < 0) {
+        return -1;
+    }
+    return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+}
+
+
+/**
+ * Main function for Server
+ * @return
+ */
 int main() {
     /**
     //only for testing`!!
@@ -122,7 +162,6 @@ int main() {
     }
 
     init_thread_pool();
-
     //This makes it so we ignore the error if the socket we try to write to should be closed. (If someone leaves the website or refreshes it for example)
     signal(SIGPIPE, SIG_IGN);
 
@@ -142,7 +181,7 @@ int main() {
                 socklen_t len = sizeof(client);
                 // Accepting the connection from the connecting client
                 int client_socket = accept(server.socket, (struct sockaddr *)&client, &len);
-                printf("New client connecting \n");
+                printf("New payload received \n");
                 if (client_socket == -1) {
                     perror("Failed to accept client \n");
                     continue;
@@ -161,51 +200,30 @@ int main() {
             } else { // Otherwise it's again data from an already connected client sending something or disconnecting early
                 int client_socket = events[i].data.fd;
                 char buffer[BUFFER_SIZE];
-                ssize_t bytes_read;
-                // Reading data from client socket
-                while (true) {
-
-                bytes_read = read(client_socket, buffer, BUFFER_SIZE-1);
-
-                    if (bytes_read > 0) {
-                        buffer[bytes_read] = '\0';
-
-                        Task taskTest;
-                        taskTest.socket_id = client_socket;
-                        strcpy(taskTest.buffer, buffer);
-                        add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding
-                    } else if (bytes_read == 0) {
-                        printf("Client disconnected \n");
-                        close(client_socket);
-                        epoll_ctl(epoll_instance, EPOLL_CTL_DEL, client_socket, NULL);
-                        break;
-                    }else {
-                        if (errno == EAGAIN && errno == EWOULDBLOCK) {
+                // Reading full request from client socket
+                ssize_t bytes_read = recv_full_request(client_socket, buffer, BUFFER_SIZE);
+                if (bytes_read > 0) {
+                    buffer[bytes_read] = '\0';
+                    printf("received full request: \n%s\n", buffer); // For debugging
+                    Task taskTest;
+                    taskTest.socket_id = client_socket;
+                    strcpy(taskTest.buffer, buffer);
+                    add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding
+                } else if (bytes_read == 0) {
+                    printf("Client disconnected \n");
+                    close(client_socket);
+                    epoll_ctl(epoll_instance, EPOLL_CTL_DEL, client_socket, NULL);
+                } else {
+                    if (errno == EAGAIN && errno == EWOULDBLOCK) {
                             break;
-                        } else {
+                    } else {
                             perror("Failed to read client data \n");
                             close(client_socket);
                             epoll_ctl(epoll_instance, EPOLL_CTL_DEL, client_socket, NULL);
-                            break;
-                        }
                     }
                 }
-
             }
         }
     }
 }
 
-/**
- * Gets the file status of a file and setts the O_NONBLOCK flag.
- * This ensures that the socket isn't blocking. (Not waiting for accept, read or write like in the prototype before)
- * @param fd Socket to make non blocking
- * @return Exit status of operation (Unused)
- */
-int setNonBlocking(int fd) {
-    int flags = fcntl(fd, F_GETFL, 0);
-    if (flags < 0) {
-        return -1;
-    }
-    return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-}

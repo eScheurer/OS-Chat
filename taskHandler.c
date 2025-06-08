@@ -101,7 +101,8 @@ void sendChatUpdate(Task task) {
     if (messages == NULL) {
         printf("Failed to send Chat update, chat could not be found\n");
         free(messages);
-        messages = "Failed to load, trying again...";
+        //messages = "Failed to load, trying again...";
+        return;
     };
     char response[1024];
     snprintf(response, sizeof(response),

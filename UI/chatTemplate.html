@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>OS-Chatroom</title>
+    <link rel="stylesheet" href="chatLayout.css">
 </head>
 <body onload="getThreadStatus(); setInterval(getChatUpdate, 10000)">
 <table>
@@ -29,8 +30,10 @@
                       maxlength="500"
                       writingsuggestions="true"
                       spellcheck="true"
-                      placeholder="type here..."></textarea>
-            <button onclick=sendMessage()>
+                      placeholder="type here..."
+                      oninput="validateMessage()"></textarea>
+            <p id="messageHint" style="color:red;"></p>
+            <button onclick="if (validateMessage()) sendMessage();">
                 send!
             </button>
         </td>

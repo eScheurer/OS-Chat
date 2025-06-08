@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <errno.h>
-#include <threadpool.h>
+#include "threadpool.h"
 #include <string.h>
 
 #define MAX_QUEUE 128 //reicht das aus? sollte queue dynamsich wachsen?
@@ -57,6 +57,7 @@ int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, cons
  * Worker thread function to handle the task (client socket)
  */
 void* thread_worker(void* arg) {
+    printf("Thread %ld handling request\n", pthread_self()); // Used for IntegartionTesting
     int index = (int)(size_t)arg; // Pass thread index when creating
     thread_stats[index].thread_id = pthread_self();
     thread_stats[index].tasks_handled = 0;
