@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "chatList.h"
 #include "LinkedList.h"
@@ -27,11 +28,11 @@ ChatList* createChatList() {
     return chatList;
 }
 
-ChatDatabase* createChatDatabase() {
-    ChatDatabase* chatDatabase = malloc(sizeof(ChatDatabase));
-    chatDatabase->head = NULL;
-    chatDatabase->tail = NULL;
-    return chatDatabase;
+Database* createDatabase() {
+    Database* database = malloc(sizeof(Database));
+    database->head = NULL;
+    database->tail = NULL;
+    return database;
 }
 
 /**
@@ -177,9 +178,47 @@ char* getChatNames(ChatList* chatList) {
     return chatNames;
 }
 
-void chatNamesDatabase(ChatDatabase* chatDatabase, char* ChatName) {
+/** checks if Name taken, if yes: retrun that info. If no: append name in list and return info ok
+ */
+char* namesDatabase(Database* databaseList, char* name) {
     pthread_mutex_lock(&lock);
+    if (search(databaseList, name) == true) {
+        pthread_mutex_unlock(&lock);
+        return "TAKEN";
+    }
+    append(databaseList, name);
+    pthread_mutex_unlock(&lock);
+    return "OK";
+}
 
+/** returns true if name in list, false if not
+ */
+bool search(Database* list, const char* newName) {
+    DatabaseNode* current = list->head;
+    while (current != NULL) {
+        if (strcmp(current->name, newName) == 0) {
+            return true;  // found it
+        }
+        current = current->next;
+    } return false;  // not found
+}
+
+/** appends an element to a linked list database
+ */
+void append(Database* list, const char* newName) {
+    DatabaseNode* new_node = malloc(sizeof(Node));
+    if (!new_node) {
+        perror("malloc failed for append");
+    }
+    new_node->name = strdup(newName);  // copy name into node
+    new_node->next = NULL;
+
+    if (list->tail) { // List not empty -> append
+        list->tail->next = new_node;
+    } else { // List empty -> set head
+        list->head = new_node;
+    }
+    list->tail = new_node; // update tail
 }
 
 /**

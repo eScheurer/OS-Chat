@@ -31,17 +31,20 @@ typedef struct DatabaseNode {
     struct DatabaseNode* next;
 } DatabaseNode;
 
-typedef struct ChatDatabase {
+typedef struct Database {
     ListNode* head;
     ListNode* tail;
-} ChatDatabase;
+} Database;
 
 ChatList* createChatList();
 DatabaseNode* createDatabaseNode();
+Database* createDatabase();
 void createNewChat(ChatList* chatList,const char* chatName, const char* message);
 void insertMessage(ChatList* chatList,const char* chatName, const char* message);
 char* getChatNames(ChatList* chatList);
 char* getChatMessages(ChatList* chatList, const char* chatName);
+bool search(Database* database, const char* chatName);
+void append(Database* database, const char* chatName);
 //void saveChatToFile(ChatList* chatList);
 //void loadFromFile(ChatList* chatList, const char* chatName);
 //void* thread_routine(void* arg);
