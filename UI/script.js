@@ -22,11 +22,13 @@ function setUserName(){
         return;
     }
     let username = usernameInput.value.trim();
-    console.log("username = " + username);
-    usernameInput.placeholder = username;
-    sessionStorage.setItem("username",username);
-    usernameInput.value = "";
-    console.log("stored username: " + sessionStorage.getItem("username"));
+    if(isValidName(username)){
+        console.log("username = " + username);
+        usernameInput.placeholder = username;
+        sessionStorage.setItem("username",username);
+        usernameInput.value = "";
+        console.log("stored username: " + sessionStorage.getItem("username"));
+    }
 }
 
 function getUserName(){
@@ -258,7 +260,7 @@ function isValidName(name) {
 }
 
 function validateUsername() {
-    const input = document.getElementById("Uname").value;
+    const input = document.getElementById("username").value;
     const hint = document.getElementById("usernameHint");
 
     if (!isValidName(input)) {
