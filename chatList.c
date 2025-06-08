@@ -180,7 +180,7 @@ char* getChatNames(ChatList* chatList) {
 
 /** checks if Name taken, if yes: retrun that info. If no: append name in list and return info ok
  */
-char* namesDatabase(Database* databaseList, char* name) {
+char* checkNamesDatabase(Database* databaseList, char* name) {
     pthread_mutex_lock(&lock);
     if (search(databaseList, name) == true) {
         pthread_mutex_unlock(&lock);

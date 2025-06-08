@@ -178,6 +178,27 @@ void allChats(Task task) {
     send(task.socket_id, response, strlen(response), 0);
 }
 
+/** coordinates communication for checking if name already exists and saving of not
+ */
+void checkAndWriteName(Task task, Database* database) {
+    char* name = extractHTTPBody(task); //is body rly just name??
+    if (name == NULL) {
+        send404(task);
+        free(name);
+        return;
+    }
+    char* message = checkNamesDatabase(database, name);
+    char response[1024];
+    snprintf(response, sizeof(response),
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/plain\r\n"
+            "Access-Control-Allow-Origin: *\r\n"
+            "Content-Length: %lu\r\n"
+            "\r\n"
+            "%s", strlen(message), message);
+    send(task.socket_id, response, strlen(response), 0);
+    free(name);
+}
 
 /**
  * Extracts the Body of a http message.
