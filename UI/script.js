@@ -48,10 +48,31 @@ window.addEventListener('DOMContentLoaded', () => {
 // The "Create" button
     document.getElementById("confirmButton").addEventListener("click", function (){
         const input = document.getElementById("userInput").value;
-        createNewChatroom(input);
+        checkChatName(input);
         document.getElementById("userInput").value = ""; // Reset input
     });
 });
+
+function checkChatName(name) {
+    fetch(url + '/checkChatName/', {
+        method: 'POST',
+        body: name
+    })
+        .then(response => response.text())
+        .then(text => {
+            if (text.includes("FREE")) {
+                createNewChatroom(name);
+            } else if (text.includes("TAKEN")) {
+                document.getElementById('chatnameHint').textContent = "Name already taken, please choose another one.";
+            } else {
+                console.log("Something went wrong with checking the name. Response was:", text);
+            }
+        })
+        .catch(error => {
+            document.getElementById('chatnameHint').textContent = "Error: " + error;
+        });
+}
+
 function createNewChatroom(name){
     window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(name);
     let message = name;
@@ -60,7 +81,7 @@ function createNewChatroom(name){
         method: 'POST',
         body: message
     }).catch(error => {
-        document.getElementById('chatMessages').placeholder = "Error: " + error;
+        document.getElementById('chatRoomsList').placeholder = "Error: " + error;
     });
     console.log(message);
 }

@@ -48,11 +48,12 @@ void handle_request(Task task) {
         extern void allChats(Task task);
         allChats(task);
         return;
-    } if (strstr(task.buffer, "GET /checkChatName/") != NULL) {
+    } if (strstr(task.buffer, "POST /checkChatName/") != NULL) {
+        printf("in checkChatName");
         extern void checkAndWriteName(Task task, Database* database);
         checkAndWriteName(task, chatDatabase);
         return;
-    } if (strstr(task.buffer, "GET /checkUsername/") != NULL) {
+    } if (strstr(task.buffer, "POST /checkUsername/") != NULL) {
         extern void checkAndWriteName(Task task, Database* database);
         checkAndWriteName(task, userDatabase);
         return;

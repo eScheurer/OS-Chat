@@ -188,7 +188,7 @@ char* checkNamesDatabase(Database* databaseList, char* name) {
     }
     append(databaseList, name);
     pthread_mutex_unlock(&lock);
-    return "OK";
+    return "FREE";
 }
 
 /** returns true if name in list, false if not

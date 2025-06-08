@@ -8,6 +8,7 @@
 #include <LinkedList.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <stdbool.h>
 
 #define NUM_OF_ELEMENTS_IN_LIST 100
 
@@ -43,7 +44,7 @@ void createNewChat(ChatList* chatList,const char* chatName, const char* message)
 void insertMessage(ChatList* chatList,const char* chatName, const char* message);
 char* getChatNames(ChatList* chatList);
 char* getChatMessages(ChatList* chatList, const char* chatName);
-char* checkNamesDatabase(Database* Database, const char* Name);
+char* checkNamesDatabase(Database* databaseList, char* name);
 bool search(Database* database, const char* chatName);
 void append(Database* database, const char* chatName);
 //void saveChatToFile(ChatList* chatList);
