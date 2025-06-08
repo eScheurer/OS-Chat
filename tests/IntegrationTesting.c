@@ -9,13 +9,13 @@
 
 
 
-#define NUM_CLIENTS 10 // Todo: test up to 100 clients
-#define NUM_MESSAGES 10
+#define NUM_CLIENTS 100 // Todo: test up to 100 clients
+#define NUM_MESSAGES 5
 #define SERVER_IP "127.0.0.1" // Todo: change for server not running on Helene machine
 #define SERVER_PORT 8080
 
 // To track success
-atomic_int failed_requests = 0;
+int failed_requests = 0;
 
 void* client_behavior(void* arg) {
   int client_id = *(int*)arg;
