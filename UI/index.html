@@ -11,10 +11,14 @@
     <div id="main">
         Welcome to the OSFS25 Project:
         <h1>Multithreaded Chat Server</h1>
-        <form>
-            <label for="Uname">Please type in a Username:</label>
-            <input type="text" id="Uname" name="Uname"><br><br>
-        </form>
+        <label for="username">Set a Username:</label>
+        <input id="username"
+               maxlength="20"
+               writingsuggestions="true"
+               placeholder="Username">
+        <button onclick=setUserName()>
+            confirm
+        </button>
         Currently available Chat-Rooms: <button onclick="getChatRooms()">Refresh</button>
         <div id="chatList">
             <ul id="chatRoomsList"></ul>

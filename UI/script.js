@@ -2,7 +2,6 @@ console.log('Script loaded'); //Test if js is loaded
 
 let url = "http://localhost:8080"
 //This can be changed, standart is NoUsername for testing
-let usrname = "NoUsername"
 //This can be changed on buttton press, standart is general for testing
 //let chatname = "general"
 
@@ -17,7 +16,22 @@ function initChatTemplate(){
 }
 
 function setUserName(){
+    let usernameInput = document.getElementById("username")
+    if(!usernameInput){
+        console.log("Failed to set Username, couldn't fetch element")
+        return;
+    }
+    let username = usernameInput.value.trim();
+    console.log("username = " + username);
+    usernameInput.placeholder = username;
+    sessionStorage.setItem("username",username);
+    usernameInput.value = "";
+    console.log("stored username: " + sessionStorage.getItem("username"));
+}
 
+function getUserName(){
+    console.log("stored username: " + sessionStorage.getItem("username"));
+    return sessionStorage.getItem("username");
 }
 window.addEventListener('DOMContentLoaded', () => {
     // Handles the creation of a new chatroom.
@@ -39,7 +53,7 @@ window.addEventListener('DOMContentLoaded', () => {
 function createNewChatroom(name){
     window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(name);
     let message = name;
-    message = name + ":" + usrname + " created a new chat room!";
+    message = name + ":" + getUserName() + " created a new chat room!";
     fetch(url + '/newChatroom/', {
         method: 'POST',
         body: message
@@ -134,7 +148,7 @@ function getChatRoomsfromChat() {
 function joinChatroom(chatName){
     window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(chatName);
     chatName = chatName.trim();
-    let message = chatName + ":" + usrname + " joined this chat room!";
+    let message = chatName + ":" + getUserName() + " joined this chat room!";
     fetch(url + '/sendmessage', {
         method: 'POST',
         body: message
@@ -165,7 +179,7 @@ function sendMessage() {
     //extract ChatName from HTML
     const chatNameElement = document.getElementById('chat-title');
     const chatName = chatNameElement.innerText.trim(); //.trim() erases unwanted added elements from formating
-    message = chatName + ":" + usrname + ": " + message
+    message = chatName + ":" + getUserName() + ": " + message
     textarea.value = "";
     fetch(url + '/sendmessage', {
         method: 'POST',
@@ -174,7 +188,7 @@ function sendMessage() {
         },
         body: message
     }).catch(error => {
-        document.getElementById('message-text').placeholder = "Error: " + error;
+        console.error("Could not send message: " + error)
     });
     console.log(message);
 }
