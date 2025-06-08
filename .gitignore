@@ -152,3 +152,4 @@ fabric.properties
 /build/CMakeFiles/IntegrationTesting.dir/link.txt
 /build/CMakeFiles/IntegrationTesting.dir/progress.make
 /build/CMakeFiles/IntegrationTesting.dir/compiler_depend.internal
+/runnableForPi/
