@@ -15,10 +15,13 @@
         <input id="username"
                maxlength="20"
                writingsuggestions="true"
-               placeholder="Username">
+               placeholder="Username"
+               oninput="validateUsername()">
         <button onclick=setUserName()>
             confirm
         </button>
+        <p id="usernameHint" style="color: red;"></p>
+        <br><br>
         Currently available Chat-Rooms: <button onclick="getChatRooms()">Refresh</button>
         <div id="chatList">
             <ul id="chatRoomsList"></ul>
@@ -27,7 +30,8 @@
         <div id="popup" style="display: none;">
             <div id="content">
                 <h2>Please choose a name for you chat room:</h2>
-                <input type="text" id="userInput" placeholder="please type here..">
+                <input type="text" id="userInput" placeholder="please type here.." oninput="validateChatname()">
+                <p id="chatnameHint" style="color:red;"></p>
                 <button id="confirmButton">Create</button>
                 <button id="closePopup">X</button>
             </div>

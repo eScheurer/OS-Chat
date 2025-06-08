@@ -132,7 +132,7 @@ char* formatMessagesForSending(const char* chatName) {
 
     while (fgets(messageBuffer, sizeof(messageBuffer), file)) {
         messageBuffer[strcspn(messageBuffer, "\n")] = '\0';  // removing the \n //TODO: problematic if zeilenumbruch in message?
-        char temp[258]; //temp Buffer to simplify appending
+        char temp[512]; //temp Buffer to simplify appending
         snprintf(temp, sizeof(temp), "%s$",messageBuffer);
 
         if (strlen(messages) + strlen(temp) + 1 > maxSize) {

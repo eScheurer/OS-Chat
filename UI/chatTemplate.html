@@ -30,8 +30,10 @@
                       maxlength="500"
                       writingsuggestions="true"
                       spellcheck="true"
-                      placeholder="type here..."></textarea>
-            <button onclick=sendMessage()>
+                      placeholder="type here..."
+                      oninput="validateMessage()"></textarea>
+            <p id="messageHint" style="color:red;"></p>
+            <button onclick="if (validateMessage()) sendMessage();">
                 send!
             </button>
         </td>
