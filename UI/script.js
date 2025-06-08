@@ -231,15 +231,30 @@ function sendMessage() {
     console.log(message);
 }
 
-//Does not seem to work yet, but not too important
-document.getElementById("message-text").addEventListener("keypress", function(event) {
-    // If the user presses the "Enter" key on the keyboard
+//Section to check for enter inputs to send messages!
+//We store this variable to check if enter and shift are pressed together
+let shiftIsPressed = false;
+document.getElementById("message-text").addEventListener("keydown", function(event) {
+    if (event.key === "Shift") {
+        shiftIsPressed = true;
+    }
     if (event.key === "Enter") {
+        if(shiftIsPressed){
+            return;
+        }
         // Cancel the default action, if needed
         event.preventDefault();
         sendMessage()
     }
 });
+document.getElementById("message-text").addEventListener("keyup", function(event) {
+    //If we let go of shift we set it back to false
+    if (event.key === "Shift") {
+        shiftIsPressed = false;
+    }
+});
+
+
 
 setInterval(getThreadStatus, 10000);
 function getThreadStatus() {
