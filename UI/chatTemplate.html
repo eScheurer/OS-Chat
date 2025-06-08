@@ -11,7 +11,7 @@
     <tr>
         <th>Chat Rooms:<button onclick="getChatRoomsfromChat()">refresh</button></th>
         <th>
-            <div id="chat-title"></div>
+            <h1 id="chat-title"></h1>
         </th>
         <th>Data</th>
     </tr>
@@ -22,11 +22,14 @@
             </div>
         </td>
         <td>
-            <div id="chatMessages">-Chat-</div>
+            <div id = "scrollPane">
+                <div id="chatMessages">-Chat-</div>
+                <div id="anchor"></div>
+            </div>
             <label for="message-text">Send a Message:</label>
             <textarea id="message-text"
                       cols="50"
-                      rows="10"
+                      rows="2"
                       maxlength="500"
                       writingsuggestions="true"
                       spellcheck="true"
