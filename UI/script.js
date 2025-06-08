@@ -23,11 +23,25 @@ function setUserName(){
     }
     let username = usernameInput.value.trim();
     if(isValidName(username)){
-        console.log("username = " + username);
-        usernameInput.placeholder = username;
-        sessionStorage.setItem("username",username);
-        usernameInput.value = "";
-        console.log("stored username: " + sessionStorage.getItem("username"));
+        fetch(url + '/checkUsername/', {
+            method: 'POST',
+            body: username
+        })
+            .then(response => response.text())
+            .then(text => {
+                if (text.includes("FREE")) {
+                    console.log("username = " + username);
+                    usernameInput.placeholder = username;
+                    sessionStorage.setItem("username",username);
+                    usernameInput.value = "";
+                    console.log("stored username: " + sessionStorage.getItem("username"));
+                } else if (text.includes("TAKEN")) {
+                    document.getElementById('usernameHint').textContent = "Username already taken, please choose another one.";
+                }
+            })
+            .catch(error => {
+                document.getElementById('chatnameHint').textContent = "Error: Something went wrong with checking the name." + error;
+            });
     }
 }
 
