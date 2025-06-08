@@ -1,6 +1,6 @@
 console.log('Script loaded'); //Test if js is loaded
 
-let url = "http://localhost:8080"
+let url = "http://server.os-chat.ch:21092"
 //This can be changed, standart is NoUsername for testing
 //This can be changed on buttton press, standart is general for testing
 //let chatname = "general"
