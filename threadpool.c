@@ -14,10 +14,8 @@
 
 #define MAX_QUEUE 512 // Tested with up to 200 clients connecting
 #define INITIAL_THREADS 4
-#define MAX_THREADS 512 // Tested with up to 200 clients connecting
 #define THREAD_IDLE_TIMEOUT 8 // (Sekunden)
 #define NEW_THREADS 4
-
 
 static Task task_queue[MAX_QUEUE];
 static int queue_front = 0, queue_rear =0, queue_count = 0;
@@ -187,7 +185,7 @@ void add_threads_to_pool() {
     threads = new_threads;
     thread_count++;
     pthread_create(&threads[thread_count -1], NULL, thread_worker, NULL);
-    printf("Creating new Thread %d .\n", thread_count); //for testing
+    printf("Creating new Thread %d.\n", thread_count); //for testing
     pthread_mutex_unlock(&lock);
 }
 

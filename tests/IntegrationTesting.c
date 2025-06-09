@@ -9,7 +9,7 @@
 
 
 
-#define NUM_CLIENTS 100 // Todo: test up to 100 clients
+#define NUM_CLIENTS 100 // Requested Number of Prof. Ciorba
 #define NUM_MESSAGES 5
 #define SERVER_IP "127.0.0.1" // Todo: change for server not running on Helene machine
 #define SERVER_PORT 8080
@@ -45,12 +45,12 @@ void* client_behavior(void* arg) {
 
     char body[128];
     snprintf(body, sizeof(body),
-         "chatroom=Room%d&message=HelloFromClient%d",
+         "chatroom=Room%d&message=HelloFromClient%d\n",
          client_id % 10, client_id); // Reuse 10 rooms for stress, cycle through 0-9 chatroom if more than 10 clients
 
     char request[512];
     snprintf(request, sizeof(request),
-           "POST /chat HTTP/1.1\r\n"
+           "POST /test HTTP/1.1\r\n"
            "Host: %s\r\n"
            "Content-Type: text/plain\r\n"
            "Content-Length: %ld\r\n"

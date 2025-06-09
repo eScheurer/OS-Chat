@@ -1,15 +1,13 @@
-//
-// Created by user1 on 14.04.25.
-//
-
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
+
+
 
 #include <pthread.h>
 #include <stdbool.h>
 
+#define MAX_THREADS 512 // Tested with up to 200 clients connecting
 
-#define MAX_THREADS 128 // Todo: does this make sense?
 
 // Struct for each Chunk of the queue
 typedef struct Task {

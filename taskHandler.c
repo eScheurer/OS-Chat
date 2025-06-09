@@ -200,6 +200,14 @@ void checkAndWriteName(Task task, Database* database) {
 }
 
 /**
+ * For integrated testing:
+ * Checks if message from client request gets until task_hanler
+*/
+void testTask(Task task) {
+    printf("Test-Task processed:\n%s\n", task.buffer);
+}
+
+/**
  * Extracts the Body of a http message.
  * @param task containing http message in buffer.
  * @return body, string that needs to be deallocated!!
