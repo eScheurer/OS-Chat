@@ -3,8 +3,10 @@ body{
     background-color: #32CBFF;
     align-content: center;
     align-items: center;
+    font: 1em arial;
 }
 h1{
+    color: #292E1E;
     background-color: white;
     text-align: center;
     margin: 20px auto 40px;
@@ -24,6 +26,28 @@ h1{
     margin: auto;
     width: 90%;
     padding: 20px;
+}
+
+#namebox {
+    background-color: white;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    margin: auto;
+    width: 60%;
+    border-radius: 25px;
+}
+
+#chatList {
+    background-color: white;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    margin: auto;
+    width: 60%;
+    border-radius: 25px;
 }
 
 #content {

@@ -11,22 +11,27 @@
     <div id="main">
         Welcome to the OSFS25 Project:
         <h1>Multithreaded Chat Server</h1>
-        <label for="username">Set a Username:</label>
-        <input id="username"
-               maxlength="20"
-               writingsuggestions="true"
-               placeholder="Username"
-               oninput="validateUsername()">
-        <button onclick=setUserName()>
-            confirm
-        </button>
-        <p id="usernameHint" style="color: red;"></p>
-        <br><br>
+        <div id = "namebox">
+            <label for="username">Set a Username:</label>
+            <input id="username"
+                   maxlength="20"
+                   writingsuggestions="true"
+                   placeholder="Username"
+                   oninput="validateUsername()">
+            <button onclick=setUserName()>
+                confirm
+            </button>
+            <p id="usernameHint" style="color: red;"></p>
+        </div>
+        <br>
         Currently available Chat-Rooms: <button onclick="getChatRooms()">Refresh</button>
+        <br>
         <div id="chatList">
             <ul id="chatRoomsList"></ul>
         </div>
+        <br>
         Create a new Chat-Room: <button id="openPopup">Create</button>
+        <br>
         <div id="popup" style="display: none;">
             <div id="content">
                 <h2>Please choose a name for you chat room:</h2>

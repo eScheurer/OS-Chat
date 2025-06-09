@@ -14,6 +14,8 @@
 #include "threadpool.h"
 
 ChatList* chatList;
+Database* chatDatabase;
+Database *userDatabase;
 
 
 /**
@@ -71,6 +73,8 @@ int main() {
 */
     printf("creating ChatList \n");
     chatList = createChatList();
+    chatDatabase = createDatabase();
+    userDatabase = createDatabase();
 
     //TODO: Remove Test Code
     /**

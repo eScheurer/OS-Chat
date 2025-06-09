@@ -11,7 +11,12 @@
 
 #include "LinkedList.h"
 #include "threadpool.h"
+#include "chatList.h"
+
 /** this file is responsible for the cooridation of handling tasks*/
+
+extern Database* chatDatabase;
+extern Database* userDatabase;
 
 /** switch case type method that distinguishes between the differnet types of tasks.
  * @param Task that should be executded
@@ -42,6 +47,15 @@ void handle_request(Task task) {
     } if (strstr(task.buffer, "GET /chatList/") != NULL) {
         extern void allChats(Task task);
         allChats(task);
+        return;
+    } if (strstr(task.buffer, "POST /checkChatName/") != NULL) {
+        printf("in checkChatName");
+        extern void checkAndWriteName(Task task, Database* database);
+        checkAndWriteName(task, chatDatabase);
+        return;
+    } if (strstr(task.buffer, "POST /checkUsername/") != NULL) {
+        extern void checkAndWriteName(Task task, Database* database);
+        checkAndWriteName(task, userDatabase);
         return;
     }
     extern void send404(Task task);

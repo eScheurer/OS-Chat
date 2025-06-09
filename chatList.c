@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "chatList.h"
 #include "LinkedList.h"
 
+static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 //These functions should not be accessible for any other files
 void readerLock(ChatList* chatList);
 void readerUnlock(ChatList* chatList);
@@ -24,6 +26,13 @@ ChatList* createChatList() {
     pthread_mutex_init(&chatList->readLock,NULL);
     sem_init(&chatList->queue,0,1);
     return chatList;
+}
+
+Database* createDatabase() {
+    Database* database = malloc(sizeof(Database));
+    database->head = NULL;
+    database->tail = NULL;
+    return database;
 }
 
 /**
@@ -167,6 +176,49 @@ char* getChatNames(ChatList* chatList) {
     strcpy(chatNames, buffer);
     free(buffer);
     return chatNames;
+}
+
+/** checks if Name taken, if yes: retrun that info. If no: append name in list and return info ok
+ */
+char* checkNamesDatabase(Database* databaseList, char* name) {
+    pthread_mutex_lock(&lock);
+    if (search(databaseList, name) == true) {
+        pthread_mutex_unlock(&lock);
+        return "TAKEN";
+    }
+    append(databaseList, name);
+    pthread_mutex_unlock(&lock);
+    return "FREE";
+}
+
+/** returns true if name in list, false if not
+ */
+bool search(Database* list, const char* newName) {
+    DatabaseNode* current = list->head;
+    while (current != NULL) {
+        if (strcmp(current->name, newName) == 0) {
+            return true;  // found it
+        }
+        current = current->next;
+    } return false;  // not found
+}
+
+/** appends an element to a linked list database
+ */
+void append(Database* list, const char* newName) {
+    DatabaseNode* new_node = malloc(sizeof(Node));
+    if (!new_node) {
+        perror("malloc failed for append");
+    }
+    new_node->name = strdup(newName);  // copy name into node
+    new_node->next = NULL;
+
+    if (list->tail) { // List not empty -> append
+        list->tail->next = new_node;
+    } else { // List empty -> set head
+        list->head = new_node;
+    }
+    list->tail = new_node; // update tail
 }
 
 /**

@@ -23,11 +23,25 @@ function setUserName(){
     }
     let username = usernameInput.value.trim();
     if(isValidName(username)){
-        console.log("username = " + username);
-        usernameInput.placeholder = username;
-        sessionStorage.setItem("username",username);
-        usernameInput.value = "";
-        console.log("stored username: " + sessionStorage.getItem("username"));
+        fetch(url + '/checkUsername/', {
+            method: 'POST',
+            body: username
+        })
+            .then(response => response.text())
+            .then(text => {
+                if (text.includes("FREE")) {
+                    console.log("username = " + username);
+                    usernameInput.placeholder = username;
+                    sessionStorage.setItem("username",username);
+                    usernameInput.value = "";
+                    console.log("stored username: " + sessionStorage.getItem("username"));
+                } else if (text.includes("TAKEN")) {
+                    document.getElementById('usernameHint').textContent = "Username already taken, please choose another one.";
+                }
+            })
+            .catch(error => {
+                document.getElementById('chatnameHint').textContent = "Error: Something went wrong with checking the name." + error;
+            });
     }
 }
 
@@ -47,11 +61,37 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 // The "Create" button
     document.getElementById("confirmButton").addEventListener("click", function (){
+        //Check that we even have a name before allowing the creation
+        if(sessionStorage.getItem("username")==null){
+            document.getElementById("usernameHint").innerText = "Username not yet set!";
+            return;
+        }
         const input = document.getElementById("userInput").value;
-        createNewChatroom(input);
+        checkChatName(input);
         document.getElementById("userInput").value = ""; // Reset input
     });
 });
+
+function checkChatName(name) {
+    fetch(url + '/checkChatName/', {
+        method: 'POST',
+        body: name
+    })
+        .then(response => response.text())
+        .then(text => {
+            if (text.includes("FREE")) {
+                createNewChatroom(name);
+            } else if (text.includes("TAKEN")) {
+                document.getElementById('chatnameHint').textContent = "Name already taken, please choose another one.";
+            } else {
+                console.log("Something went wrong with checking the name. Response was:", text);
+            }
+        })
+        .catch(error => {
+            document.getElementById('chatnameHint').textContent = "Error: " + error;
+        });
+}
+
 function createNewChatroom(name){
     window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(name);
     let message = name;
@@ -60,21 +100,9 @@ function createNewChatroom(name){
         method: 'POST',
         body: message
     }).catch(error => {
-        document.getElementById('chatMessages').placeholder = "Error: " + error;
+        document.getElementById('chatRoomsList').placeholder = "Error: " + error;
     });
     console.log(message);
-}
-
-
- function getTime() {
-  fetch(url)
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('time').innerText = data;
-    })
-    .catch(error => {
-      document.getElementById('time').innerText = "Error: " + error;
-    });
 }
 
 // For displaying currently available chatrooms
@@ -100,6 +128,14 @@ function getChatRooms() {
                 li.textContent = chatName;
                 const button = document.createElement('button') ;
                 button.textContent = 'Join'; button.onclick = function () {
+                    //Check that we even have a name before allowing the creation
+                    if(sessionStorage.getItem("username")==null){
+                        if(document.getElementById("usernameHint")) {
+                            document.getElementById("usernameHint").innerText = "Username not yet set!";
+                        }
+                        console.log("tried joining chat but username is null");
+                        return;
+                    }
                     joinChatroom(chatName);
                 };
                 li.appendChild(button);
@@ -195,18 +231,35 @@ function sendMessage() {
     console.log(message);
 }
 
-//Does not seem to work yet, but not too important
-document.getElementById("message-text").addEventListener("keypress", function(event) {
-    // If the user presses the "Enter" key on the keyboard
+//Section to check for enter inputs to send messages!
+//We store this variable to check if enter and shift are pressed together
+let shiftIsPressed = false;
+document.getElementById("message-text").addEventListener("keydown", function(event) {
+    if (event.key === "Shift") {
+        shiftIsPressed = true;
+    }
     if (event.key === "Enter") {
+        if(shiftIsPressed){
+            return;
+        }
         // Cancel the default action, if needed
         event.preventDefault();
         sendMessage()
     }
 });
+document.getElementById("message-text").addEventListener("keyup", function(event) {
+    //If we let go of shift we set it back to false
+    if (event.key === "Shift") {
+        shiftIsPressed = false;
+    }
+});
 
+
+
+setInterval(getThreadStatus, 10000);
 function getThreadStatus() {
-    console.log('Fetching thread status...'); // Test if thread_stats is fetched
+    console.log('Fetching thread status...');
+    // Test if thread_stats is fetched
     fetch(url + '/threadstatus')
         .then(response => response.json())
         .then(data => {
@@ -302,12 +355,3 @@ function validateMessage() {
         return true; // Submission allowed
     }
 }
-
-// Fetch in defined interval
-//setInterval(getThreadStatus, 10000);
-
-
-// Update frequently. This is usefull for our project to fetch new chat messages later on.
-// setInterval(getTime, 1000);
-
-// getTime();
