@@ -56,12 +56,17 @@ int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, cons
  * Worker thread function to handle the task (client socket)
  */
 void* thread_worker(void* arg) {
-    printf("Thread %ld handling request\n", pthread_self()); // Used for IntegartionTesting
-    int index = (int)(size_t)arg; // Pass thread index when creating
+    // printf("Thread %ld handling request\n", pthread_self()); // Used for IntegartionTesting
+
+    int index = *((int*)arg); // Pass thread index when creating
+    free(arg);
+
+    pthread_mutex_lock(&lock);
     thread_stats[index].thread_id = pthread_self();
     thread_stats[index].tasks_handled = 0;
     thread_stats[index].total_active_time = 0;
     thread_stats[index].is_idle = true;
+    pthread_mutex_unlock(&lock);
 
     while (keep_running){
         // Wait for tasks from client socket
@@ -167,7 +172,9 @@ void init_thread_pool(){
 
     //Create worker threads
     for (int i = 0; i < thread_count; i++) {
-        pthread_create(&threads[i], NULL, thread_worker, NULL);
+        int* arg = malloc(sizeof(int));
+        *arg= i;
+        pthread_create(&threads[i], NULL, thread_worker, arg);
     }
     pthread_mutex_unlock(&lock);
 }
@@ -185,7 +192,9 @@ void add_threads_to_pool() {
     //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
     threads = new_threads;
     thread_count++;
-    pthread_create(&threads[thread_count -1], NULL, thread_worker, NULL);
+    int* arg = malloc(sizeof(int));
+    *arg = thread_count -1;
+    pthread_create(&threads[thread_count -1], NULL, thread_worker, arg);
     printf("Creating new Thread %d.\n", thread_count); //for testing
     pthread_mutex_unlock(&lock);
 }
@@ -252,6 +261,7 @@ void get_thread_activity_json(char *buffer, size_t buffer_size) {
 
     snprintf(buffer, buffer_size, "[");
     size_t used = 1;
+
     for (int i = 0; i < thread_count; ++i) {
         if (thread_stats[i].thread_id == 0) {
             continue; // skip unitialized thread
@@ -267,7 +277,6 @@ void get_thread_activity_json(char *buffer, size_t buffer_size) {
         if (used >= buffer_size) break;
     }
     snprintf(buffer + used, buffer_size - used, "]");
-
     pthread_mutex_unlock(&lock);
 }
 
