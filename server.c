@@ -71,8 +71,8 @@ int main() {
     insert(list, "Charlie: Hi alle!");
     saveToFile(list);
 */
-    printf("creating ChatList \n");
     chatList = createChatList();
+    printf("ChatList created.\n");
     chatDatabase = createDatabase();
     userDatabase = createDatabase();
 
@@ -183,7 +183,7 @@ int main() {
                 socklen_t len = sizeof(client);
                 // Accepting the connection from the connecting client
                 int client_socket = accept(server.socket, (struct sockaddr *)&client, &len);
-                printf("New payload received. \n");
+                //printf("New payload received. \n");
                 if (client_socket == -1) {
                     perror("Failed to accept client. \n");
                     continue;
@@ -206,7 +206,7 @@ int main() {
                 ssize_t bytes_read = recv_full_request(client_socket, buffer, BUFFER_SIZE);
                 if (bytes_read > 0) {
                     buffer[bytes_read] = '\0';
-                    printf("Received full request: \n%s\n", buffer); // For debugging and testing
+                    // printf("Received full request: \n%s\n", buffer); // For debugging and testing
                     Task taskTest;
                     taskTest.socket_id = client_socket;
                     strcpy(taskTest.buffer, buffer);

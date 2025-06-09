@@ -61,7 +61,7 @@ void serve_thread_status(Task task) {
  * @param task containing http buffer
  */
 void process_message(Task task) {
-    printf("received message, processing... \n");
+    //printf("received message, processing... \n");
     //Get Message Body - Dynamically allocated!
     char* body = extractHTTPBody(task);
     if (body == NULL) {
