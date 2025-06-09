@@ -102,7 +102,7 @@ int main() {
     //End of test code
     */
     // Setup for TCP connection
-    printf("Server starting \n");
+    printf("Server starting... \n");
     struct Server server;
     server.domain = AF_INET;
     server.service = SOCK_STREAM;
@@ -118,7 +118,7 @@ int main() {
 
     // Checking if socket was set up correctly
     if (server.socket < 0) {
-        perror("Failed to initialize \n");
+        perror("Failed to initialize. \n");
         exit(1);
     }
 
@@ -126,17 +126,17 @@ int main() {
     int opt = 1;
     setsockopt(server.socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
-    printf("Checking validity of socket, binding & listening \n");
+    printf("Checking validity of socket, binding & listening. \n");
 
     // Binding the socket & Check
     if (bind(server.socket, (struct sockaddr *)&server.address, sizeof(server.address)) < 0) {
-        perror("Failed to bind \n");
+        perror("Failed to bind. \n");
         exit(1);
     }
 
     // Server listens & Check
     if (listen(server.socket, server.backlog) < 0) {
-        perror("Failed to listen \n");
+        perror("Failed to listen. \n");
         exit(1);
     }
 
@@ -148,7 +148,7 @@ int main() {
     // See "man epoll" or https://man7.org/linux/man-pages/man7/epoll.7.html
     int epoll_instance = epoll_create1(0);
     if (epoll_instance == -1) {
-        perror("Failed to create epoll \n");
+        perror("Failed to create epoll. \n");
         exit(EXIT_FAILURE);
     }
 
@@ -159,7 +159,7 @@ int main() {
 
     // Adding the server socket to the epoll listener to monitor
     if (epoll_ctl(epoll_instance, EPOLL_CTL_ADD, server.socket, &event) == -1) {
-        perror("Failed to add event to epoll \n");
+        perror("Failed to add event to epoll. \n");
         exit(EXIT_FAILURE);
     }
 
@@ -171,7 +171,7 @@ int main() {
         // Waiting for event
         int n = epoll_wait(epoll_instance, events, MAX_EVENTS, -1);
         if (n == -1) {
-            perror("epoll_wait failed \n");
+            perror("epoll_wait failed. \n");
             exit(EXIT_FAILURE);
         }
         // Looping through all file descriptors (sockets)
@@ -183,9 +183,9 @@ int main() {
                 socklen_t len = sizeof(client);
                 // Accepting the connection from the connecting client
                 int client_socket = accept(server.socket, (struct sockaddr *)&client, &len);
-                printf("New payload received \n");
+                printf("New payload received. \n");
                 if (client_socket == -1) {
-                    perror("Failed to accept client \n");
+                    perror("Failed to accept client. \n");
                     continue;
                 }
 
@@ -196,7 +196,7 @@ int main() {
 
                 // Adding new client to be watched by epoll
                 if (epoll_ctl(epoll_instance, EPOLL_CTL_ADD, client_socket, &event) == -1) {
-                    perror("Failed to add event to epoll \n");
+                    perror("Failed to add event to epoll. \n");
                     exit(EXIT_FAILURE);
                 }
             } else { // Otherwise it's again data from an already connected client sending something or disconnecting early
@@ -206,20 +206,20 @@ int main() {
                 ssize_t bytes_read = recv_full_request(client_socket, buffer, BUFFER_SIZE);
                 if (bytes_read > 0) {
                     buffer[bytes_read] = '\0';
-                    printf("received full request: \n%s\n", buffer); // For debugging
+                    printf("Received full request: \n%s\n", buffer); // For debugging and testing
                     Task taskTest;
                     taskTest.socket_id = client_socket;
                     strcpy(taskTest.buffer, buffer);
                     add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding
                 } else if (bytes_read == 0) {
-                    printf("Client disconnected \n");
+                    printf("Client disconnected. \n");
                     close(client_socket);
                     epoll_ctl(epoll_instance, EPOLL_CTL_DEL, client_socket, NULL);
                 } else {
                     if (errno == EAGAIN && errno == EWOULDBLOCK) {
                             break;
                     } else {
-                            perror("Failed to read client data \n");
+                            perror("Failed to read client data. \n");
                             close(client_socket);
                             epoll_ctl(epoll_instance, EPOLL_CTL_DEL, client_socket, NULL);
                     }
