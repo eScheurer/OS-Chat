@@ -133,19 +133,18 @@ TODO: Kommunikation zwischen request handler und html
 
 # 5.6.2025
 ## Progress Report
-Enya: Messages werden isoliert geupdatet, heute soll dies integriert werden. Option neue Chats generieren ist als Funktion auf Website implementiert. Heute noch Defaultnachricht "has joind the chat" um automatisch logisch chat zu generieren. Plus Errornachricht implementieren, falls Chat in Logik generieren nicht funktioniert (Errorhandling).
-Cielle: Reader-Writer Problem genauer informiert um Locks sinnvoll zu zu implementieren. Neue Funktionen gecoded, die über ganzes Programm verwendet werden können.
-Helene: Raspberry pi mit OS läuft über Helene's Hotspot. Server läuft noch nicht darauf, wegen Kompliationsfehler. Wird am Freitag weiter erprobt. Heute Testing-Konzept und Programm erste prio 
+* Enya: Messages werden isoliert geupdatet, heute soll dies integriert werden. Option neue Chats generieren ist als Funktion auf Website implementiert. Heute noch Defaultnachricht "has joind the chat" um automatisch logisch chat zu generieren. Plus Errornachricht implementieren, falls Chat in Logik generieren nicht funktioniert (Errorhandling).
+* Cielle: Reader-Writer Problem genauer informiert um Locks sinnvoll zu zu implementieren. Neue Funktionen gecoded, die über ganzes Programm verwendet werden können.
+* Helene: Raspberry pi mit OS läuft über Helene's Hotspot. Server läuft noch nicht darauf, wegen Kompliationsfehler. Wird am Freitag weiter erprobt. Heute Testing-Konzept und Programm erste prio 
 
 # 6.6.2025
 ## Progress Report
-Enya: Repetitives Client connecting Fehler gefunden und gelöst. liste von chats kann ausgelesen und angezeigt werden. Mache jetzt bei der Funktion chat neu generieren und chat joinen.
-Cielle: Bin an Dokumentation von all meinen Befehlen und heute für eine neue Aufgabe zu haben, z.B.
-Helene: UNittests für LinkedList und Threadpool erstellt. Kleine Fehler in Threadpool entdeckt, möchte ich mit Enya anschauen (Update: war nur schriebfehler, nevermind). Habt ihr noch wichtige Komponenten die in Unit-tests getestet werden sollen? -> Cielle: chatList Methoden sind relevant.
-Helene wird also noch chatList Unittests erstellen und später an Integrated testing um Server zu populaten arbeiten
+* Enya: Repetitives Client connecting Fehler gefunden und gelöst. liste von chats kann ausgelesen und angezeigt werden. Mache jetzt bei der Funktion chat neu generieren und chat joinen.
+* Cielle: Bin an Dokumentation von all meinen Befehlen und heute für eine neue Aufgabe zu haben, z.B.
+* Helene: UNittests für LinkedList und Threadpool erstellt. Kleine Fehler in Threadpool entdeckt, möchte ich mit Enya anschauen (Update: war nur schriebfehler, nevermind). Habt ihr noch wichtige Komponenten die in Unit-tests getestet werden sollen? -> Cielle: chatList Methoden sind relevant. -> Helene wird also noch chatList Unittests erstellen und später an Integrated testing um Server zu populaten arbeiten
 
-Gemeinsamer Entscheid: Wir machen keinen automatischen default Main chat.
-Current Fehler: Cielle ist aufgefallen, dass Server abstürzt wenn 2. Website geöffnet und Chatlist ausgelesen werden soll
+Gemeinsamer Entscheid: Wir machen keinen automatischen default Main chat. \\
+Current Fehler: Cielle ist aufgefallen, dass Server abstürzt wenn 2. Website geöffnet und Chatlist ausgelesen werden soll \\
 
 
 ## Aufteilung Präsentation 18. min Präsi plus Demo
@@ -163,10 +162,40 @@ Pro person ca. 3min:
 * Server auf Raspberry-Pi @Helene (Übergang zu Demo)
 * Demo zu UI und Threadpoolstats kurz was sagen @Enya Backup @Cielle 
 * Dicussion and Lessons Learned @Helene 
-
+\\
 --> Präsentation Üben Donnerstag 12.6.2025 8:30 per Discord
 
 ## Nächstes Meeting 9.6.2025 13:00 Uhr und bis dahin:
 * Offene Aufgaben erledigen
 * Report zugeteilte Teile schreiben
 * Präsentation Slides individuelle Teile schreiben
+* 
+
+# 9.6.2025
+## Wünsche:
+* Präsi und Report auf Overleaf mühsam wegen nicht alle gleichzeitig bearbeiten können. Bitte auf Google dock -> Helene fügt dann am Dienstag Abend alles zusammen.
+* 
+## Progress Report
+* Luis: Wir haben schon mega viel, hab mal etwas getestet und funktioniert schon mega gut. -> Alle: Juhuii! \\
+  Frage: Sockets offen halten nach Request funktioniert nicht ganz mit unserer implementation. Hat sich noch informiert über Websocket usw. Findet ihr, dass das noch viel Zeit wert ist? -> Funktionierende Basis ist relevanter, Projekt ist auch zeitlich terminiert. Einfach evtl. möchten im Report transparent kommunizieren, dass das unser nächster Schritt wäre mit offenen Sockets. \\
+  Idee: Zurück Knopf zu Loginfenster und Threadstats anzeige richtig noch wichtig. \\
+  Idee: Console output evtl. noch schöner organisieren -> bitte alle Code clean up machen. und Javadoc! \\
+  Info: https ist mir relevanter, ich werde das nochmals versuchen. \\
+  Info: Arbeite morgen an Report und Präsi und bin heute Nachmittag erreichbar wenn jemensch auf Pi testen will.
+
+* Helene: Create chatraum immer noch möglich auch wenn name invalid und info über invalid Name stimmt? Bitte nachher gemeinsam testen \\
+Frage: Was ist mit Bilder senden und so? Cielle: Ist implementiert als Messenge-Fenster Bild senden automatisch abgehandelt als nicht funktionierend. \\
+Info: Ich Kümmere mich noch um Threadstats, die ein Probem zu haben scheinen (siehe Testsession unten)
+
+* Enya Codingsachen sind erledigt, ist momentan am Report. Weitere Idee: wenn Chat verlassen wird Nachricht senden. Enya schaut sich an wenn Zeit. \\
+Frage: Initial Threads und Intervall von dynamic Threads okay so? -> Ja hat sich is jetzt bewährt. \\
+Frage: Update von Messenges auf einer Sekunde finde ich zu lange, können wir dies runter stellen? -> Ja testen wir gleich noch. \\
+Info: Ich habe heute keine Zeit mehr ich arbeite morgen weiter an Präsi und Report. 
+
+* Cielle: Habe morgen Dienstag keine Zeit. Finalisiere heute noch Präsi und Report. Mit Code bin ich somit zufrieden, werde aber entsprechend Luis auch noch Code aufräumen.
+
+## Testsession
+* Bei chat kreieren, error bei Messagebereich und keine test senden, auch nach Browser neu laden nicht funktioniert @Enya versucht dies zu korrigieren (evtl Cache und schon gelöst)
+* Bodylength Error bei vielen Nachrichten. @Cielle hat schon herausgefunden wie gefixt wird, Bodlength wird in neueren Browser ausgelesen und muss nicht definiert werden.
+* Tasks werden in Threadstats nur bei \#0 kumuliert. @Helene Threadstats müssen überprüft werden und notfalls nur im Server angezeigt werden nicht auf Website verfügbar.
+* Chat kann auch mit nicht validem Chatname erstellt werden. Kleiner fix in html von @Helene
