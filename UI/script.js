@@ -1,9 +1,6 @@
 console.log('Script loaded'); //Test if js is loaded
 
-let url = "http://localhost:8080"
-//This can be changed, standart is NoUsername for testing
-//This can be changed on buttton press, standart is general for testing
-//let chatname = "general"
+const url = "http://localhost:8080"
 
 // For reading URL-parameters (in case needed somewhere else too)
 function getURLParam(param) {
@@ -15,14 +12,21 @@ function initChatTemplate(){
     document.getElementById('chat-title').innerText = getURLParam('chatname');
 }
 
+//--------------USERNAME-----------------------
+/**
+ * Takes the input of the user and tries to load it into the session storage after checking if it is unique
+ */
 function setUserName(){
     let usernameInput = document.getElementById("username")
+    //Check for null-pointers
     if(!usernameInput){
         console.log("Failed to set Username, couldn't fetch element")
         return;
     }
     let username = usernameInput.value.trim();
+    //Check for no special characters
     if(isValidName(username)){
+        //Send to server to check if name is already taken
         fetch(url + '/checkUsername/', {
             method: 'POST',
             body: username
@@ -30,12 +34,14 @@ function setUserName(){
             .then(response => response.text())
             .then(text => {
                 if (text.includes("FREE")) {
+                    //If it's free we put it into session storage and clear the input
                     console.log("username = " + username);
                     usernameInput.placeholder = username;
                     sessionStorage.setItem("username",username);
                     usernameInput.value = "";
                     console.log("stored username: " + sessionStorage.getItem("username"));
                 } else if (text.includes("TAKEN")) {
+                    //If it's already taken we inform the user about it
                     document.getElementById('usernameHint').textContent = "Username already taken, please choose another one.";
                 }
             })
@@ -45,10 +51,16 @@ function setUserName(){
     }
 }
 
+/**
+ * Fetches username out of Session storage. Implemented in case we switch to local storage or similar.
+ * @returns username
+ */
 function getUserName(){
     console.log("stored username: " + sessionStorage.getItem("username"));
     return sessionStorage.getItem("username");
 }
+
+//--------------CHAT-CREATION-----------------------
 window.addEventListener('DOMContentLoaded', () => {
     // Handles the creation of a new chatroom.
 // Opening popup
@@ -104,6 +116,8 @@ function createNewChatroom(name){
     });
     console.log(message);
 }
+
+//--------------FETCH/JOIN-CHATS-----------------------
 
 // For displaying currently available chatrooms
 function getChatRooms() {
@@ -196,9 +210,13 @@ function joinChatroom(chatName){
     console.log(message);
 }
 
-
+//--------------SEND-MESSAGES-----------------------
 
 let previousSend = 0;
+/**
+ * Takes input of the message text field and sends it to the server.
+ * Function blocks if it is used too frequently
+ */
 function sendMessage() {
     const now = Date.now();
     if (now - previousSend < 100) {
@@ -208,6 +226,10 @@ function sendMessage() {
     }
     previousSend = now;
     const textarea = document.getElementById("message-text")
+    if(textarea == null){
+        console.log("Could not fetch textarea to send message!");
+        return
+    }
     let message = textarea.value.trim();
 
     if (message === ""){
@@ -216,6 +238,10 @@ function sendMessage() {
     }
     //extract ChatName from HTML
     const chatNameElement = document.getElementById('chat-title');
+    if(chatNameElement == null){
+        console.log("Could not fetch chatname to send message!");
+        return;
+    }
     const chatName = chatNameElement.innerText.trim(); //.trim() erases unwanted added elements from formating
     message = chatName + ":" + getUserName() + ": " + message
     textarea.value = "";
@@ -254,6 +280,8 @@ document.getElementById("message-text").addEventListener("keyup", function(event
     }
 });
 
+
+//--------------FETCH-UPDATES-----------------------
 
 
 setInterval(getThreadStatus, 10000);
@@ -306,6 +334,9 @@ if (window.location.pathname.endsWith('chatTemplate.html')) {
         initChatTemplate();
     });
 }
+
+
+//--------------REGEX-CHECKS-----------------------
 
 function isValidName(name) {
     const pattern = /^[a-zA-Z0-9]+$/;
