@@ -29,6 +29,7 @@ typedef struct ThreadStats { // typedef to define type later
     int tasks_handled;
     double total_active_time;
     bool is_idle; // id_idel = true when thread is waiting, is_idle = false when thread busy
+    int thread_count;
 } ThreadStats; //
 
 extern ThreadStats thread_stats[MAX_THREADS];

@@ -26,7 +26,7 @@ static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 static pthread_t *threads;
-int thread_count;
+int thread_count = 0;
 static bool keep_running = true;
 static int idle_threads = 0;
 
@@ -46,6 +46,7 @@ struct timespec make_timeout_timespec(const int seconds) {
 /**
  * @return 0 if Task available, ETIMEOUT if time out is reached
  */
+
 int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, const int seconds) {
     const struct timespec ts = make_timeout_timespec(seconds);
     return pthread_cond_timedwait(cond, lock, &ts);
@@ -240,23 +241,33 @@ void remove_thread_from_pool() {
     pthread_mutex_unlock(&lock);
 }
 
+
 /**
  * Methods for Thread Monitoring
+ * Extension to display one focus of this OS-project: threadpooling
  */
+
 void get_thread_activity_json(char *buffer, size_t buffer_size) {
+    pthread_mutex_lock(&lock);
+
     snprintf(buffer, buffer_size, "[");
     size_t used = 1;
     for (int i = 0; i < thread_count; ++i) {
+        if (thread_stats[i].thread_id == 0) {
+            continue; // skip unitialized thread
+        }
         int written = snprintf(buffer + used, buffer_size - used,
             "{\"thread_id\": %lu, \"tasks_handled\": %d, \"active_time\": %.2f, \"is_idle\": %s}%s",
             (unsigned long)thread_stats[i].thread_id,
             thread_stats[i].tasks_handled,
             thread_stats[i].total_active_time,
             thread_stats[i].is_idle ? "true" : "false",
-            (i < thread_count - 1) ? "," : "");
+            (i < thread_count - 1 && thread_stats[i + 1].thread_id != 0) ? "," : "");
         used += written;
         if (used >= buffer_size) break;
     }
     snprintf(buffer + used, buffer_size - used, "]");
+
+    pthread_mutex_unlock(&lock);
 }
 
