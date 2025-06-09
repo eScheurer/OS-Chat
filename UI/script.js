@@ -73,23 +73,25 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function checkChatName(name) {
-    fetch(url + '/checkChatName/', {
-        method: 'POST',
-        body: name
-    })
-        .then(response => response.text())
-        .then(text => {
-            if (text.includes("FREE")) {
-                createNewChatroom(name);
-            } else if (text.includes("TAKEN")) {
-                document.getElementById('chatnameHint').textContent = "Name already taken, please choose another one.";
-            } else {
-                console.log("Something went wrong with checking the name. Response was:", text);
-            }
+    if(isValidName(name)) {
+        fetch(url + '/checkChatName/', {
+            method: 'POST',
+            body: name
         })
-        .catch(error => {
-            document.getElementById('chatnameHint').textContent = "Error: " + error;
-        });
+            .then(response => response.text())
+            .then(text => {
+                if (text.includes("FREE")) {
+                    createNewChatroom(name);
+                } else if (text.includes("TAKEN")) {
+                    document.getElementById('chatnameHint').textContent = "Name already taken, please choose another one.";
+                } else {
+                    console.log("Something went wrong with checking the name. Response was:", text);
+                }
+            })
+            .catch(error => {
+                document.getElementById('chatnameHint').textContent = "Error: " + error;
+            });
+    }
 }
 
 function createNewChatroom(name){
