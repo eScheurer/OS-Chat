@@ -110,9 +110,8 @@ void sendChatUpdate(Task task) {
         "HTTP/1.1 200 OK\r\n"
         "Content-Type: text/plain\r\n"
         "Access-Control-Allow-Origin: *\r\n"
-        "Content-Length: %lu\r\n"
         "\r\n"
-        "%s", strlen(messages), messages);
+        "%s", messages);
     send(task.socket_id, response, strlen(response), 0);
 }
 
