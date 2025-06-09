@@ -36,7 +36,6 @@ void handle_request(Task task) {
         sendChatUpdate(task);
         return;
     } if (strstr(task.buffer, "POST /sendmessage ") != NULL) {
-        printf("in send msg");
         extern void process_message(Task task);
         process_message(task);
         return;
@@ -49,7 +48,7 @@ void handle_request(Task task) {
         allChats(task);
         return;
     } if (strstr(task.buffer, "POST /checkChatName/") != NULL) {
-        printf("in checkChatName");
+        //printf("in checkChatName");
         extern void checkAndWriteName(Task task, Database* database);
         checkAndWriteName(task, chatDatabase);
         return;

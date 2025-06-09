@@ -238,7 +238,7 @@ void remove_thread_from_pool() {
         printf("Thread %d is exiting due to inactivity.\n", thread_count); //for testing
         pthread_exit(NULL);
     }
-    printf("not gonna remove youuu\n");
+    printf("Essential Thread: not gonna remove youuu\n");
     pthread_mutex_unlock(&lock);
 }
 
