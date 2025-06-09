@@ -12,10 +12,10 @@
 #include "threadpool.h"
 #include <string.h>
 
-#define MAX_QUEUE 128 //reicht das aus? sollte queue dynamsich wachsen?
+#define MAX_QUEUE 512 // Tested with up to 200 clients connecting
 #define INITIAL_THREADS 4
-#define MAX_THREADS 128 //sinvoll?
-#define THREAD_IDLE_TIMEOUT 8 // (Sekunden), sinvoll? -> später dann so 30-60 sekunden? für testing aber tief lassen
+#define MAX_THREADS 512 // Tested with up to 200 clients connecting
+#define THREAD_IDLE_TIMEOUT 8 // (Sekunden)
 #define NEW_THREADS 4
 
 

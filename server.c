@@ -108,7 +108,7 @@ int main() {
     server.service = SOCK_STREAM;
     server.port = PORT;
     server.protocol = 0;
-    server.backlog = 20;
+    server.backlog = 128;
 
     server.address.sin_family = AF_INET;
     server.address.sin_port = htons(PORT);
