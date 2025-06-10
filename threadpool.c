@@ -12,10 +12,9 @@
 #include "threadpool.h"
 #include <string.h>
 
-#define MAX_QUEUE 128 //enough? -> yes
+#define MAX_QUEUE 512 // Tested with up to 200 clients connecting
 #define INITIAL_THREADS 4
-#define MAX_THREADS 128 //reasonable? -> yes
-#define THREAD_IDLE_TIMEOUT 8 //reasonable? -> yes
+#define THREAD_IDLE_TIMEOUT 8 // (Sekunden)
 #define NEW_THREADS 4
 
 
@@ -28,7 +27,7 @@ static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 static pthread_t *threads;
-int thread_count;
+int thread_count = 0;
 static bool keep_running = true;
 static int idle_threads = 0;
 
@@ -59,12 +58,18 @@ int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, cons
  * Worker thread function to handle the task (client socket)
  */
 void* thread_worker(void* arg) {
-    printf("Thread %ld handling request\n", pthread_self()); // Used for IntegartionTesting
-    int index = (int)(size_t)arg; // Pass thread index when creating
+    // printf("Thread %ld handling request\n", pthread_self()); // Used for IntegartionTesting
+
+    int index = *(int*)arg; // Pass thread index when creating
+    free(arg);
+
+    pthread_mutex_lock(&lock);
     thread_stats[index].thread_id = pthread_self();
     thread_stats[index].tasks_handled = 0;
     thread_stats[index].total_active_time = 0;
     thread_stats[index].is_idle = true;
+    pthread_mutex_unlock(&lock);
+
     while (keep_running){
         // Wait for tasks from client socket
         pthread_mutex_lock(&lock);
@@ -133,19 +138,21 @@ void add_task_to_queue(Task task){
     queue_rear = (queue_rear + 1) % MAX_QUEUE;
     queue_count++;
 
-    // first add task to queue and then create new thread to ensure right order and safe storage of task (and no race condition)
+    pthread_cond_broadcast(&cond); // Wake up all threads so initial threads get used to
+
     if (queue_count > idle_threads && thread_count < MAX_THREADS){
         pthread_mutex_unlock(&lock);
         add_threads_to_pool();
         pthread_mutex_lock(&lock);
     }
-    pthread_cond_signal(&cond); // thread awoken
+
     pthread_mutex_unlock(&lock);
 }
 
 /**
  * shuts down thread pool cleanly
  */
+
 void shutdown_thread_pool(){
     pthread_mutex_lock(&lock);
     keep_running = false;
@@ -163,12 +170,19 @@ void shutdown_thread_pool(){
  */
 void init_thread_pool(){
     pthread_mutex_lock(&lock);
-    thread_count = INITIAL_THREADS;
-    threads = malloc(sizeof(pthread_t) * thread_count);
+    // Here: thread_count = INITIAL_THREADS;
+    threads = malloc(sizeof(pthread_t) * INITIAL_THREADS); // Here changed
 
     //Create worker threads
-    for (int i = 0; i < thread_count; i++) {
-        pthread_create(&threads[i], NULL, thread_worker, NULL);
+    for (int i = 0; i < INITIAL_THREADS; i++) { // Here changed
+        int* arg = malloc(sizeof(int));
+        *arg= i;
+        if (pthread_create(&threads[thread_count], NULL, thread_worker, arg) == 0) {// Here changed
+            thread_count++; // Here new
+        } else { // here new
+            free(arg);
+            printf("Error: could not create initial threads. \n");
+        }
     }
     pthread_mutex_unlock(&lock);
 }
@@ -185,11 +199,14 @@ void add_threads_to_pool() {
         pthread_mutex_unlock(&lock);
         return;
     }
+
     //first realloc to new place instead of overwriting to avoid losing memory leak in case of error
     threads = new_threads;
     thread_count++;
-    pthread_create(&threads[thread_count -1], NULL, thread_worker, NULL);
-    printf("Creating new Thread %d .\n", thread_count); //for testing
+    int* arg = malloc(sizeof(int));
+    *arg = thread_count -1;
+    pthread_create(&threads[thread_count -1], NULL, thread_worker, arg);
+    printf("Creating new Thread with ID %d\n", *arg); //for testing
     pthread_mutex_unlock(&lock);
 }
 
@@ -227,6 +244,7 @@ void add_threads_to_pool() {
 /** Removed a read form pool.
  * Should only be called by worker threads that want to terminate themselves, not by any others, because it will kill your thread
  */
+
 void remove_thread_from_pool() {
     pthread_mutex_lock(&lock);
 
@@ -249,12 +267,18 @@ void remove_thread_from_pool() {
     pthread_mutex_unlock(&lock);
 }
 
+
 /**
  * Methods for Thread Monitoring
+ * Extension to display one focus of this OS-project: threadpooling
  */
+
 void get_thread_activity_json(char *buffer, size_t buffer_size) {
+    pthread_mutex_lock(&lock);
+
     snprintf(buffer, buffer_size, "[");
     size_t used = 1;
+
     for (int i = 0; i < thread_count; ++i) {
         int written = snprintf(buffer + used, buffer_size - used,
             "{\"thread_id\": %lu, \"tasks_handled\": %d, \"active_time\": %.2f, \"is_idle\": %s}%s",
@@ -262,10 +286,11 @@ void get_thread_activity_json(char *buffer, size_t buffer_size) {
             thread_stats[i].tasks_handled,
             thread_stats[i].total_active_time,
             thread_stats[i].is_idle ? "true" : "false",
-            (i < thread_count - 1) ? "," : "");
+            (i < thread_count - 1 && thread_stats[i + 1].thread_id != 0) ? "," : "");
         used += written;
         if (used >= buffer_size) break;
     }
     snprintf(buffer + used, buffer_size - used, "]");
+    pthread_mutex_unlock(&lock);
 }
 

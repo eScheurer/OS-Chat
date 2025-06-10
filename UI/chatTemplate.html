@@ -36,7 +36,7 @@
                       placeholder="type here..."
                       oninput="validateMessage()"></textarea>
             <p id="messageHint" style="color:red;"></p>
-            <button onclick="if (validateMessage()) sendMessage();">
+            <button type="button" onclick="if (validateMessage()) { sendMessage(); }">
                 send!
             </button>
         </td>

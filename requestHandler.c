@@ -24,7 +24,7 @@ extern Database* userDatabase;
  */
 
 void handle_request(Task task) {
-    if (strstr(task.buffer, "GET / ") != NULL) {
+    if (strstr(task.buffer, "GET / ") != NULL) { // Default-Option to get time, was used in prototype
         extern void time_request (Task task);
         time_request(task);
         return;
@@ -55,6 +55,10 @@ void handle_request(Task task) {
     } if (strstr(task.buffer, "POST /checkUsername/") != NULL) {
         extern void checkAndWriteName(Task task, Database* database);
         checkAndWriteName(task, userDatabase);
+        return;
+    } if (strstr(task.buffer, "POST /test ") != NULL) { // Used in IntegratedTesting.c
+        extern void testTask(Task task);
+        testTask(task);
         return;
     }
     extern void send404(Task task);

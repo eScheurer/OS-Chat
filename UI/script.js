@@ -1,6 +1,9 @@
 console.log('Script loaded'); //Test if js is loaded
 
-const url = "http://localhost:8080"
+let url = "http://localhost:8080"
+//This can be changed, standart is NoUsername for testing
+//This can be changed on buttton press, standart is general for testing
+//let chatname = "general"
 
 
 /**
@@ -97,24 +100,26 @@ window.addEventListener('DOMContentLoaded', () => {
  * @param name entered by user
  */
 function checkChatName(name) {
-    fetch(url + '/checkChatName/', {
-        method: 'POST',
-        body: name
-    })
-        .then(response => response.text())
-        .then(text => {
-            if (text.includes("FREE")) {
-                createNewChatroom(name); // if name free, create chatroom
-            } else if (text.includes("TAKEN")) {
-                // inform user that name taken
-                document.getElementById('chatnameHint').textContent = "Name already taken, please choose another one.";
-            } else {
-                console.log("Something went wrong with checking the name. Response was:", text);
-            }
+    if(isValidName(name)) {
+        fetch(url + '/checkChatName/', {
+            method: 'POST',
+            body: name
         })
-        .catch(error => {
-            document.getElementById('chatnameHint').textContent = "Error: " + error;
-        });
+            .then(response => response.text())
+            .then(text => {
+                if (text.includes("FREE")) {
+                    createNewChatroom(name);
+                } else if (text.includes("TAKEN")) {// if name free, create chatroom
+                    // inform user that name taken
+                    document.getElementById('chatnameHint').textContent = "Name already taken, please choose another one.";
+                } else {
+                    console.log("Something went wrong with checking the name. Response was:", text);
+                }
+            })
+            .catch(error => {
+                document.getElementById('chatnameHint').textContent = "Error: " + error;
+            });
+    }
 }
 
 /**
@@ -294,7 +299,9 @@ document.getElementById("message-text").addEventListener("keydown", function(eve
         }
         // Cancel the default action, if needed
         event.preventDefault();
-        sendMessage()
+        if (validateMessage()) {
+            sendMessage()
+        }
     }
 });
 document.getElementById("message-text").addEventListener("keyup", function(event) {
@@ -347,11 +354,11 @@ function getChatUpdate() {
             document.getElementById('chatMessages').innerText = data.split('$').join('\n'); // Format data
         })
         .catch(error => {
-            document.getElementById('chatMessages').innerText = "Error: " + error;
+            //document.getElementById('chatMessages').innerText = "Error: " + error;
         })
 }
 // Fetch in defined interval
-setInterval(getChatUpdate, 1000);
+// setInterval(getChatUpdate, 1000); already handled in HTML
 
 // Differentiate that chat stuff only happens on the chat page
 // the general idea for the following lines is from ChatGPT when I did research on how to use a single javascript file for multiple html files, I then implemented that idea myself.

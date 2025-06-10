@@ -8,7 +8,6 @@
 
 // TODO Check again if no memory leaks or other funky memory stuff happens
 // TODO Check that critical section is safe (Please review yourself again, mistakes can happen quickly)
-// TODO Implement writer/reader locks for more efficient access
 
 /**
  * Create a new ThreadSafeList with a name
@@ -105,10 +104,7 @@ char* getMessages(ThreadSafeList* list) {
     return messages;
 }
 
-
-// TODO Implement method to export the data of a list in json format (Warning the list in currently stored in reverse due to implementation)
-
-// methode use for old linked list:
+// Method use for old linked list:
 // char* formatMessagesForSending(const char* chatName) {
 //     const char* path = "../Chats";
 //     struct stat st = {0};
@@ -146,9 +142,11 @@ char* getMessages(ThreadSafeList* list) {
 //     return messages; // Aufrufer has to free the memory of messages!
 // }
 
-/**k
+/**
  * Deallocate memory for list
  * @param list name
+ * To ensure the list really frees all required things after the method is called ChatGPT was queried with "Is this method freeing everything it should"
+ * To which ChatGPT made the important discovery that the locks needs to be discarded and only after the list freed to prevent memory leaks.
  */
 void freeList(ThreadSafeList* list) {
     pthread_mutex_lock(&list->lock);
@@ -173,6 +171,7 @@ void freeList(ThreadSafeList* list) {
 /**
  * Store a list in the directory ../Chats/ with name "Chat_{nameOfList}"
  * @param list name
+ * To get information about files https://www.geeksforgeeks.org/basics-file-handling-c/ (26.04.25) was used
  */
 void saveToFile(ThreadSafeList* list) {
 
@@ -193,6 +192,7 @@ void saveToFile(ThreadSafeList* list) {
         return;
     }
 
+    // Translate list into entry to file
     Node* current = list->head;
     while (current) {
         fprintf(file, "%s\n",current->message);
@@ -207,6 +207,7 @@ void saveToFile(ThreadSafeList* list) {
  * Loading a list from directory ../Chats/ with name "Chats_{name}"
  * @param name of the chat
  * @return ThreadSafeList with name
+ * Here also https://www.geeksforgeeks.org/basics-file-handling-c/ (26.04.25) was used as guide on how to handle files)
  */
 ThreadSafeList* loadFromFile(const char* name) {
     const char* path = "../Chats";
@@ -230,8 +231,6 @@ ThreadSafeList* loadFromFile(const char* name) {
 
     ThreadSafeList* list = create(name);
 
-    // Not entirely sure why we need to reserve it first
-    char nameBuffer[256];
     char messageBuffer[256];
     while (fscanf(file, "%255[^\n]",messageBuffer) == 1) {
     insert(list, messageBuffer);

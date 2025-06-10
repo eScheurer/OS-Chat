@@ -100,9 +100,8 @@ void sendChatUpdate(Task task) {
     //char chatName2[512] = "Chat Title"; // for testing
     char* messages = getChatMessages(chatList, chatName);
     if (messages == NULL) {
-        printf("Failed to send Chat update, chat could not be found\n");
+        // printf("Failed to send Chat update, chat could not be found\n");
         free(messages);
-        //messages = "Failed to load, trying again...";
         return;
     };
     char response[1024];
@@ -120,7 +119,7 @@ void sendChatUpdate(Task task) {
  * @param task containing socket_id
  */
 void send404(Task task) {
-    printf("404: invalid request made\n");
+    //printf("404: invalid request made\n");
     /**
     char* httpRequest = strdup(task.buffer);
     char test[100];
@@ -198,6 +197,14 @@ void checkAndWriteName(Task task, Database* database) {
             "%s", strlen(message), message);
     send(task.socket_id, response, strlen(response), 0);
     free(name);
+}
+
+/**
+ * For integrated testing:
+ * Checks if message from client request gets until task_hanler
+*/
+void testTask(Task task) {
+    printf("Test-Task processed:\n%s\n", task.buffer);
 }
 
 /**
