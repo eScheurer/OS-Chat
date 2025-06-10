@@ -272,7 +272,9 @@ document.getElementById("message-text").addEventListener("keydown", function(eve
         }
         // Cancel the default action, if needed
         event.preventDefault();
-        sendMessage()
+        if (validateMessage()) {
+            sendMessage()
+        }
     }
 });
 document.getElementById("message-text").addEventListener("keyup", function(event) {
