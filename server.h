@@ -20,6 +20,7 @@ struct Server;
 // Function prototype
 void sendTime(int client_socket);
 int setNonBlocking(int fd);
+ssize_t recv_full_request(int socket, char *buffer, size_t buffer_size);
 
 // Struct definition
 struct Server {

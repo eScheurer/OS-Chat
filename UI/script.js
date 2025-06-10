@@ -1,13 +1,24 @@
 console.log('Script loaded'); //Test if js is loaded
 
-const url = "http://localhost:8080"
+let url = "http://localhost:8080"
+//This can be changed, standart is NoUsername for testing
+//This can be changed on buttton press, standart is general for testing
+//let chatname = "general"
 
-// For reading URL-parameters (in case needed somewhere else too)
+
+/**
+ * Retrieves value of param from current URL (after '?') (example: if "...com/?chatname=general", it returns "gereral")
+ * @param param
+ * @returns {string}
+ */
 function getURLParam(param) {
-    const urlSearchParams = new URLSearchParams(window.location.search);
+    const urlSearchParams = new URLSearchParams(window.location.search); // ChatGPT was used to get the idea for this
     return urlSearchParams.get(param);
 }
-// For updating Chat Title on chatTemplate.html
+
+/**
+ * Initializes chat UI by setting chat title form URL
+ */
 function initChatTemplate(){
     document.getElementById('chat-title').innerText = getURLParam('chatname');
 }
@@ -79,11 +90,15 @@ window.addEventListener('DOMContentLoaded', () => {
             return;
         }
         const input = document.getElementById("userInput").value;
-        checkChatName(input);
+        checkChatName(input); // check if name is valid
         document.getElementById("userInput").value = ""; // Reset input
     });
 });
 
+/**
+ * Sends request to server for checking the name, creates chatroom if free, informs user if taken
+ * @param name entered by user
+ */
 function checkChatName(name) {
     if(isValidName(name)) {
         fetch(url + '/checkChatName/', {
@@ -94,7 +109,8 @@ function checkChatName(name) {
             .then(text => {
                 if (text.includes("FREE")) {
                     createNewChatroom(name);
-                } else if (text.includes("TAKEN")) {
+                } else if (text.includes("TAKEN")) {// if name free, create chatroom
+                    // inform user that name taken
                     document.getElementById('chatnameHint').textContent = "Name already taken, please choose another one.";
                 } else {
                     console.log("Something went wrong with checking the name. Response was:", text);
@@ -106,6 +122,10 @@ function checkChatName(name) {
     }
 }
 
+/**
+ * Creates new chatroom by displaying new UI and sending initial message to server.
+ * @param name for chatroom
+ */
 function createNewChatroom(name){
     window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(name);
     let message = name;
@@ -121,9 +141,13 @@ function createNewChatroom(name){
 
 //--------------FETCH/JOIN-CHATS-----------------------
 
-// For displaying currently available chatrooms
+/**
+ * Requests all currently existing chatrooms from server, displays in dynamic list with join buttons. On main page.
+ */
 function getChatRooms() {
     const ul = document.getElementById('chatRoomsList');
+    // ChatGPT was used to understand how a list with buttons can be created dynamically in javascript.
+    // ChatGPT provided very basic general code. I then implemented it myself, following that general idea and adapting it for our use.
     ul.innerHTML = ''; // List needs to be emptied so that no duplicate chatrooms are shown
     //document.getElementById('chatList').innerText = "Loading...";
     //ul.innerHTML = "<li>Loading...</li>";
@@ -164,7 +188,9 @@ function getChatRooms() {
         });
 }
 
-// For displaying currently available chatrooms
+ /**
+ * Requests all currently existing chatrooms from server, displays in dynamic list with join buttons. On chat page.
+ */
 function getChatRoomsfromChat() {
     //extract ChatName from HTML
     const chatNameElement = document.getElementById('chat-title');
@@ -198,7 +224,11 @@ function getChatRoomsfromChat() {
         });
 }
 
-// for joining a chatroom on button click
+
+/**
+ * For joining another chat. Switches to new UI and sends initial message
+ * @param chatName
+ */
 function joinChatroom(chatName){
     window.location.href = "chatTemplate.html?chatname=" + encodeURIComponent(chatName);
     chatName = chatName.trim();
@@ -309,6 +339,9 @@ function getThreadStatus() {
         });
 }
 
+/**
+ * requests content of current chat, displays reply in chat format
+ */
 function getChatUpdate() {
     //extract ChatName from HTML
     const chatNameElement = document.getElementById('chat-title');
@@ -324,13 +357,14 @@ function getChatUpdate() {
             document.getElementById('chatMessages').innerText = data.split('$').join('\n'); // Format data
         })
         .catch(error => {
-            document.getElementById('chatMessages').innerText = "Error: " + error;
+            //document.getElementById('chatMessages').innerText = "Error: " + error;
         })
 }
 // Fetch in defined interval
-setInterval(getChatUpdate, 1000);
+// setInterval(getChatUpdate, 1000); already handled in HTML
 
 // Differentiate that chat stuff only happens on the chat page
+// the idea for the following lines is from ChatGPT when I did research on how to use a single javascript file for multiple html files.
 console.log("Current path:", window.location.pathname);
 if (window.location.pathname.endsWith('chatTemplate.html')) {
     window.addEventListener('load', () => {

@@ -10,7 +10,6 @@ add_executable(OS_Chat
         LinkedList.h
         requestHandler.c
         server.c
-        LinkedListStub.c
         server.h
         taskHandler.c
         threadpool.c

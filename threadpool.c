@@ -17,6 +17,7 @@
 #define THREAD_IDLE_TIMEOUT 8 // (Sekunden)
 #define NEW_THREADS 4
 
+
 static Task task_queue[MAX_QUEUE];
 static int queue_front = 0, queue_rear =0, queue_count = 0;
 
@@ -30,13 +31,15 @@ int thread_count = 0;
 static bool keep_running = true;
 static int idle_threads = 0;
 
-// Funktionsprototyp
+// function prototypes
 void add_threads_to_pool();
 void remove_thread_from_pool();
 void print_threadpool_status();
 
 // Struct for timespec
-struct timespec make_timeout_timespec(const int seconds) {
+// The following struct was written with the help of ChatGPT.
+// I asked the AI why my previous timeout implementation did not work and it helped me correct it.
+struct timespec make_timeout_timespec(const int seconds) { //
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     ts.tv_sec += seconds;
@@ -47,6 +50,7 @@ struct timespec make_timeout_timespec(const int seconds) {
  * @return 0 if Task available, ETIMEOUT if time out is reached
  */
 
+// ChatGPT was used to understand how timeouts and ETIMEDOUT work in C (with example code). I then implemented it myself, following the general idea but adapting it to our use.
 int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, const int seconds) {
     const struct timespec ts = make_timeout_timespec(seconds);
     return pthread_cond_timedwait(cond, lock, &ts);
@@ -74,15 +78,13 @@ void* thread_worker(void* arg) {
         Task task;
         idle_threads ++; //markiert sich selbst als idle um zu zeigen dass er auf arbeit wartet
 
-
-        // thread geht schlafen
+        // old version: thread geht schlafen
         //const int resume = wait_for_task_with_timeout(&cond, &lock, THREAD_IDLE_TIMEOUT);
         //wird geweckt, wenn jemand pthread_cond_signal(&cond) oder pthread_cond_broadcast(&cond) aufruft.
         //Oder er wird nach THREAD_IDLE_TIMEOUT Sekunden automatisch aufgeweckt, falls niemand ihn vorher weckt.
 
-
         int resume;
-        //wartet auf Task oder Timeout, geht nur raus wenn eine Task da oder thread beendet werden soll
+        //waits for task or timeout, only exists if task available or if thread should be removed
         while (queue_count == 0 && keep_running) {
             resume = wait_for_task_with_timeout(&cond, &lock, THREAD_IDLE_TIMEOUT);
 
@@ -98,10 +100,8 @@ void* thread_worker(void* arg) {
                 return NULL;
             }
         }
-
         //if (resume == 0 && queue_count > 0 || (resume == ETIMEDOUT && queue_count > 0))
-            // (resume == 0, wenn thread durch siganl geweckt wurde
-        task = task_queue[queue_front]; //task wird aus der queue geholt
+        task = task_queue[queue_front]; // Task extracted from queue
         queue_front = (queue_front + 1) % MAX_QUEUE;
         queue_count--;
         idle_threads --;
@@ -112,7 +112,7 @@ void* thread_worker(void* arg) {
         struct timespec start, end;
         clock_gettime(CLOCK_MONOTONIC, &start);
 
-        extern void handle_request(Task task); // Call send_time to handle client communication
+        extern void handle_request(Task task); // Call handle_request for actual processing of task
         handle_request(task);
 
         clock_gettime(CLOCK_MONOTONIC, &end);
@@ -127,14 +127,12 @@ void* thread_worker(void* arg) {
 
 void add_task_to_queue(Task task){
     pthread_mutex_lock(&lock);
-
     //error handling
     if (queue_count == MAX_QUEUE) {
         printf("Error: queue is full\n");
         pthread_mutex_unlock(&lock);
         return;
     }
-
     task_queue[queue_rear] = task;
     queue_rear = (queue_rear + 1) % MAX_QUEUE;
     queue_count++;
@@ -150,7 +148,10 @@ void add_task_to_queue(Task task){
     pthread_mutex_unlock(&lock);
 }
 
-// Shut down threadpool
+/**
+ * shuts down thread pool cleanly
+ */
+
 void shutdown_thread_pool(){
     pthread_mutex_lock(&lock);
     keep_running = false;
@@ -163,7 +164,9 @@ void shutdown_thread_pool(){
     free(threads);
 }
 
-//Initialize threadpool
+/**
+ * creates the initial threadpool threads.
+ */
 void init_thread_pool(){
     pthread_mutex_lock(&lock);
     // Here: thread_count = INITIAL_THREADS;
@@ -183,6 +186,9 @@ void init_thread_pool(){
     pthread_mutex_unlock(&lock);
 }
 
+/**
+ * adds one thread to pool
+ */
 void add_threads_to_pool() {
     pthread_mutex_lock(&lock);
     //reallocate memory: with pointer to the memory that is being resized + new size of allocated memory
@@ -203,6 +209,9 @@ void add_threads_to_pool() {
     pthread_mutex_unlock(&lock);
 }
 
+/**
+ * tried to do add multiple threads to pool at once, caused problems (or wrong implementation), but adding only one turned out to be sufficient.
+ */
 // //idea for adding multiple threads (auskommentiert), doesn't fully work yet (sometimes works, sometimes creates complete overhead..)
 // void add_threads_to_pool() {
 //     pthread_mutex_lock(&lock);
@@ -231,7 +240,10 @@ void add_threads_to_pool() {
 //     pthread_mutex_unlock(&lock);
 // }
 
-// Should only be called by worker threads that want to terminate themselves, not by any others, cause it will kill your thread
+/** Removed a read form pool.
+ * Should only be called by worker threads that want to terminate themselves, not by any others, because it will kill your thread
+ */
+
 void remove_thread_from_pool() {
     pthread_mutex_lock(&lock);
 
@@ -247,7 +259,7 @@ void remove_thread_from_pool() {
         }
 
         pthread_mutex_unlock(&lock);
-        printf("Thread %d is exiting due to inactivity.\n", thread_count); //for testing
+        printf("Thread %d is exiting due to inactivity.\n", thread_count); //monitoring
         pthread_exit(NULL);
     }
     printf("Essential Thread: not gonna remove youuu\n");

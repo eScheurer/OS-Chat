@@ -60,47 +60,11 @@ int setNonBlocking(int fd) {
  * @return
  */
 int main() {
-    /**
-    //only for testing`!!
-    //extern void test_LL();
-    //test_LL();
-    ThreadSafeList* list = create("Chat Title");
-    // Testdaten einfügen
-    insert(list, "Alice: Hallo zusammen!");
-    insert(list, "Bob: Hey Alice :)");
-    insert(list, "Charlie: Hi alle!");
-    saveToFile(list);
-*/
     chatList = createChatList();
     printf("ChatList created.\n");
     chatDatabase = createDatabase();
     userDatabase = createDatabase();
 
-    //TODO: Remove Test Code
-    /**
-    const char* message = "Cielle: Wow it really is working!";
-    createNewChat(chatList,"general","This server has made a chat!");
-    insertMessage(chatList,"general",message);
-    createNewChat(chatList,"test","This server has made a chat!");
-    insertMessage(chatList,"general",message);
-    insertMessage(chatList,"test",message);
-    char* messages = getChatMessages(chatList,"general");
-    printf(messages);
-    free(messages);
-    printf("\n");
-    char* chatNames = getChatNames(chatList);
-    printf(chatNames);
-    free(chatNames);
-    printf("\n");
-    insertMessage(chatList,"general",message);
-    messages = getChatMessages(chatList,"general");
-    printf(messages);
-    free(messages);
-    messages = getChatMessages(chatList,"test");
-    printf(messages);
-    free(messages);
-    //End of test code
-    */
     // Setup for TCP connection
     printf("Server starting... \n");
     struct Server server;
@@ -140,12 +104,14 @@ int main() {
         exit(1);
     }
 
+    // Everything running fine so far
     printf("-------------------------\n");
-    printf("Server running! Please make sure the html is open.\n");
+    printf("Server running! Please make sure the website is running.\n");
     printf("-------------------------\n");
 
     // Initialize epoll
     // See "man epoll" or https://man7.org/linux/man-pages/man7/epoll.7.html
+    // The below code is inspired by an example featured on the man page but also modified to fit our needs with new clients connecting and already existing clients state keeping
     int epoll_instance = epoll_create1(0);
     if (epoll_instance == -1) {
         perror("Failed to create epoll. \n");
@@ -163,8 +129,12 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
+    // Populating thread pool
     init_thread_pool();
-    //This makes it so we ignore the error if the socket we try to write to should be closed. (If someone leaves the website or refreshes it for example)
+
+    // This makes it so we ignore the error if the socket we try to write to should be closed. (If someone leaves the website or refreshes it for example)
+    // This change was suggested by ChatGPT after trying to debug a crash that happened after someone closed the tab.
+    // The query used was "When a client closes their tab the whole server crashes. Please find and suggest a fix."
     signal(SIGPIPE, SIG_IGN);
 
     while (1) {
@@ -207,14 +177,19 @@ int main() {
                 if (bytes_read > 0) {
                     buffer[bytes_read] = '\0';
                     // printf("Received full request: \n%s\n", buffer); // For debugging and testing
+                    // Create the task to pass on
                     Task taskTest;
                     taskTest.socket_id = client_socket;
                     strcpy(taskTest.buffer, buffer);
-                    add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding
+                    add_task_to_queue(taskTest); //Pass task to threadpool to handle reading and responding
+
+                    // no bytes ready means a client disconnected
                 } else if (bytes_read == 0) {
                     printf("Client disconnected. \n");
                     close(client_socket);
                     epoll_ctl(epoll_instance, EPOLL_CTL_DEL, client_socket, NULL);
+
+                    // If the bytes read were <0 we have another issue
                 } else {
                     if (errno == EAGAIN && errno == EWOULDBLOCK) {
                             break;
