@@ -372,7 +372,16 @@ if (window.location.pathname.endsWith('chatTemplate.html')) {
 
 
 //--------------REGEX-CHECKS-----------------------
-
+/**
+ * The methods bellow are used to check chatnames, usernames and messages for validity
+ * Due to some special characters used for parsing requests in backend, we forbid to use special characters in names and $-sign in messages
+ *
+ * ChatGPT has been used to find out what regex pattern needs to be used
+ * prompt:how does regex function? Can i implement it in my C Project? I want to handle user- and chatnames in my webserver project. There should only be the possibility to use letters and numbers, no special characters.
+ *
+ * @param name
+ * @returns {boolean}
+ */
 function isValidName(name) {
     const pattern = /^[a-zA-Z0-9]+$/;
     return pattern.test(name);

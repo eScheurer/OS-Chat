@@ -20,6 +20,10 @@ Database *userDatabase;
 
 /**
  * Helperfunction to receive full request before proceed in requestHandler
+ *
+ * ChatGPT has been used to scetch this method and debug it later
+ * initial prompt: how can i fix my program to read full incoming HTTp request before checking with strstr(...)
+ * error prompt: zsh: segmentation fault (core dumped)  ./build/OS_Chat
 */
 ssize_t recv_full_request(int socket, char *buffer, size_t buffer_size) {
     ssize_t total_received = 0;
