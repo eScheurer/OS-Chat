@@ -22,47 +22,10 @@ Database *userDatabase;
  * @return
  */
 int main() {
-    /**
-    // Local test to test chat list creation (Not needed anymore)
-    //extern void test_LL();
-    //test_LL();
-    ThreadSafeList* list = create("Chat Title");
-    // Testdaten einfügen
-    insert(list, "Alice: Hallo zusammen!");
-    insert(list, "Bob: Hey Alice :)");
-    insert(list, "Charlie: Hi alle!");
-    saveToFile(list);
-*/
     chatList = createChatList();
     printf("ChatList created.\n");
     chatDatabase = createDatabase();
     userDatabase = createDatabase();
-
-    /**
-     * Local test to test messaging service (Not needed anymore)
-    const char* message = "Cielle: Wow it really is working!";
-    createNewChat(chatList,"general","This server has made a chat!");
-    insertMessage(chatList,"general",message);
-    createNewChat(chatList,"test","This server has made a chat!");
-    insertMessage(chatList,"general",message);
-    insertMessage(chatList,"test",message);
-    char* messages = getChatMessages(chatList,"general");
-    printf(messages);
-    free(messages);
-    printf("\n");
-    char* chatNames = getChatNames(chatList);
-    printf(chatNames);
-    free(chatNames);
-    printf("\n");
-    insertMessage(chatList,"general",message);
-    messages = getChatMessages(chatList,"general");
-    printf(messages);
-    free(messages);
-    messages = getChatMessages(chatList,"test");
-    printf(messages);
-    free(messages);
-    //End of test code
-    */
 
     // Setup for TCP connection
     printf("Server starting... \n");
@@ -132,6 +95,8 @@ int main() {
     init_thread_pool();
 
     // This makes it so we ignore the error if the socket we try to write to should be closed. (If someone leaves the website or refreshes it for example)
+    // This change was suggested by ChatGPT after trying to debug a crash that happened after someone closed the tab.
+    // The query used was "When a client closes their tab the whole server crashes. Please find and suggest a fix."
     signal(SIGPIPE, SIG_IGN);
 
     while (1) {
