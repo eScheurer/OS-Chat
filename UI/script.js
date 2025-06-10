@@ -9,7 +9,7 @@ const url = "http://localhost:8080"
  * @returns {string}
  */
 function getURLParam(param) {
-    const urlSearchParams = new URLSearchParams(window.location.search);
+    const urlSearchParams = new URLSearchParams(window.location.search); // ChatGPT was used to get the idea for this
     return urlSearchParams.get(param);
 }
 
@@ -141,6 +141,8 @@ function createNewChatroom(name){
  */
 function getChatRooms() {
     const ul = document.getElementById('chatRoomsList');
+    // ChatGPT was used to understand how a list with buttons can be created dynamically in javascript.
+    // ChatGPT provided very basic general code. I then implemented it myself, following that general idea and adapting it for our use.
     ul.innerHTML = ''; // List needs to be emptied so that no duplicate chatrooms are shown
     //document.getElementById('chatList').innerText = "Loading...";
     //ul.innerHTML = "<li>Loading...</li>";
@@ -355,6 +357,7 @@ function getChatUpdate() {
 setInterval(getChatUpdate, 1000);
 
 // Differentiate that chat stuff only happens on the chat page
+// the idea for the following lines is from ChatGPT when I did research on how to use a single javascript file for multiple html files.
 console.log("Current path:", window.location.pathname);
 if (window.location.pathname.endsWith('chatTemplate.html')) {
     window.addEventListener('load', () => {

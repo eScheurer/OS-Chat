@@ -38,7 +38,9 @@ void remove_thread_from_pool();
 void print_threadpool_status();
 
 // Struct for timespec
-struct timespec make_timeout_timespec(const int seconds) {
+// The following struct was written with the help of ChatGPT.
+// I asked the AI why my previous timeout implementation did not work and it helped me correct it.
+struct timespec make_timeout_timespec(const int seconds) { //
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     ts.tv_sec += seconds;
@@ -48,6 +50,7 @@ struct timespec make_timeout_timespec(const int seconds) {
 /**
  * @return 0 if Task available, ETIMEOUT if time out is reached
  */
+// ChatGPT was used to understand how timeouts and ETIMEDOUT work in C (with example code). I then implemented it myself, following the general idea but adapting it to our use.
 int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, const int seconds) {
     const struct timespec ts = make_timeout_timespec(seconds);
     return pthread_cond_timedwait(cond, lock, &ts);
