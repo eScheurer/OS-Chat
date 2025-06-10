@@ -145,8 +145,6 @@ char* formatMessagesForSending(const char* chatName) {
     return messages; // Aufrufer has to free the memory of messages!
 }
 
-// TODO Implement method to send single new entries (Not sure if even possible)
-
 /**k
  * Deallocate memory for list
  * @param list name

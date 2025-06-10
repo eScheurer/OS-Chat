@@ -17,51 +17,13 @@ ChatList* chatList;
 Database* chatDatabase;
 Database *userDatabase;
 
-
-/**
- * Helperfunction to receive full request before proceed in requestHandler
-*/
-ssize_t recv_full_request(int socket, char *buffer, size_t buffer_size) {
-    ssize_t total_received = 0;
-    while (1) {
-        ssize_t bytes_received = recv(socket, buffer + total_received, buffer_size - total_received -1, 0);
-        if (bytes_received <= 0) {
-            return -1; // Error or closed connection
-        }
-
-        total_received += bytes_received;
-        buffer[total_received] = '\0';
-
-        // Check if full request has been received
-        if (strstr (buffer, "\r\n\r\n") != NULL) {
-            break; // End found
-        }
-    }
-    return total_received;
-}
-
-/**
- * Gets the file status of a file and setts the O_NONBLOCK flag.
- * This ensures that the socket isn't blocking. (Not waiting for accept, read or write like in the prototype before)
- * @param fd Socket to make non blocking
- * @return Exit status of operation (Unused)
- */
-int setNonBlocking(int fd) {
-    int flags = fcntl(fd, F_GETFL, 0);
-    if (flags < 0) {
-        return -1;
-    }
-    return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-}
-
-
 /**
  * Main function for Server
  * @return
  */
 int main() {
     /**
-    //only for testing`!!
+    // Local test to test chat list creation (Not needed anymore)
     //extern void test_LL();
     //test_LL();
     ThreadSafeList* list = create("Chat Title");
@@ -76,8 +38,8 @@ int main() {
     chatDatabase = createDatabase();
     userDatabase = createDatabase();
 
-    //TODO: Remove Test Code
     /**
+     * Local test to test messaging service (Not needed anymore)
     const char* message = "Cielle: Wow it really is working!";
     createNewChat(chatList,"general","This server has made a chat!");
     insertMessage(chatList,"general",message);
@@ -101,6 +63,7 @@ int main() {
     free(messages);
     //End of test code
     */
+
     // Setup for TCP connection
     printf("Server starting... \n");
     struct Server server;
@@ -140,8 +103,9 @@ int main() {
         exit(1);
     }
 
+    // Everything running fine so far
     printf("-------------------------\n");
-    printf("Server running! Please make sure the html is open.\n");
+    printf("Server running! Please make sure the website is running.\n");
     printf("-------------------------\n");
 
     // Initialize epoll
@@ -163,8 +127,10 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
+    // Populating thread pool
     init_thread_pool();
-    //This makes it so we ignore the error if the socket we try to write to should be closed. (If someone leaves the website or refreshes it for example)
+
+    // This makes it so we ignore the error if the socket we try to write to should be closed. (If someone leaves the website or refreshes it for example)
     signal(SIGPIPE, SIG_IGN);
 
     while (1) {
@@ -207,14 +173,19 @@ int main() {
                 if (bytes_read > 0) {
                     buffer[bytes_read] = '\0';
                     //printf("received full request: \n%s\n", buffer); // For debugging
+                    // Create the task to pass on
                     Task taskTest;
                     taskTest.socket_id = client_socket;
                     strcpy(taskTest.buffer, buffer);
-                    add_task_to_queue(taskTest); //Pass task to threadpool to handly reading and responding
+                    add_task_to_queue(taskTest); //Pass task to threadpool to handle reading and responding
+
+                    // no bytes ready means a client disconnected
                 } else if (bytes_read == 0) {
                     printf("Client disconnected \n");
                     close(client_socket);
                     epoll_ctl(epoll_instance, EPOLL_CTL_DEL, client_socket, NULL);
+
+                    // If the bytes read were <0 we have another issue
                 } else {
                     if (errno == EAGAIN && errno == EWOULDBLOCK) {
                             break;
@@ -227,5 +198,41 @@ int main() {
             }
         }
     }
+}
+
+/**
+ * Helperfunction to receive full request before proceed in requestHandler
+*/
+ssize_t recv_full_request(int socket, char *buffer, size_t buffer_size) {
+    ssize_t total_received = 0;
+    while (1) {
+        ssize_t bytes_received = recv(socket, buffer + total_received, buffer_size - total_received -1, 0);
+        if (bytes_received <= 0) {
+            return -1; // Error or closed connection
+        }
+
+        total_received += bytes_received;
+        buffer[total_received] = '\0';
+
+        // Check if full request has been received
+        if (strstr (buffer, "\r\n\r\n") != NULL) {
+            break; // End found
+        }
+    }
+    return total_received;
+}
+
+/**
+ * Gets the file status of a file and setts the O_NONBLOCK flag.
+ * This ensures that the socket isn't blocking. (Not waiting for accept, read or write like in the prototype before)
+ * @param fd Socket to make non blocking
+ * @return Exit status of operation (Unused)
+ */
+int setNonBlocking(int fd) {
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags < 0) {
+        return -1;
+    }
+    return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
