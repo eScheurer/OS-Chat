@@ -19,7 +19,7 @@
 
 ## A project by
 Cielle Hawrylenko\
-Enya Schurer\
+Enya Scheurer\
 Helene Spörri\
 Luis Wenger\
 \
