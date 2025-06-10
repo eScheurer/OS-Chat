@@ -100,8 +100,9 @@ void sendChatUpdate(Task task) {
     //char chatName2[512] = "Chat Title"; // for testing
     char* messages = getChatMessages(chatList, chatName);
     if (messages == NULL) {
-        //printf("Failed to send Chat update, chat could not be found\n");
-        messages = "";
+        // printf("Failed to send Chat update, chat could not be found\n");
+        free(messages);
+        return;
     };
     char response[1024];
     snprintf(response, sizeof(response),
@@ -111,7 +112,6 @@ void sendChatUpdate(Task task) {
         "\r\n"
         "%s", messages);
     send(task.socket_id, response, strlen(response), 0);
-    free(messages);
 }
 
 /**
