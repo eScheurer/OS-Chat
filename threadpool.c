@@ -58,7 +58,7 @@ int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, cons
 void* thread_worker(void* arg) {
     // printf("Thread %ld handling request\n", pthread_self()); // Used for IntegartionTesting
 
-    int index = *((int*)arg); // Pass thread index when creating
+    int index = *(int*)arg; // Pass thread index when creating
     free(arg);
 
     pthread_mutex_lock(&lock);
@@ -139,7 +139,7 @@ void add_task_to_queue(Task task){
     queue_rear = (queue_rear + 1) % MAX_QUEUE;
     queue_count++;
 
-    // first add task to queue and then create new thread to ensure right order and safe storage of task (and no race condition)
+    pthread_cond_broadcast(&cond); // Wake up all threads so initial threads get used to
 
     if (queue_count > idle_threads && thread_count < MAX_THREADS){
         pthread_mutex_unlock(&lock);
@@ -147,7 +147,6 @@ void add_task_to_queue(Task task){
         pthread_mutex_lock(&lock);
     }
 
-    pthread_cond_signal(&cond); //thread wird aufgeweckt!
     pthread_mutex_unlock(&lock);
 }
 
@@ -167,14 +166,19 @@ void shutdown_thread_pool(){
 //Initialize threadpool
 void init_thread_pool(){
     pthread_mutex_lock(&lock);
-    thread_count = INITIAL_THREADS;
-    threads = malloc(sizeof(pthread_t) * thread_count);
+    // Here: thread_count = INITIAL_THREADS;
+    threads = malloc(sizeof(pthread_t) * INITIAL_THREADS); // Here changed
 
     //Create worker threads
-    for (int i = 0; i < thread_count; i++) {
+    for (int i = 0; i < INITIAL_THREADS; i++) { // Here changed
         int* arg = malloc(sizeof(int));
         *arg= i;
-        pthread_create(&threads[i], NULL, thread_worker, arg);
+        if (pthread_create(&threads[thread_count], NULL, thread_worker, arg) == 0) {// Here changed
+            thread_count++; // Here new
+        } else { // here new
+            free(arg);
+            printf("Error: could not create initial threads. \n");
+        }
     }
     pthread_mutex_unlock(&lock);
 }
@@ -195,7 +199,7 @@ void add_threads_to_pool() {
     int* arg = malloc(sizeof(int));
     *arg = thread_count -1;
     pthread_create(&threads[thread_count -1], NULL, thread_worker, arg);
-    printf("Creating new Thread %d.\n", thread_count); //for testing
+    printf("Creating new Thread with ID %d\n", *arg); //for testing
     pthread_mutex_unlock(&lock);
 }
 
@@ -263,9 +267,6 @@ void get_thread_activity_json(char *buffer, size_t buffer_size) {
     size_t used = 1;
 
     for (int i = 0; i < thread_count; ++i) {
-        if (thread_stats[i].thread_id == 0) {
-            continue; // skip unitialized thread
-        }
         int written = snprintf(buffer + used, buffer_size - used,
             "{\"thread_id\": %lu, \"tasks_handled\": %d, \"active_time\": %.2f, \"is_idle\": %s}%s",
             (unsigned long)thread_stats[i].thread_id,
