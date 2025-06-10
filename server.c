@@ -110,6 +110,7 @@ int main() {
 
     // Initialize epoll
     // See "man epoll" or https://man7.org/linux/man-pages/man7/epoll.7.html
+    // The below code is inspired by an example featured on the man page but also modified to fit our needs with new clients connecting and already existing clients state keeping
     int epoll_instance = epoll_create1(0);
     if (epoll_instance == -1) {
         perror("Failed to create epoll \n");
