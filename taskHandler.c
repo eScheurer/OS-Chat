@@ -129,8 +129,8 @@ void send404(Task task) {
     printf("\n");
 */
 
-    //const char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
-    //send(task.socket_id, not_found, strlen(not_found), 0);
+    const char *not_found = "HTTP/1.1 404 Not Found\r\n\r\n";
+    send(task.socket_id, not_found, strlen(not_found), 0);
 }
 
 /**
