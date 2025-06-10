@@ -350,14 +350,18 @@ function getChatUpdate() {
     })
         .then(response => response.text())
         .then(data => { //display response in field chatMessages
-            document.getElementById('chatMessages').innerText = data.split('$').join('\n'); // Format data
+            if (data.includes("Failed to send Chat update, chat could not be found")){
+                return;
+            } else {
+                document.getElementById('chatMessages').innerText = data.split('$').join('\n'); // Format data
+            }
         })
         .catch(error => {
             document.getElementById('chatMessages').innerText = "Error: " + error;
         })
 }
 // Fetch in defined interval
-setInterval(getChatUpdate, 1000);
+// setInterval(getChatUpdate, 1000); already handled in HTML
 
 // Differentiate that chat stuff only happens on the chat page
 // the idea for the following lines is from ChatGPT when I did research on how to use a single javascript file for multiple html files.
