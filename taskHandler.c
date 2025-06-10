@@ -100,9 +100,8 @@ void sendChatUpdate(Task task) {
     //char chatName2[512] = "Chat Title"; // for testing
     char* messages = getChatMessages(chatList, chatName);
     if (messages == NULL) {
-        printf("Failed to send Chat update, chat could not be found\n");
+        // printf("Failed to send Chat update, chat could not be found\n");
         free(messages);
-        //messages = "Failed to load, trying again...";
         return;
     };
     char response[1024];
