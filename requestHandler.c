@@ -13,13 +13,14 @@
 #include "threadpool.h"
 #include "chatList.h"
 
-/** this file is responsible for the cooridation of handling tasks*/
+/** this file is responsible for the coordination of handling tasks*/
 
+// Databases for unique names
 extern Database* chatDatabase;
 extern Database* userDatabase;
 
-/** switch case type method that distinguishes between the differnet types of tasks.
- * @param Task that should be executded
+/** switch case type method that distinguishes between the different types of tasks.
+ * @param task that should be executed
  */
 
 void handle_request(Task task) {
@@ -36,7 +37,6 @@ void handle_request(Task task) {
         sendChatUpdate(task);
         return;
     } if (strstr(task.buffer, "POST /sendmessage ") != NULL) {
-        printf("in send msg");
         extern void process_message(Task task);
         process_message(task);
         return;
@@ -49,7 +49,6 @@ void handle_request(Task task) {
         allChats(task);
         return;
     } if (strstr(task.buffer, "POST /checkChatName/") != NULL) {
-        printf("in checkChatName");
         extern void checkAndWriteName(Task task, Database* database);
         checkAndWriteName(task, chatDatabase);
         return;

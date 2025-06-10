@@ -6,14 +6,14 @@
     <title>OS-Chatroom</title>
     <link rel="stylesheet" href="chatLayout.css">
 </head>
-<body onload="getThreadStatus(); setInterval(getChatUpdate, 10000)">
+<body onload="getThreadStatus(); setInterval(getChatUpdate, 100)"> <!-- adjust frequency of update here -->
 <table>
     <tr>
         <th>Chat Rooms:<button onclick="getChatRoomsfromChat()">refresh</button></th>
         <th>
             <h1 id="chat-title"></h1>
         </th>
-        <th>Data</th>
+        <th>Thread-Data</th>
     </tr>
     <tr>
         <td>

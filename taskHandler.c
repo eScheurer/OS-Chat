@@ -61,7 +61,7 @@ void serve_thread_status(Task task) {
  * @param task containing http buffer
  */
 void process_message(Task task) {
-    printf("received message, processing... \n");
+    //printf("received message, processing... \n");
     //Get Message Body - Dynamically allocated!
     char* body = extractHTTPBody(task);
     if (body == NULL) {
@@ -97,7 +97,7 @@ void sendChatUpdate(Task task) {
         free(chatName);
         return;
     }
-    //char chatName2[512] = "Chat Title";
+    //char chatName2[512] = "Chat Title"; // for testing
     char* messages = getChatMessages(chatList, chatName);
     if (messages == NULL) {
         printf("Failed to send Chat update, chat could not be found\n");
@@ -135,7 +135,7 @@ void send404(Task task) {
 }
 
 /**
- * Adds initial message to the chatroom in creation
+ * Adds initial message to the chatroom for creation
  * @param task contains the buffer with chat name and msg
  */
 void newChatroom(Task task) {
@@ -178,6 +178,7 @@ void allChats(Task task) {
 }
 
 /** coordinates communication for checking if name already exists and saving of not
+ * @param task containing name, database in which to check
  */
 void checkAndWriteName(Task task, Database* database) {
     char* name = extractHTTPBody(task); //is body rly just name??

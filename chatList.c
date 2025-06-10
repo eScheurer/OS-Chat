@@ -28,6 +28,10 @@ ChatList* createChatList() {
     return chatList;
 }
 
+/**
+ * Creates and returns empty Database list
+ * @return empty database pointer
+ */
 Database* createDatabase() {
     Database* database = malloc(sizeof(Database));
     database->head = NULL;
@@ -179,6 +183,8 @@ char* getChatNames(ChatList* chatList) {
 }
 
 /** checks if Name taken, if yes: retrun that info. If no: append name in list and return info ok
+ * @param databaseList, name
+ * @returns a String indicating result
  */
 char* checkNamesDatabase(Database* databaseList, char* name) {
     pthread_mutex_lock(&lock);
@@ -191,7 +197,9 @@ char* checkNamesDatabase(Database* databaseList, char* name) {
     return "FREE";
 }
 
-/** returns true if name in list, false if not
+/** searches for name in list
+ * @param list in which we want to look up, newName to look up
+ * @returns true if name in list, false if not
  */
 bool search(Database* list, const char* newName) {
     DatabaseNode* current = list->head;
@@ -204,6 +212,7 @@ bool search(Database* list, const char* newName) {
 }
 
 /** appends an element to a linked list database
+ * @param list in which to append, newName to append
  */
 void append(Database* list, const char* newName) {
     DatabaseNode* new_node = malloc(sizeof(Node));
