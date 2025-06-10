@@ -4,12 +4,12 @@ const url = "http://localhost:8080"
 
 
 /**
- * Retrieves value of param from current URL (after '?') (example: if "...com/?chatname=general", it returns "gereral")
+ * Retrieves value of param from current URL (example: if "...com/?chatname=general", it returns "gereral")
  * @param param
  * @returns {string}
  */
 function getURLParam(param) {
-    const urlSearchParams = new URLSearchParams(window.location.search); // ChatGPT was used to get the idea for this
+    const urlSearchParams = new URLSearchParams(window.location.search);
     return urlSearchParams.get(param);
 }
 
@@ -142,14 +142,12 @@ function createNewChatroom(name){
 function getChatRooms() {
     const ul = document.getElementById('chatRoomsList');
     // ChatGPT was used to understand how a list with buttons can be created dynamically in javascript.
-    // ChatGPT provided very basic general code. I then implemented it myself, following that general idea and adapting it for our use.
+    // ChatGPT provided very basic general code structure. I then implemented it myself, following that general idea but adapting it for our use.
     ul.innerHTML = ''; // List needs to be emptied so that no duplicate chatrooms are shown
     //document.getElementById('chatList').innerText = "Loading...";
-    //ul.innerHTML = "<li>Loading...</li>";
     fetch(url + '/chatList/')
         .then(response => response.text())
         .then(data => {
-            //const chatRoomsList = data.split('$');
             //document.getElementById('chatList').innerText = data.split('$').join('\n');
             const chatRoomsList = data.split('$').filter(name => name !== '' && name !== 'Empty chatList');
 
@@ -176,7 +174,6 @@ function getChatRooms() {
                 li.appendChild(button);
                 ul.appendChild(li);
             }
-
         })
         .catch(error => {
             document.getElementById('chatList').innerText = "Error: " + error;
@@ -357,7 +354,7 @@ function getChatUpdate() {
 setInterval(getChatUpdate, 1000);
 
 // Differentiate that chat stuff only happens on the chat page
-// the idea for the following lines is from ChatGPT when I did research on how to use a single javascript file for multiple html files.
+// the general idea for the following lines is from ChatGPT when I did research on how to use a single javascript file for multiple html files, I then implemented that idea myself.
 console.log("Current path:", window.location.pathname);
 if (window.location.pathname.endsWith('chatTemplate.html')) {
     window.addEventListener('load', () => {

@@ -39,18 +39,17 @@ void print_threadpool_status();
 
 // Struct for timespec
 // The following struct was written with the help of ChatGPT.
-// I asked the AI why my previous timeout implementation did not work and it helped me correct it.
+// I asked the AI "what is wrong with the following implementation" and it helped me correct the struct.
 struct timespec make_timeout_timespec(const int seconds) { //
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     ts.tv_sec += seconds;
     return ts;
 }
-
 /**
  * @return 0 if Task available, ETIMEOUT if time out is reached
  */
-// ChatGPT was used to understand how timeouts and ETIMEDOUT work in C (with example code). I then implemented it myself, following the general idea but adapting it to our use.
+// ChatGPT was used to understand how timeouts and ETIMEDOUT work in C. I then implemented it myself, following the general structure ChatGPT explained to me but adapting it to our use.
 int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, const int seconds) {
     const struct timespec ts = make_timeout_timespec(seconds);
     return pthread_cond_timedwait(cond, lock, &ts);
@@ -70,7 +69,7 @@ void* thread_worker(void* arg) {
         // Wait for tasks from client socket
         pthread_mutex_lock(&lock);
         Task task;
-        idle_threads ++; //markiert sich selbst als idle um zu zeigen dass er auf arbeit wartet
+        idle_threads ++; //marks iself as idle to show that it waits for work
 
         // old version: thread geht schlafen
         //const int resume = wait_for_task_with_timeout(&cond, &lock, THREAD_IDLE_TIMEOUT);
@@ -119,6 +118,9 @@ void* thread_worker(void* arg) {
     return NULL;
 }
 
+/** adds incoming task to the circular queue at the rear and commands to create new thread if neccesary.
+ *@param task
+ */
 void add_task_to_queue(Task task){
     pthread_mutex_lock(&lock);
     //error handling
