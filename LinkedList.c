@@ -108,42 +108,43 @@ char* getMessages(ThreadSafeList* list) {
 
 // TODO Implement method to export the data of a list in json format (Warning the list in currently stored in reverse due to implementation)
 
-char* formatMessagesForSending(const char* chatName) {
-    const char* path = "../Chats";
-    struct stat st = {0};
-    // Check if ../Chats exists
-    // -> If no chat exists there's also nothing to load -> skip
-    if (stat(path, &st) == -1) {
-        fprintf(stderr, "../Chats does not exist.\n");
-        return NULL;
-    }
-    char filePath[512];
-    snprintf(filePath, sizeof(filePath), "%s/Chat_%s.txt", path, chatName);
-
-    FILE* file = fopen(filePath, "r");
-    if (!file) {
-        perror("Failed to open file for reading! error in LL");
-        return "failed to update messages..";
-    }
-    size_t maxSize = 4096;
-    char* messages = malloc(maxSize); //TODO: how large does it need to be?
-    messages[0] = '\0'; // Initialize with empty String to avoid including previous content that was safed there
-    char messageBuffer[256];
-
-    while (fgets(messageBuffer, sizeof(messageBuffer), file)) {
-        messageBuffer[strcspn(messageBuffer, "\n")] = '\0';  // removing the \n //TODO: problematic if zeilenumbruch in message?
-        char temp[512]; //temp Buffer to simplify appending
-        snprintf(temp, sizeof(temp), "%s$",messageBuffer);
-
-        if (strlen(messages) + strlen(temp) + 1 > maxSize) {
-            fprintf(stderr, "Return string is too long!\n");
-            break;
-        }
-        strcat(messages, temp); // Appends the temp buffer to the end of messages-string
-    }
-    fclose(file);
-    return messages; // Aufrufer has to free the memory of messages!
-}
+// methode use for old linked list:
+// char* formatMessagesForSending(const char* chatName) {
+//     const char* path = "../Chats";
+//     struct stat st = {0};
+//     // Check if ../Chats exists
+//     // -> If no chat exists there's also nothing to load -> skip
+//     if (stat(path, &st) == -1) {
+//         fprintf(stderr, "../Chats does not exist.\n");
+//         return NULL;
+//     }
+//     char filePath[512];
+//     snprintf(filePath, sizeof(filePath), "%s/Chat_%s.txt", path, chatName);
+//
+//     FILE* file = fopen(filePath, "r");
+//     if (!file) {
+//         perror("Failed to open file for reading! error in LL");
+//         return "failed to update messages..";
+//     }
+//     size_t maxSize = 4096;
+//     char* messages = malloc(maxSize);
+//     messages[0] = '\0'; // Initialize with empty String to avoid including previous content that was safed there
+//     char messageBuffer[256];
+//
+//     while (fgets(messageBuffer, sizeof(messageBuffer), file)) {
+//         messageBuffer[strcspn(messageBuffer, "\n")] = '\0';  // removing the \n
+//         char temp[512]; //temp Buffer to simplify appending
+//         snprintf(temp, sizeof(temp), "%s$",messageBuffer);
+//
+//         if (strlen(messages) + strlen(temp) + 1 > maxSize) {
+//             fprintf(stderr, "Return string is too long!\n");
+//             break;
+//         }
+//         strcat(messages, temp); // Appends the temp buffer to the end of messages-string
+//     }
+//     fclose(file);
+//     return messages; // Aufrufer has to free the memory of messages!
+// }
 
 /**k
  * Deallocate memory for list
