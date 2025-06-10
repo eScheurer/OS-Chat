@@ -350,14 +350,10 @@ function getChatUpdate() {
     })
         .then(response => response.text())
         .then(data => { //display response in field chatMessages
-            if (data.includes("Error: TypeError: NetworkError when attempting to fetch resource.")){
-                return;
-            } else {
-                document.getElementById('chatMessages').innerText = data.split('$').join('\n'); // Format data
-            }
+            document.getElementById('chatMessages').innerText = data.split('$').join('\n'); // Format data
         })
         .catch(error => {
-            document.getElementById('chatMessages').innerText = "Error: " + error;
+            //document.getElementById('chatMessages').innerText = "Error: " + error;
         })
 }
 // Fetch in defined interval
