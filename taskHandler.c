@@ -119,7 +119,7 @@ void sendChatUpdate(Task task) {
  * @param task containing socket_id
  */
 void send404(Task task) {
-    printf("404: invalid request made\n");
+    //printf("404: invalid request made\n");
     /**
     char* httpRequest = strdup(task.buffer);
     char test[100];
