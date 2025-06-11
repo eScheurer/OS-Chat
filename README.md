@@ -1,10 +1,11 @@
 # Operating Systems Project - Dynamic Multithreaded Chat Server
 
 ### Requirements
-1. Linux system
-2. C compiler & cmake
-3. Python3
-4. (Optional) 2x Playit.gg tunnels
+1. Linux system 
+2. C compiler & cmake (3.10 or newer)
+3. Python3 
+4. Any modern Browser (Safari is currently not compatible)
+5. (Optional) 2x Playit.gg tunnels
 
 ## How to use
 1. Open a terminal on Linux
