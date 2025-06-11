@@ -13,7 +13,7 @@
 #include <string.h>
 
 #define MAX_QUEUE 512 // Tested with up to 200 clients connecting and sending requests
-#define INITIAL_THREADS 4
+#define INITIAL_THREADS 0 // Quickfix for difference between inital and dynamicly created threads
 #define THREAD_IDLE_TIMEOUT 8 // (seconds)
 #define NEW_THREADS 4
 
