@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="script.js" defer></script>
+
+<head>
+    <meta charset="UTF-8">
+    <title>OS Project 2025</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body onload="getChatRooms()">
+    <div id="main">
+        Welcome to the OSFS25 Project:
+        <h1>Multithreaded Chat Server</h1>
+        <div id = "namebox">
+            <label for="username">Set a Username:</label>
+            <input id="username"
+                   maxlength="20"
+                   writingsuggestions="true"
+                   placeholder="Username"
+                   oninput="validateUsername()">
+            <button onclick=setUserName()>
+                confirm
+            </button>
+            <p id="usernameHint" style="color: red;"></p>
+        </div>
+        <br>
+        Currently available Chat-Rooms: <button onclick="getChatRooms()">Refresh</button>
+        <br>
+        <div id="chatList">
+            <ul id="chatRoomsList"></ul>
+        </div>
+        <br>
+        Create a new Chat-Room: <button id="openPopup">Create</button>
+        <br>
+        <div id="popup" style="display: none;">
+            <div id="content">
+                <h2>Please choose a name for you chat room:</h2>
+                <input type="text" id="userInput" placeholder="please type here.." oninput="validateChatname()">
+                <p id="chatnameHint" style="color:red;"></p>
+                <button id="confirmButton">Create</button>
+                <button id="closePopup">X</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

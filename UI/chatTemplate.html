@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="script.js" defer></script>
+<head>
+    <meta charset="UTF-8">
+    <title>OS-Chatroom</title>
+    <link rel="stylesheet" href="chatLayout.css">
+</head>
+<body onload="getThreadStatus(); setInterval(getChatUpdate, 100)"> <!-- adjust frequency of update here -->
+<table>
+    <tr>
+        <th>Chat Rooms:<button onclick="getChatRoomsfromChat()">refresh</button></th>
+        <th>
+            <h1 id="chat-title"></h1>
+        </th>
+        <th>Thread-Data</th>
+    </tr>
+    <tr>
+        <td>
+            <div id="chatList">
+                <ul id="chatRoomsList"></ul>
+            </div>
+        </td>
+        <td>
+            <div id = "scrollPane">
+                <div id="chatMessages">loading...</div>
+                <div id="anchor"></div>
+            </div>
+            <label for="message-text">Send a Message:</label>
+            <textarea id="message-text"
+                      cols="50"
+                      rows="2"
+                      maxlength="500"
+                      writingsuggestions="true"
+                      spellcheck="true"
+                      placeholder="type here..."
+                      oninput="validateMessage()"></textarea>
+            <p id="messageHint" style="color:red;"></p>
+            <button type="button" onclick="if (validateMessage()) { sendMessage(); }">
+                send!
+            </button>
+        </td>
+        <td>
+            <div id="thread-status">
+                <ul id="status-list"></ul>
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

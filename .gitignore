@@ -1,0 +1,158 @@
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+.idea
+# User-specific stuff
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/workspace.xml
+.idea/editor.xml
+
+# AWS User-specific
+.idea/**/aws.xml
+
+# Generated files
+.idea/**/contentModel.xml
+
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# Gradle and Maven with auto-import
+# When using Gradle or Maven with auto-import, you should exclude module files,
+# since they will be recreated, and may cause churn.  Uncomment if using
+# auto-import.
+# .idea/artifacts
+# .idea/compiler.xml
+# .idea/jarRepositories.xml
+# .idea/modules.xml
+# .idea/*.iml
+# .idea/modules
+# *.iml
+# *.ipr
+
+# CMake
+cmake-build-*/
+
+# Mongo Explorer plugin
+.idea/**/mongoSettings.xml
+
+# File-based project format
+*.iws
+
+# IntelliJ
+out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+# Cursive Clojure plugin
+.idea/replstate.xml
+
+# SonarLint plugin
+.idea/sonarlint/
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Editor-based Rest Client
+.idea/httpRequests
+
+# Android studio 3.1+ serialized cache file
+.idea/caches/build_file_checksums.ser
+/build/CMakeFiles/Progress/2
+/build/CMakeFiles/OS_Chat.dir/compiler_depend.internal
+/build/CMakeFiles/OS_Chat.dir/server.c.o
+/build/CMakeFiles/OS_Chat.dir/threadpool.c.o.d
+/CMakeFiles/OS_Chat.dir/compiler_depend.internal
+/Chats/
+/build/CMakeFiles/3.28.3/CompilerIdC/a.out
+/build/CMakeFiles/OS_Chat.dir/build.make
+/build/CMakeFiles/UnitTesting.dir/build.make
+/build/CMakeFiles/OS_Chat.dir/chatList.c.o
+/build/CMakeFiles/OS_Chat.dir/chatList.c.o.d
+/build/CMakeFiles/cmake.check_cache
+/build/CMakeFiles/OS_Chat.dir/cmake_clean.cmake
+/build/CMakeFiles/UnitTesting.dir/cmake_clean.cmake
+/build/cmake_install.cmake
+/build/CMakeCache.txt
+/build/CMakeFiles/3.28.3/CMakeCCompiler.cmake
+/build/CMakeFiles/3.28.3/CompilerIdC/CMakeCCompilerId.c
+/build/CMakeFiles/CMakeConfigureLog.yaml
+/build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_C.bin
+/build/CMakeFiles/CMakeDirectoryInformation.cmake
+/build/CMakeFiles/3.28.3/CMakeSystem.cmake
+/build/CMakeFiles/UnitTesting.dir/compiler_depend.internal
+/build/CMakeFiles/OS_Chat.dir/compiler_depend.make
+/build/CMakeFiles/UnitTesting.dir/compiler_depend.make
+/build/CMakeFiles/OS_Chat.dir/compiler_depend.ts
+/build/CMakeFiles/UnitTesting.dir/compiler_depend.ts
+/build/CMakeFiles/OS_Chat.dir/depend.make
+/build/CMakeFiles/UnitTesting.dir/depend.make
+/build/CMakeFiles/OS_Chat.dir/DependInfo.cmake
+/build/CMakeFiles/UnitTesting.dir/DependInfo.cmake
+/build/CMakeFiles/OS_Chat.dir/flags.make
+/build/CMakeFiles/UnitTesting.dir/flags.make
+/build/CMakeFiles/OS_Chat.dir/link.txt
+/build/CMakeFiles/UnitTesting.dir/link.txt
+/build/CMakeFiles/OS_Chat.dir/LinkedList.c.o
+/build/CMakeFiles/UnitTesting.dir/LinkedList.c.o
+/build/CMakeFiles/OS_Chat.dir/LinkedList.c.o.d
+/build/CMakeFiles/UnitTesting.dir/LinkedList.c.o.d
+/build/CMakeFiles/OS_Chat.dir/LinkedListStub.c.o
+/build/CMakeFiles/OS_Chat.dir/LinkedListStub.c.o.d
+/build/Makefile
+/build/CMakeFiles/Makefile.cmake
+/build/CMakeFiles/Makefile2
+/build/OS_Chat
+/build/CMakeFiles/OS_Chat.dir/progress.make
+/build/CMakeFiles/UnitTesting.dir/progress.make
+/build/CMakeFiles/progress.marks
+/build/CMakeFiles/OS_Chat.dir/requestHandler.c.o
+/build/CMakeFiles/OS_Chat.dir/requestHandler.c.o.d
+/build/CMakeFiles/OS_Chat.dir/server.c.o.d
+/build/CMakeFiles/TargetDirectories.txt
+/build/CMakeFiles/OS_Chat.dir/taskHandler.c.o
+/build/CMakeFiles/OS_Chat.dir/taskHandler.c.o.d
+/build/CMakeFiles/OS_Chat.dir/threadpool.c.o
+/build/CMakeFiles/UnitTesting.dir/threadpool.c.o
+/build/CMakeFiles/UnitTesting.dir/threadpool.c.o.d
+/build/UnitTesting
+/build/CMakeFiles/UnitTesting.dir/tests/UnitTesting.c.o
+/build/CMakeFiles/UnitTesting.dir/tests/UnitTesting.c.o.d
+/build/CMakeFiles/UnitTesting.dir/chatList.c.o
+/build/CMakeFiles/UnitTesting.dir/chatList.c.o.d
+/build/CMakeFiles/IntegrationTesting.dir/build.make
+/build/CMakeFiles/IntegrationTesting.dir/cmake_clean.cmake
+/build/CMakeFiles/IntegrationTesting.dir/compiler_depend.make
+/build/CMakeFiles/IntegrationTesting.dir/compiler_depend.ts
+/build/CMakeFiles/IntegrationTesting.dir/depend.make
+/build/CMakeFiles/IntegrationTesting.dir/DependInfo.cmake
+/build/CMakeFiles/IntegrationTesting.dir/flags.make
+/build/IntegrationTesting
+/build/CMakeFiles/IntegrationTesting.dir/tests/IntegrationTesting.c.o
+/build/CMakeFiles/IntegrationTesting.dir/tests/IntegrationTesting.c.o.d
+/build/CMakeFiles/IntegrationTesting.dir/link.txt
+/build/CMakeFiles/IntegrationTesting.dir/progress.make
+/build/CMakeFiles/IntegrationTesting.dir/compiler_depend.internal
+/build/CMakeFiles/Progress/5
+/build/CMakeFiles/Progress/8
+/build/CMakeFiles/Progress/count.txt
+/runnableForPi/
