@@ -12,9 +12,9 @@
 #include "threadpool.h"
 #include <string.h>
 
-#define MAX_QUEUE 512 // Tested with up to 200 clients connecting
+#define MAX_QUEUE 512 // Tested with up to 200 clients connecting and sending requests
 #define INITIAL_THREADS 4
-#define THREAD_IDLE_TIMEOUT 8 // (Sekunden)
+#define THREAD_IDLE_TIMEOUT 8 // (seconds)
 #define NEW_THREADS 4
 
 
@@ -31,14 +31,14 @@ int thread_count = 0;
 static bool keep_running = true;
 static int idle_threads = 0;
 
-// function prototypes
+// Function prototypes
 void add_threads_to_pool();
 void remove_thread_from_pool();
 void print_threadpool_status();
 
 // Struct for timespec
 // The following struct was written with the help of ChatGPT.
-// I asked the AI why my previous timeout implementation did not work and it helped me correct it.
+// I asked the AI "what is wrong with the following implementation" and it helped me correct the struct.
 struct timespec make_timeout_timespec(const int seconds) { //
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
@@ -46,15 +46,16 @@ struct timespec make_timeout_timespec(const int seconds) { //
     return ts;
 }
 
+
 /**
  * @return 0 if Task available, ETIMEOUT if time out is reached
  */
-
-// ChatGPT was used to understand how timeouts and ETIMEDOUT work in C (with example code). I then implemented it myself, following the general idea but adapting it to our use.
+// ChatGPT was used to understand how timeouts and ETIMEDOUT work in C. I then implemented it myself, following the general structure ChatGPT explained to me but adapting it to our use.
 int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, const int seconds) {
     const struct timespec ts = make_timeout_timespec(seconds);
     return pthread_cond_timedwait(cond, lock, &ts);
 }
+
 
 /**
  * Worker thread function to handle the task (client socket)
@@ -62,9 +63,11 @@ int wait_for_task_with_timeout(pthread_cond_t *cond, pthread_mutex_t *lock, cons
 void* thread_worker(void* arg) {
     // printf("Thread %ld handling request\n", pthread_self()); // Used for IntegartionTesting
 
-    int index = *(int*)arg; // Pass thread index when creating
+    // Init thread index
+    int index = *(int*)arg;
     free(arg);
 
+    // Used for thread statistics displayed on website
     pthread_mutex_lock(&lock);
     thread_stats[index].thread_id = pthread_self();
     thread_stats[index].tasks_handled = 0;
@@ -76,7 +79,7 @@ void* thread_worker(void* arg) {
         // Wait for tasks from client socket
         pthread_mutex_lock(&lock);
         Task task;
-        idle_threads ++; //markiert sich selbst als idle um zu zeigen dass er auf arbeit wartet
+        idle_threads ++; //marks iself as idle to show that it waits for work
 
         // old version: thread geht schlafen
         //const int resume = wait_for_task_with_timeout(&cond, &lock, THREAD_IDLE_TIMEOUT);
@@ -125,6 +128,11 @@ void* thread_worker(void* arg) {
     return NULL;
 }
 
+
+/**
+ * Adds incoming task to the circular queue at the rear and commands to create new thread if neccessary.
+ *@param task
+ */
 void add_task_to_queue(Task task){
     pthread_mutex_lock(&lock);
     //error handling
@@ -148,10 +156,10 @@ void add_task_to_queue(Task task){
     pthread_mutex_unlock(&lock);
 }
 
+
 /**
  * shuts down thread pool cleanly
  */
-
 void shutdown_thread_pool(){
     pthread_mutex_lock(&lock);
     keep_running = false;
@@ -164,21 +172,23 @@ void shutdown_thread_pool(){
     free(threads);
 }
 
+
 /**
  * creates the initial threadpool threads.
+ *
+ * ChatGPT has been used to find missing index submission (passed whole method to ChatGPT and asked for error with thread index)
  */
 void init_thread_pool(){
     pthread_mutex_lock(&lock);
-    // Here: thread_count = INITIAL_THREADS;
-    threads = malloc(sizeof(pthread_t) * INITIAL_THREADS); // Here changed
+    threads = malloc(sizeof(pthread_t) * INITIAL_THREADS);
 
     //Create worker threads
-    for (int i = 0; i < INITIAL_THREADS; i++) { // Here changed
+    for (int i = 0; i < INITIAL_THREADS; i++) {
         int* arg = malloc(sizeof(int));
         *arg= i;
-        if (pthread_create(&threads[thread_count], NULL, thread_worker, arg) == 0) {// Here changed
-            thread_count++; // Here new
-        } else { // here new
+        if (pthread_create(&threads[thread_count], NULL, thread_worker, arg) == 0) {
+            thread_count++;
+        } else {
             free(arg);
             printf("Error: could not create initial threads. \n");
         }
@@ -188,6 +198,8 @@ void init_thread_pool(){
 
 /**
  * adds one thread to pool
+ *
+ * ChatGPT has been used to find missing index submission (passed whole method to ChatGPT and asked for error with thread index)
  */
 void add_threads_to_pool() {
     pthread_mutex_lock(&lock);
@@ -205,7 +217,7 @@ void add_threads_to_pool() {
     int* arg = malloc(sizeof(int));
     *arg = thread_count -1;
     pthread_create(&threads[thread_count -1], NULL, thread_worker, arg);
-    printf("Creating new Thread with ID %d\n", *arg); //for testing
+    printf("Creating new Thread with ID %d\n", *arg); // For Debugging
     pthread_mutex_unlock(&lock);
 }
 
@@ -240,10 +252,11 @@ void add_threads_to_pool() {
 //     pthread_mutex_unlock(&lock);
 // }
 
-/** Removed a read form pool.
+
+/**
+ * Remove a thread form pool.
  * Should only be called by worker threads that want to terminate themselves, not by any others, because it will kill your thread
  */
-
 void remove_thread_from_pool() {
     pthread_mutex_lock(&lock);
 
@@ -271,7 +284,6 @@ void remove_thread_from_pool() {
  * Methods for Thread Monitoring
  * Extension to display one focus of this OS-project: threadpooling
  */
-
 void get_thread_activity_json(char *buffer, size_t buffer_size) {
     pthread_mutex_lock(&lock);
 

@@ -7,16 +7,21 @@
 #include <arpa/inet.h>
 #include <stdatomic.h>
 
-
-
 #define NUM_CLIENTS 100 // Requested Number of Prof. Ciorba
 #define NUM_MESSAGES 5
-#define SERVER_IP "127.0.0.1" // Todo: change for server not running on Helene machine
+#define SERVER_IP "127.0.0.1" // Todo: change if not run on Helenes Lenovo Thinkpad
 #define SERVER_PORT 8080
 
-// To track success
+// Variable for tracking success
 int failed_requests = 0;
 
+/**
+ * This method is for testing and mimics a potential behavior of a client
+ *
+ * ChatGPT has been used as debugging support for this test-file. (no single prompt, more of a discussion)
+ * @param arg
+ * @return NULL
+ */
 void* client_behavior(void* arg) {
   int client_id = *(int*)arg;
   free(arg);
@@ -70,6 +75,10 @@ void* client_behavior(void* arg) {
   return NULL;
 }
 
+/**
+ * Main method, used to run integrated test seen above and print out feedback
+ * @return NULL
+ */
 int main() {
   pthread_t threads[NUM_CLIENTS];
 

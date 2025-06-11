@@ -14,8 +14,11 @@ int testChatList();
 int testThreadpool();
 int countMessages();
 
-
-
+/**
+ * Main method to run all unit tests
+ * Due to small number of tests only one class and one main method
+ * @return
+ */
 int main() {
 
   printf("Running LinkedList tests.\n");
@@ -68,7 +71,10 @@ int testLinkedList() {
 
 }
 
-// Helper class for chatList tests
+
+/**
+ * Helper method for chatList tests
+*/
 int countMessages(ChatList* list, const char* chatName) {
     ListNode* node = list->head;
     while (node != NULL) {
@@ -122,7 +128,6 @@ int testChatList() {
 }
 
 
-
 /**
  * These are methods to tests the most important functions of the threadpool class
  */
@@ -130,7 +135,6 @@ void handle_request(Task task) {
     printf("Mock handle_request: %d\n", task.socket_id);
     sleep(1);
 }
-
 
 int testThreadpool() {
     init_thread_pool(); // Workerthread

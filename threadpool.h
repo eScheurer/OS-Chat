@@ -36,8 +36,9 @@ typedef struct ThreadStats { // typedef to define type later
 extern ThreadStats thread_stats[MAX_THREADS];
 extern int thread_count;
 
+
 /**
- * Methods for Monitoring Threads and save Statistics
+ * Methods for monitoring threads and save statistics
  */
 void get_thread_activity_json(char *buffer, size_t buffer_size);
 
