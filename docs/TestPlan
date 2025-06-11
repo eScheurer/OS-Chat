@@ -1,0 +1,113 @@
+---
+layout: default
+title: Woche 6
+---
+
+# Testplan Multi-threaded Chat
+
+| Version | Projektname         |  Autor   | Status    | Datum      | Kommentar     |
+|---------|---------------------|----------|-----------|------------|---------------|
+| 0.1     | Multi-threaded Chat |  Spörri  | i.B.      | 05.04.2025 |                |
+| 0.1     | Multi-threaded Chat |  Spörri  |  |   |  |
+
+# 1. Introduction
+
+For the Operating Systems Lecture in Springsemester 2025 we are programming a Chatroom avaliable over website.
+The server should run on a raspberry pi and each client should be assigned to its own thread. The threads should be organized in a threadpool.
+
+## 1.1 Purpose
+
+This project should teach us about communication between server and thread, especially in cases where many requests come in at the same time.
+it also should teach us about handling critical sections and possible errors.
+In this document, the testing is explained and documented.
+
+## 1.2 Beziehung zu anderen Dokumenten
+
+We recomend to only consider this document with feeper understanding of our project, which you can earn by reading our Code, our protocol or our project report.
+
+## 2. System overview
+
+After running the server we should be able to load a website (client connects to server). On this website there should be the possibilities to create a new chat, 
+join the main chat, read and write messages. And explore some details about the current threadactivity.
+
+## 3. To be tested
+
+### 3.1 Functionality
+
+* send, recieve, view messages
+* create new chat
+* join chat
+* open link, files, gif's?
+
+### 3.2 Scaalbility
+
+We want to ensure that this server and Chatfunctionalities work for 70-100 users at a time. Therefore we will inmlement a Testprogram that populates server.
+
+### 3.3 Specialcases
+
+Errorhandling when application looses connection to network
+
+## 4. Not to be tested
+
+We will not test the activity due to the already implemented Thread-Statistics which are displayed on our Chat website.
+We also will not have special security tests due to a different focus in this project.
+
+
+## 4 Vorgehensweise
+
+### 4.1 Modul und Integrationstests
+
+Unittests will not be implemented in Github Workflow, we want them to run manually when needed.
+GUI-components will be tested manually and visually.
+There will be a Populating-Test-Program where the server gets populated to 
+
+### 4.2 Funktionstest
+
+Die Funktionalität unserer Erweiterung wird via Graphischer Benutzeroberfläche
+getestet.
+
+### 5 Hardware und Softwareanforderungen
+
+We will require a working raspberry pi to eventually run server on this mini-computer.
+
+
+## 6 Testfälle
+
+### 6.1 Modultests
+
+| ProcessUserstatistics | testCalculateProgramDuration_withZeroDuration            |
+| ProcessUserstatistics | testCalculateLibraryDuration_withNegativeDuration        |
+| ProcessUserstatistics | testCalculateMultipleProgramDurations                    |
+| ProcessUserstatistics | testMultipleOpenLibraryEntriesWithoutClosing             |
+| ProcessUserstatistics | testKeywordCountingMultipleOccurrences                   |
+| ProcessUserstatistics | testKeywordHashMapInitializationAndUpdate                |
+
+### 6.2 Funktionstests
+
+##### Testfall:
+
+*Testziel:* 
+
+*Voraussetzung:* 
+
+*Eingabe:* 
+
+*Erwartete Ausgabe:* 
+
+*Abhängigkeiten:* 
+
+----
+
+##### Testfall: 
+
+*Testziel:* 
+
+*Voraussetzung:* 
+
+*Eingabe:* 
+
+*Erwartete Ausgabe:* 
+
+*Abhängigkeiten:* 
+
+
